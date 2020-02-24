@@ -3,12 +3,12 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Sapphire-Hexo
+title: Sapphire
 subtitle: ''
-description: '私人博客'
+description: '兴趣使然的博客'
 keywords:
 author: Ryan Shu
-language: zh-cn
+language: zh-Hans
 timezone: ''
 
 # URL
@@ -98,4 +98,42 @@ theme: Ayer
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
-  type: ''
+  type: git
+  message: update
+  repo: root@47.112.224.238:/var/repo/blog.git,master
+
+# Hexo-generator-search
+search:
+  path: search.xml
+  field: post
+  format: html
+
+feed:
+    type: atom
+    path: atom.xml
+    limit: 20
+    hub:
+    content:
+    content_limit: 140
+    content_limit_delim: ' '
+    order_by: -date
+
+# live2d live2d-widget-model-shizuku
+live2d:
+  enable: true
+  scriptFrom: local
+  pluginRootPath: live2dw/
+  pluginJsPath: lib/
+  pluginModelPath: assets/
+  tagMode: false
+  debug: false
+  model:
+    use:
+  display:
+    position: right
+    width: 150
+    height: 300
+  mobile:
+    show: true
+  react:
+    opacity: 0.7
