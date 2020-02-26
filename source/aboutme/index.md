@@ -1,7 +1,5 @@
 ---
 title: About me
-tags: 基本信息
-categories: 关于我
 date: 2020-02-23 01:06:13
 ---
 
