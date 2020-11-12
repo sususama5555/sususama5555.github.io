@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Sapphire</title>
+  
+  
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://sapphirez.gitee.io/"/>
+  <updated>2020-11-12T15:21:49.044Z</updated>
+  <id>http://sapphirez.gitee.io/</id>
+  
+  <author>
+    <name>Ryan Shu</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>git_basis</title>
+    <link href="http://sapphirez.gitee.io/2020/11/12/git-basis/"/>
+    <id>http://sapphirez.gitee.io/2020/11/12/git-basis/</id>
+    <published>2020-11-12T14:45:15.000Z</published>
+    <updated>2020-11-12T15:21:49.044Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;Git是什么&quot;&gt;&lt;a href=&quot;#Git是什么&quot; class=&quot;headerlink&quot; title=&quot;Git是什么?&quot;&gt;&lt;/a&gt;Git是什么?&lt;/h1&gt;&lt;h2 id=&quot;什么是版本控制？&quot;&gt;&lt;a href=&quot;#什么是版本控制？&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Git" scheme="http://sapphirez.gitee.io/categories/Git/"/>
+    
+    
+      <category term="Git基础" scheme="http://sapphirez.gitee.io/tags/Git%E5%9F%BA%E7%A1%80/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Redis修炼之数据类型</title>
+    <link href="http://sapphirez.gitee.io/2020/11/12/redis-data-types/"/>
+    <id>http://sapphirez.gitee.io/2020/11/12/redis-data-types/</id>
+    <published>2020-11-11T16:34:08.000Z</published>
+    <updated>2020-11-12T14:41:22.642Z</updated>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;一、Redis 数据类型:&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;1、String（字符串）&lt;/strong&gt;&lt;br&gt;string 是 Redis 最基本的类型，理解成与 Memcached 一模一样的类型，一个 key 对应一个 value。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;2、Hash（哈希）&lt;/strong&gt;&lt;br&gt;Redis hash 是一个键值(key=&amp;gt;value)对集合。&lt;br&gt;Redis hash 是一个 string 类型的 field 和 value 的映射表，hash 特别适合用于存储对象。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="Redis" scheme="http://sapphirez.gitee.io/categories/Redis/"/>
+    
+    
+      <category term="Redis" scheme="http://sapphirez.gitee.io/tags/Redis/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>红黑树</title>
+    <link href="http://sapphirez.gitee.io/2020/11/09/2020-11-09/"/>
+    <id>http://sapphirez.gitee.io/2020/11/09/2020-11-09/</id>
+    <published>2020-11-09T14:13:53.000Z</published>
+    <updated>2020-11-09T16:11:35.368Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;红黑树其实就是一种数据结构，设计它的目的就是为了高效地进行增删改查，我们可以从二叉查找树逐渐引入到红黑树：&lt;/p&gt;
+&lt;h3 id=&quot;一、二叉查找树&quot;&gt;&lt;a href=&quot;#一、二叉查找树&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="学习笔记" scheme="http://sapphirez.gitee.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+    
+    
+      <category term="算法结构" scheme="http://sapphirez.gitee.io/tags/%E7%AE%97%E6%B3%95%E7%BB%93%E6%9E%84/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>B树与B+树</title>
+    <link href="http://sapphirez.gitee.io/2020/11/01/2020-11-01/"/>
+    <id>http://sapphirez.gitee.io/2020/11/01/2020-11-01/</id>
+    <published>2020-11-01T11:07:22.000Z</published>
+    <updated>2020-11-09T16:11:35.373Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;一、B树和B-树的区别&quot;&gt;&lt;a href=&quot;#一、B树和B-树的区别&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="学习笔记" scheme="http://sapphirez.gitee.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+    
+    
+      <category term="算法结构" scheme="http://sapphirez.gitee.io/tags/%E7%AE%97%E6%B3%95%E7%BB%93%E6%9E%84/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>记一次持续到凌晨两点半的coding</title>
+    <link href="http://sapphirez.gitee.io/2020/09/26/2020-09-26/"/>
+    <id>http://sapphirez.gitee.io/2020/09/26/2020-09-26/</id>
+    <published>2020-09-25T18:34:12.000Z</published>
+    <updated>2020-09-25T18:35:47.606Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;二叉搜索树的后序遍历序列&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;题干&lt;/strong&gt;：&lt;br&gt;输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历的结果。&lt;br&gt;如果是则输出Yes,否则输出No。假设输入的数组的任意两个数字都互不相同。&lt;/p
+        
+      
+    
+    </summary>
+    
+    
+      <category term="学习笔记" scheme="http://sapphirez.gitee.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+    
+    
+      <category term="剑指offer" scheme="http://sapphirez.gitee.io/tags/%E5%89%91%E6%8C%87offer/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>pearson相关系数</title>
+    <link href="http://sapphirez.gitee.io/2020/02/26/2020-02-26/"/>
+    <id>http://sapphirez.gitee.io/2020/02/26/2020-02-26/</id>
+    <published>2020-02-26T08:09:38.000Z</published>
+    <updated>2020-03-25T17:00:33.982Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;pearson相关系数&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;../picture/pearson%E5%85%AC%E5%BC%8F.png&quot; alt=&quot;avatar&quot;&gt;&lt;/p&gt;
+&lt;p&gt;公式定义为：
+        
+      
+    
+    </summary>
+    
+    
+      <category term="学习笔记" scheme="http://sapphirez.gitee.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+    
+    
+      <category term="大数据分析" scheme="http://sapphirez.gitee.io/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>平平淡淡的一天</title>
+    <link href="http://sapphirez.gitee.io/2020/02/19/first-blog/"/>
+    <id>http://sapphirez.gitee.io/2020/02/19/first-blog/</id>
+    <published>2020-02-19T10:19:11.000Z</published>
+    <updated>2020-03-25T17:00:33.982Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;我的一天：&quot;&gt;&lt;a href=&quot;#我的一天：&quot; class=&quot;headerlink&quot; title=&quot;我的一天：  &quot;&gt;&lt;/a&gt;我的一天：  &lt;/h1&gt;&lt;hr&gt;
+&lt;p&gt;上午：改bug 
+        
+      
+    
+    </summary>
+    
+    
+      <category term="摸鱼随笔" scheme="http://sapphirez.gitee.io/categories/%E6%91%B8%E9%B1%BC%E9%9A%8F%E7%AC%94/"/>
+    
+    
+      <category term="第一条博客" scheme="http://sapphirez.gitee.io/tags/%E7%AC%AC%E4%B8%80%E6%9D%A1%E5%8D%9A%E5%AE%A2/"/>
+    
+  </entry>
+  
+</feed>
