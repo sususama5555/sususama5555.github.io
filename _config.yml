@@ -8,7 +8,7 @@ subtitle: ''
 description: '兴趣使然的博客'
 keywords:
 author: Ryan Shu
-language: zh-CN
+language: zh-Hans
 timezone: ''
 
 # URL
@@ -32,7 +32,7 @@ i18n_dir: :lang
 skip_render:
 
 # Writing
-new_post_name: :title.md # File name of new posts
+new_post_name: :year-:month-:day-:title.md # File name of new posts
 default_layout: post
 titlecase: false # Transform title into titlecase
 external_link:
@@ -41,7 +41,7 @@ external_link:
   exclude: ''
 filename_case: 0
 render_drafts: false
-post_asset_folder: false
+post_asset_folder: true
 relative_link: false
 future: true
 highlight:
@@ -105,10 +105,10 @@ theme: next
 #  repo: root@47.112.224.238:/var/repo/blog.git,master
 
 #aliyun-3years
-deploy:
-  type: git
-  message: update
-  repo: root@47.112.240.167:/var/repo/blog.git,master
+#deploy:
+#  type: git
+#  message: update
+#  repo: root@47.112.240.167:/var/repo/blog.git,master
 
 #gitee
 #deploy:
@@ -117,10 +117,10 @@ deploy:
 #  repo: https://gitee.com/sapphirez/sapphirez.git,master
 
 #gitee
-#deploy:
-#  type: git
-#  message: github
-#  repo: https://github.com/sususama5555/sususama5555.github.io.git,master
+deploy:
+  type: git
+  message: github
+  repo: https://github.com/sususama5555/sususama5555.github.io.git,master
 
 # Hexo-generator-search
 search:
