@@ -5,9 +5,9 @@
   
   <link href="/atom.xml" rel="self"/>
   
-  <link href="http://sapphirez.gitee.io/"/>
-  <updated>2020-11-12T15:21:49.044Z</updated>
-  <id>http://sapphirez.gitee.io/</id>
+  <link href="http://api.ddoudou.xyz/"/>
+  <updated>2020-11-15T18:01:35.050Z</updated>
+  <id>http://api.ddoudou.xyz/</id>
   
   <author>
     <name>Ryan Shu</name>
@@ -17,11 +17,11 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>git_basis</title>
-    <link href="http://sapphirez.gitee.io/2020/11/12/git-basis/"/>
-    <id>http://sapphirez.gitee.io/2020/11/12/git-basis/</id>
-    <published>2020-11-12T14:45:15.000Z</published>
-    <updated>2020-11-12T15:21:49.044Z</updated>
+    <title>Redis修炼之数据类型使用场景</title>
+    <link href="http://api.ddoudou.xyz/2020/11/16/redis-use-case/"/>
+    <id>http://api.ddoudou.xyz/2020/11/16/redis-use-case/</id>
+    <published>2020-11-15T16:33:06.000Z</published>
+    <updated>2020-11-15T18:01:35.050Z</updated>
     
     <summary type="html">
     
@@ -29,26 +29,42 @@
       
         
         
-          &lt;h1 id=&quot;Git是什么&quot;&gt;&lt;a href=&quot;#Git是什么&quot; class=&quot;headerlink&quot; title=&quot;Git是什么?&quot;&gt;&lt;/a&gt;Git是什么?&lt;/h1&gt;&lt;h2 id=&quot;什么是版本控制？&quot;&gt;&lt;a href=&quot;#什么是版本控制？&quot;
+          &lt;blockquote&gt;
+&lt;h2 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot;
         
       
     
     </summary>
     
     
-      <category term="Git" scheme="http://sapphirez.gitee.io/categories/Git/"/>
+      <category term="Redis修炼" scheme="http://api.ddoudou.xyz/categories/Redis%E4%BF%AE%E7%82%BC/"/>
     
     
-      <category term="Git基础" scheme="http://sapphirez.gitee.io/tags/Git%E5%9F%BA%E7%A1%80/"/>
+      <category term="Redis使用场景" scheme="http://api.ddoudou.xyz/tags/Redis%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>python-wmware</title>
+    <link href="http://api.ddoudou.xyz/2020/11/15/python-wmware/"/>
+    <id>http://api.ddoudou.xyz/2020/11/15/python-wmware/</id>
+    <published>2020-11-14T20:00:06.000Z</published>
+    <updated>2020-11-14T20:00:06.273Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+    
     
   </entry>
   
   <entry>
     <title>Redis修炼之数据类型</title>
-    <link href="http://sapphirez.gitee.io/2020/11/12/redis-data-types/"/>
-    <id>http://sapphirez.gitee.io/2020/11/12/redis-data-types/</id>
+    <link href="http://api.ddoudou.xyz/2020/11/12/redis-data-types/"/>
+    <id>http://api.ddoudou.xyz/2020/11/12/redis-data-types/</id>
     <published>2020-11-11T16:34:08.000Z</published>
-    <updated>2020-11-12T14:41:22.642Z</updated>
+    <updated>2020-11-15T17:13:31.405Z</updated>
     
     <summary type="html">
     
@@ -61,131 +77,202 @@
     </summary>
     
     
-      <category term="Redis" scheme="http://sapphirez.gitee.io/categories/Redis/"/>
+      <category term="Redis修炼" scheme="http://api.ddoudou.xyz/categories/Redis%E4%BF%AE%E7%82%BC/"/>
     
     
-      <category term="Redis" scheme="http://sapphirez.gitee.io/tags/Redis/"/>
+      <category term="Redis数据类型" scheme="http://api.ddoudou.xyz/tags/Redis%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Python中构建MySql连接池</title>
+    <link href="http://api.ddoudou.xyz/2020/11/09/python-mysql-pool/"/>
+    <id>http://api.ddoudou.xyz/2020/11/09/python-mysql-pool/</id>
+    <published>2020-11-09T15:17:35.000Z</published>
+    <updated>2020-11-14T20:04:06.472Z</updated>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;&lt;b&gt;背景：为何要使用连接池&lt;/b&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;数据库连接是一种关键的、有限的、昂贵的资源，这一点在多用户的网页应用程序中体现得尤为突出。对数据库连接的管理能显著影响到整个应用程序的伸缩性和健壮性，影响到程序的性能指标。数据库连接池正是针对这个问题提出来的。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="Python" scheme="http://api.ddoudou.xyz/categories/Python/"/>
+    
+    
+      <category term="数据库连接池" scheme="http://api.ddoudou.xyz/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0/"/>
     
   </entry>
   
   <entry>
     <title>红黑树</title>
-    <link href="http://sapphirez.gitee.io/2020/11/09/2020-11-09/"/>
-    <id>http://sapphirez.gitee.io/2020/11/09/2020-11-09/</id>
+    <link href="http://api.ddoudou.xyz/2020/11/09/red-black-tree/"/>
+    <id>http://api.ddoudou.xyz/2020/11/09/red-black-tree/</id>
     <published>2020-11-09T14:13:53.000Z</published>
-    <updated>2020-11-09T16:11:35.368Z</updated>
+    <updated>2020-11-14T20:03:22.458Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;p&gt;红黑树其实就是一种数据结构，设计它的目的就是为了高效地进行增删改查，我们可以从二叉查找树逐渐引入到红黑树：&lt;/p&gt;
-&lt;h3 id=&quot;一、二叉查找树&quot;&gt;&lt;a href=&quot;#一、二叉查找树&quot; class=&quot;headerlink&quot;
-        
-      
+      &lt;p&gt;红黑树其实就是一种数据结构，设计它的目的就是为了高效地进行增删改查，我们可以从二叉查找树逐渐引入到红黑树：&lt;/p&gt;
+&lt;h3 id=&quot;一、二叉查找树&quot;&gt;&lt;a href=&quot;#一、二叉查找树&quot; class=&quot;headerlink&quot; title=&quot;一、二叉查找树&quot;&gt;&lt;/a&gt;一、二叉查找树&lt;/h3&gt;&lt;p&gt;特性：&lt;br&gt;（1）左子树上所有结点的值均小于或等于它的根结点的值；&lt;br&gt;（2）右子树上所有结点的值均大于或等于它的根结点的值。&lt;/p&gt;
     
     </summary>
     
     
-      <category term="学习笔记" scheme="http://sapphirez.gitee.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+      <category term="算法结构" scheme="http://api.ddoudou.xyz/categories/%E7%AE%97%E6%B3%95%E7%BB%93%E6%9E%84/"/>
     
     
-      <category term="算法结构" scheme="http://sapphirez.gitee.io/tags/%E7%AE%97%E6%B3%95%E7%BB%93%E6%9E%84/"/>
+      <category term="红黑树" scheme="http://api.ddoudou.xyz/tags/%E7%BA%A2%E9%BB%91%E6%A0%91/"/>
     
   </entry>
   
   <entry>
     <title>B树与B+树</title>
-    <link href="http://sapphirez.gitee.io/2020/11/01/2020-11-01/"/>
-    <id>http://sapphirez.gitee.io/2020/11/01/2020-11-01/</id>
+    <link href="http://api.ddoudou.xyz/2020/11/01/B-B-tree/"/>
+    <id>http://api.ddoudou.xyz/2020/11/01/B-B-tree/</id>
     <published>2020-11-01T11:07:22.000Z</published>
-    <updated>2020-11-09T16:11:35.373Z</updated>
+    <updated>2020-11-14T20:04:06.468Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;h2 id=&quot;一、B树和B-树的区别&quot;&gt;&lt;a href=&quot;#一、B树和B-树的区别&quot; class=&quot;headerlink&quot;
-        
-      
+      &lt;h2 id=&quot;一、B树和B-树的区别&quot;&gt;&lt;a href=&quot;#一、B树和B-树的区别&quot; class=&quot;headerlink&quot; title=&quot;一、B树和B+树的区别&quot;&gt;&lt;/a&gt;一、B树和B+树的区别&lt;/h2&gt;&lt;p&gt;很明显，我们要想弄清楚原因就要知道B树和B+树的区别。为了不长篇大论。我们直接给出他们的形式总结他们的特点。&lt;/p&gt;
+&lt;h3 id=&quot;1、B树&quot;&gt;&lt;a href=&quot;#1、B树&quot; class=&quot;headerlink&quot; title=&quot;1、B树&quot;&gt;&lt;/a&gt;1、B树&lt;/h3&gt;&lt;p&gt;B树是一种自平衡的搜索树，形式很简单：&lt;/p&gt;
     
     </summary>
     
     
-      <category term="学习笔记" scheme="http://sapphirez.gitee.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+      <category term="算法结构" scheme="http://api.ddoudou.xyz/categories/%E7%AE%97%E6%B3%95%E7%BB%93%E6%9E%84/"/>
     
     
-      <category term="算法结构" scheme="http://sapphirez.gitee.io/tags/%E7%AE%97%E6%B3%95%E7%BB%93%E6%9E%84/"/>
+      <category term="B树与B+树" scheme="http://api.ddoudou.xyz/tags/B%E6%A0%91%E4%B8%8EB-%E6%A0%91/"/>
     
   </entry>
   
   <entry>
     <title>记一次持续到凌晨两点半的coding</title>
-    <link href="http://sapphirez.gitee.io/2020/09/26/2020-09-26/"/>
-    <id>http://sapphirez.gitee.io/2020/09/26/2020-09-26/</id>
+    <link href="http://api.ddoudou.xyz/2020/09/26/2020-09-26/"/>
+    <id>http://api.ddoudou.xyz/2020/09/26/2020-09-26/</id>
     <published>2020-09-25T18:34:12.000Z</published>
-    <updated>2020-09-25T18:35:47.606Z</updated>
+    <updated>2020-11-12T17:06:51.985Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;二叉搜索树的后序遍历序列&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;题干&lt;/strong&gt;：&lt;br&gt;输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历的结果。&lt;br&gt;如果是则输出Yes,否则输出No。假设输入的数组的任意两个数字都互不相同。&lt;/p
-        
-      
+      &lt;p&gt;&lt;strong&gt;二叉搜索树的后序遍历序列&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;题干&lt;/strong&gt;：&lt;br&gt;输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历的结果。&lt;br&gt;如果是则输出Yes,否则输出No。假设输入的数组的任意两个数字都互不相同。&lt;/p&gt;
     
     </summary>
     
     
-      <category term="学习笔记" scheme="http://sapphirez.gitee.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+      <category term="学习笔记" scheme="http://api.ddoudou.xyz/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
     
     
-      <category term="剑指offer" scheme="http://sapphirez.gitee.io/tags/%E5%89%91%E6%8C%87offer/"/>
+      <category term="剑指offer" scheme="http://api.ddoudou.xyz/tags/%E5%89%91%E6%8C%87offer/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>企业(政务)微信浏览器的前端开发兼容问题</title>
+    <link href="http://api.ddoudou.xyz/2020/08/20/weixin-app/"/>
+    <id>http://api.ddoudou.xyz/2020/08/20/weixin-app/</id>
+    <published>2020-08-20T14:50:54.000Z</published>
+    <updated>2020-11-14T20:03:22.449Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;strong&gt;windows版本的企业（政务）微信浏览器基于Chromium 53版本，对ES7某些新特性不兼容&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img data-src=&quot;https://www.tapd.cn/tfl/captures/2020-08/tapd_51310665_base64_1597896079_93.png&quot; alt=&quot;图片描述&quot;&gt;&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="前端开发指南" scheme="http://api.ddoudou.xyz/categories/%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/"/>
+    
+    
+      <category term="微信轻应用" scheme="http://api.ddoudou.xyz/tags/%E5%BE%AE%E4%BF%A1%E8%BD%BB%E5%BA%94%E7%94%A8/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>使用 uWSGI + Nginx 部署 Django 项目</title>
+    <link href="http://api.ddoudou.xyz/2020/05/20/uWSGI-Nginx-Django/"/>
+    <id>http://api.ddoudou.xyz/2020/05/20/uWSGI-Nginx-Django/</id>
+    <published>2020-05-20T11:47:02.000Z</published>
+    <updated>2020-11-14T20:03:22.445Z</updated>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;摘要&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;在开发&lt;kbd&gt;Django&lt;/kbd&gt;框架时，我们通常使用&lt;kbd&gt;python manage.py runserver&lt;/kbd&gt;来运行本地服务,但是这只适用开发环境中使用，此时启动的Django项目通过127.0.0.1:8000的本地端口进行转发，也只能在本地环境下进行访问。那么我们基于Django的SaaS是怎样发布在公网、局域网环境下，并且通过域名访问站点的呢？通常的方案是：我们就需要用到&lt;kbd&gt;uWSGI&lt;/kbd&gt;配合&lt;kbd&gt;Nginx(Apache)&lt;/kbd&gt;进行代理转发。以下是笔者在实践此方案的过程中整理的一些要点。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="Django" scheme="http://api.ddoudou.xyz/categories/Django/"/>
+    
+    
+      <category term="uWSGI + Nginx + Django" scheme="http://api.ddoudou.xyz/tags/uWSGI-Nginx-Django/"/>
     
   </entry>
   
   <entry>
     <title>pearson相关系数</title>
-    <link href="http://sapphirez.gitee.io/2020/02/26/2020-02-26/"/>
-    <id>http://sapphirez.gitee.io/2020/02/26/2020-02-26/</id>
+    <link href="http://api.ddoudou.xyz/2020/02/26/pearson-formula/"/>
+    <id>http://api.ddoudou.xyz/2020/02/26/pearson-formula/</id>
     <published>2020-02-26T08:09:38.000Z</published>
-    <updated>2020-03-25T17:00:33.982Z</updated>
+    <updated>2020-11-14T19:12:17.791Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;p&gt;&lt;strong&gt;pearson相关系数&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;../picture/pearson%E5%85%AC%E5%BC%8F.png&quot; alt=&quot;avatar&quot;&gt;&lt;/p&gt;
-&lt;p&gt;公式定义为：
-        
-      
+      &lt;p&gt;&lt;strong&gt;pearson相关系数&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img data-src=&quot;/picture/pearson%E5%85%AC%E5%BC%8F.png&quot; alt=&quot;avatar&quot;&gt;&lt;/p&gt;
+&lt;p&gt;公式定义为： 两个连续变量(X,Y)的pearson相关性系数(Px,y)等于它们之间的协方差cov(X,Y)除以它们各自标准差的乘积(σX,σY)。系数的取值总是在-1.0到1.0之间，接近0的变量被成为无相关性，接近1或者-1被称为具有强相关性。&lt;/p&gt;
+&lt;p&gt;简单来说，它用来衡量两个数据集合是否在一条线上面，是否有相关性，这在数据分析中是很有效的。&lt;/p&gt;
+&lt;p&gt;用python3实现：&lt;/p&gt;
     
     </summary>
     
     
-      <category term="学习笔记" scheme="http://sapphirez.gitee.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+      <category term="学习笔记" scheme="http://api.ddoudou.xyz/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
     
     
-      <category term="大数据分析" scheme="http://sapphirez.gitee.io/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/"/>
+      <category term="大数据分析" scheme="http://api.ddoudou.xyz/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Git原理及实践</title>
+    <link href="http://api.ddoudou.xyz/2019/11/12/git-basis/"/>
+    <id>http://api.ddoudou.xyz/2019/11/12/git-basis/</id>
+    <published>2019-11-12T14:45:15.000Z</published>
+    <updated>2020-11-14T19:09:24.882Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;Git是什么&quot;&gt;&lt;a href=&quot;#Git是什么&quot; class=&quot;headerlink&quot; title=&quot;Git是什么?&quot;&gt;&lt;/a&gt;Git是什么?&lt;/h1&gt;&lt;h2 id=&quot;什么是版本控制？&quot;&gt;&lt;a href=&quot;#什么是版本控制？&quot; class=&quot;headerlink&quot; title=&quot;什么是版本控制？&quot;&gt;&lt;/a&gt;什么是版本控制？&lt;/h2&gt;&lt;p&gt;版本控制是指对软件开发过程中各种程序代码、配置文件及说明文档等文件变更的管理，是软件配置管理的核心思想之一。&lt;/p&gt;
+&lt;h2 id=&quot;什么是Git&quot;&gt;&lt;a href=&quot;#什么是Git&quot; class=&quot;headerlink&quot; title=&quot;什么是Git?&quot;&gt;&lt;/a&gt;什么是Git?&lt;/h2&gt;&lt;p&gt;&lt;img data-src=&quot;/picture/git_logo.png&quot; alt=&quot;avatar&quot;&gt;&lt;br&gt;Git 是一个开源的分布式版本控制系统，用于敏捷高效地处理任何或小或大的项目。&lt;br&gt;Git 是 Linus Torvalds 为了帮助管理 Linux 内核开发而开发的一个开放源码的版本控制软件。&lt;br&gt;Git 与常用的版本控制工具 CVS， Subversion 等不同，它采用了分布式版本库的方式，不必服务器端软件支持。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="Git" scheme="http://api.ddoudou.xyz/categories/Git/"/>
+    
+    
+      <category term="Git基础" scheme="http://api.ddoudou.xyz/tags/Git%E5%9F%BA%E7%A1%80/"/>
     
   </entry>
   
   <entry>
     <title>平平淡淡的一天</title>
-    <link href="http://sapphirez.gitee.io/2020/02/19/first-blog/"/>
-    <id>http://sapphirez.gitee.io/2020/02/19/first-blog/</id>
-    <published>2020-02-19T10:19:11.000Z</published>
-    <updated>2020-03-25T17:00:33.982Z</updated>
+    <link href="http://api.ddoudou.xyz/2019/10/19/first-blog/"/>
+    <id>http://api.ddoudou.xyz/2019/10/19/first-blog/</id>
+    <published>2019-10-19T10:19:11.000Z</published>
+    <updated>2020-11-12T16:37:05.797Z</updated>
     
     <summary type="html">
     
@@ -201,10 +288,10 @@
     </summary>
     
     
-      <category term="摸鱼随笔" scheme="http://sapphirez.gitee.io/categories/%E6%91%B8%E9%B1%BC%E9%9A%8F%E7%AC%94/"/>
+      <category term="摸鱼随笔" scheme="http://api.ddoudou.xyz/categories/%E6%91%B8%E9%B1%BC%E9%9A%8F%E7%AC%94/"/>
     
     
-      <category term="第一条博客" scheme="http://sapphirez.gitee.io/tags/%E7%AC%AC%E4%B8%80%E6%9D%A1%E5%8D%9A%E5%AE%A2/"/>
+      <category term="第一条博客" scheme="http://api.ddoudou.xyz/tags/%E7%AC%AC%E4%B8%80%E6%9D%A1%E5%8D%9A%E5%AE%A2/"/>
     
   </entry>
   

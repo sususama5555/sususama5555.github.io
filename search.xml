@@ -1,52 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>git_basis</title>
-    <url>/2020/11/12/git-basis/</url>
-    <content><![CDATA[<h1 id="Git是什么"><a href="#Git是什么" class="headerlink" title="Git是什么?"></a>Git是什么?</h1><h2 id="什么是版本控制？"><a href="#什么是版本控制？" class="headerlink" title="什么是版本控制？"></a>什么是版本控制？</h2><p>版本控制是指对软件开发过程中各种程序代码、配置文件及说明文档等文件变更的管理，是软件配置管理的核心思想之一。</p>
-<h2 id="什么是Git"><a href="#什么是Git" class="headerlink" title="什么是Git?"></a>什么是Git?</h2><p><img src="../picture/git_logo.png" alt="avatar"><br>Git 是一个开源的分布式版本控制系统，用于敏捷高效地处理任何或小或大的项目。<br>Git 是 Linus Torvalds 为了帮助管理 Linux 内核开发而开发的一个开放源码的版本控制软件。<br>Git 与常用的版本控制工具 CVS， Subversion 等不同，它采用了分布式版本库的方式，不必服务器端软件支持。</p>
-<h2 id="Git-与-SVN-区别"><a href="#Git-与-SVN-区别" class="headerlink" title="Git 与 SVN 区别"></a>Git 与 SVN 区别</h2><p>Git 不仅仅是个版本控制系统，它也是个内容管理系统(CMS)，工作管理系统等。<br>如果你是一个具有使用 SVN 背景的人，你需要做一定的思想转换，来适应 Git 提供的一些概念和特征。<br>Git 与 SVN 区别点：<br>1、Git 是分布式的，SVN 不是：这是 Git 和其它非分布式的版本控制系统，例如 SVN，CVS 等，最核心的区别。<br>2、Git 把内容按元数据方式存储，而 SVN 是按文件：所有的资源控制系统都是把文件的元信息隐藏在一个类似 .svn、.cvs 等的文件夹里。<br>3、Git 分支和 SVN 的分支不同：分支在 SVN 中一点都不特别，其实它就是版本库中的另外一个目录。<br>4、Git 没有一个全局的版本号，而 SVN 有：目前为止这是跟 SVN 相比 Git 缺少的最大的一个特征。<br>5、Git 的内容完整性要优于 SVN：Git 的内容存储使用的是 SHA-1 哈希算法。这能确保代码内容的完整性，确保在遇到磁盘故障和网络问题时降低对版本库的破坏。</p>
-<h1 id="Git的相关理论基础"><a href="#Git的相关理论基础" class="headerlink" title="Git的相关理论基础"></a>Git的相关理论基础</h1><ul>
-<li>Git的四大工作区域</li>
-<li>Git的工作流程</li>
-<li>Git文件的四种状态</li>
-<li>Git的工作原理</li>
-</ul>
-<h2 id="Git的四大工作区域"><a href="#Git的四大工作区域" class="headerlink" title="Git的四大工作区域"></a>Git的四大工作区域</h2><p><img src="../picture/git_4_workspace.png" alt="avatar"></p>
+    <title>Redis修炼之数据类型使用场景</title>
+    <url>/2020/11/16/redis-use-case/</url>
+    <content><![CDATA[<blockquote>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote>
+<p>接着Redis数据类型来说，来谈谈Redis的具体使用场景，首先回顾一下：</p>
+<p>Redis是一种基于键值对的NoSQL数据库，它的值主要由string（字符串），hash（哈希），list（列表），set（集合），zset（有序集合）五种基本数据结构构成。那么这些数据结构的使用场景有哪些？以下将用内部编码及使用场景的方式浅析Redis的五种数据类型。</p>
+<blockquote>
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2></blockquote>
+<h3 id="一-字符串"><a href="#一-字符串" class="headerlink" title="一 字符串"></a><strong>一 字符串</strong></h3><p>字符串类型是Redis最基础的数据结构，字符串类型可以是<code>JSON</code>、<code>XML</code>甚至是二进制的图片等数据，但是最大值不能超过512MB。</p>
+<h4 id="1-1-内部编码"><a href="#1-1-内部编码" class="headerlink" title="1.1 内部编码"></a><strong>1.1 内部编码</strong></h4><p>Redis会根据当前值的类型和长度决定使用哪种内部编码来实现。</p>
+<p>字符串类型的内部编码有3种：</p>
 <ul>
-<li>Workspace：你电脑本地看到的文件和目录，在Git的版本控制下，构成了工作区。</li>
-<li>Index/Stage：暂存区，一般存放在 .git目录下，即.git/index，它又叫待提交更新区，用于临时存放你未提交的改动。比如，你执行git add，这些改动就添加到这个区域啦。</li>
-<li>Repository：本地仓库，你执行git clone 地址，就是把远程仓库克隆到本地仓库。它是一个存放在本地的版本库，其中HEAD指向最新放入仓库的版本。当你执行git commit，文件改动就到本地仓库来了~</li>
-<li>Remote：远程仓库，就是类似github，码云等网站所提供的仓库，可以理解为远程数据交换的仓库~</li>
+<li>int：8个字节的长整型。</li>
+<li>embstr：小于等于39个字节的字符串。</li>
+<li>raw：大于39个字节的字符串。</li>
 </ul>
-<h2 id="Git的工作流程"><a href="#Git的工作流程" class="headerlink" title="Git的工作流程"></a>Git的工作流程</h2><p><img src="../picture/git_work_process.png" alt="avatar"></p>
-<h2 id="Git文件的四种状态"><a href="#Git文件的四种状态" class="headerlink" title="Git文件的四种状态"></a>Git文件的四种状态</h2><p>根据一个文件是否已加入版本控制，可以把文件状态分为：Tracked(已跟踪)和Untracked(未跟踪)，而tracked(已跟踪)又包括三种工作状态：Unmodified，Modified，Staged</p>
-<p><img src="../picture/git_file_status.png" alt="avatar"></p>
+<h4 id="1-2-使用场景"><a href="#1-2-使用场景" class="headerlink" title="1.2 使用场景"></a><strong>1.2 使用场景</strong></h4><h5 id="1-2-1-缓存"><a href="#1-2-1-缓存" class="headerlink" title="1.2.1 缓存"></a>1.2.1 缓存</h5><p>在web服务中，使用MySQL作为数据库，Redis作为缓存。由于Redis具有支撑高并发的特性，通常能起到加速读写和降低后端压力的作用。web端的大多数请求都是从Redis中获取的数据，如果Redis中没有需要的数据，则会从MySQL中去获取，并将获取到的数据写入redis。</p>
+<h5 id="1-2-2-计数"><a href="#1-2-2-计数" class="headerlink" title="1.2.2 计数"></a>1.2.2 计数</h5><p>Redis中有一个字符串相关的命令<code>incr key</code>，<code>incr</code>命令对值做自增操作，返回结果分为以下三种情况：</p>
 <ul>
-<li>Untracked: 文件还没有加入到git库，还没参与版本控制，即未跟踪状态。这时候的文件，通过git add 状态，可以变为Staged状态</li>
-<li>Unmodified：文件已经加入git库， 但是呢，还没修改， 就是说版本库中的文件快照内容与文件夹中还完全一致。修改变为Modified. 可用git remove移出版本库， 变为Untracked。</li>
-<li>Modified：文件被修改了，就进入modified状态啦，通过stage命令进入staged状态</li>
-<li>staged：暂存状态. 执行git commit将修改同步到库中，这时库中的文件和本地文件变为一致，为Unmodified状态.</li>
+<li>值不是整数，返回错误</li>
+<li>值是整数，返回自增后的结果</li>
+<li>key不存在，默认键为<code>0</code>，返回<code>1</code></li>
 </ul>
-<h2 id="Git的工作原理"><a href="#Git的工作原理" class="headerlink" title="Git的工作原理"></a>Git的工作原理</h2><p><img src="../picture/git_use_detail.png" alt="avatar"></p>
-<h1 id="Git基础命令"><a href="#Git基础命令" class="headerlink" title="Git基础命令"></a>Git基础命令</h1><ul>
-<li>git clone</li>
-<li>git checkout -b dev</li>
-<li>git add</li>
-<li>git commit</li>
-<li>git log</li>
-<li>git diff</li>
-<li>git status</li>
-<li>git pull/git fetch</li>
-<li>git push<br>以下是命令使用的大致流程<br><img src="../picture/git_use_detail.png" alt="avatar"></li>
+<p>比如文章的阅读量，视频的播放量等等都会使用redis来计数，每播放一次，对应的播放量就会加1，同时将这些数据异步存储到数据库中达到持久化的目的。</p>
+<h5 id="1-2-3-共享Session"><a href="#1-2-3-共享Session" class="headerlink" title="1.2.3 共享Session"></a>1.2.3 共享Session</h5><p>在分布式系统中，用户的每次请求会访问到不同的服务器，这就会导致session不同步的问题，假如一个用来获取用户信息的请求落在A服务器上，获取到用户信息后存入session。下一个请求落在B服务器上，想要从session中获取用户信息就不能正常获取了，因为用户信息的session在服务器A上，为了解决这个问题，使用redis集中管理这些session，将session存入redis，使用的时候直接从redis中获取就可以了。</p>
+<h5 id="1-2-4-限速"><a href="#1-2-4-限速" class="headerlink" title="1.2.4 限速"></a>1.2.4 限速</h5><p>为了安全考虑，有些网站会对IP进行限制，限制同一IP在一定时间内访问次数不能超过n次。</p>
+<h3 id="二-哈希"><a href="#二-哈希" class="headerlink" title="二 哈希"></a><strong>二 哈希</strong></h3><p>Redis中，哈希类型是指一个键值对的存储结构。</p>
+<h4 id="2-1-内部编码"><a href="#2-1-内部编码" class="headerlink" title="2.1 内部编码"></a><strong>2.1 内部编码</strong></h4><p>哈希类型的内部编码有两种：</p>
+<ul>
+<li>ziplist（压缩列表）：当哈希类型元素个数小于<code>hash-max-ziplist-entries</code>配置（默认512个）同时所有值都小于<code>hash-max-ziplist-value</code>配置（默认64字节）时使用。ziplist使用更加紧凑的结构实现多个元素的连续存储，所以比hashtable更加节省内存。</li>
+<li>hashtable（哈希表）：当ziplist不能满足要求时，会使用hashtable。</li>
 </ul>
+<h4 id="2-2-使用场景"><a href="#2-2-使用场景" class="headerlink" title="2.2 使用场景"></a><strong>2.2 使用场景</strong></h4><p>由于hash类型存储的是一个键值对，比如数据库有以下一个用户表结构</p>
+<table>
+<thead>
+<tr>
+<th align="left">id</th>
+<th align="left">name</th>
+<th align="left">age</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">豆豆</td>
+<td align="left">24</td>
+</tr>
+</tbody></table>
+<p>将以上信息存入redis，用表明:id作为key，用户属性作为值：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">hset user:1 name 豆豆 age 24</span><br></pre></td></tr></table></figure>
+
+<p>使用哈希存储会比字符串更加方便直观</p>
+<h3 id="三-列表"><a href="#三-列表" class="headerlink" title="三 列表"></a><strong>三 列表</strong></h3><p>列表类型用来存储多个<strong>有序</strong>的字符串，一个列表最多可以存储<code>2^32-1</code>个元素，列表的两端都可以插入和弹出元素。</p>
+<h4 id="3-1-内部编码"><a href="#3-1-内部编码" class="headerlink" title="3.1 内部编码"></a><strong>3.1 内部编码</strong></h4><p>列表的内部编码有两种：</p>
+<ul>
+<li>ziplist（压缩列表）：当哈希类型元素个数小于<code>list-max-ziplist-entries</code>配置（默认512个）同时所有值都小于<code>list-max-ziplist-value</code>配置（默认64字节）时使用。ziplist使用更加紧凑的结构实现多个元素的连续存储，所以比hashtable更加节省内存。</li>
+<li>linkedlist（链表）：当ziplist不能满足要求时，会使用linkedlist。</li>
+</ul>
+<h4 id="3-2-使用场景"><a href="#3-2-使用场景" class="headerlink" title="3.2 使用场景"></a><strong>3.2 使用场景</strong></h4><h5 id="3-2-1-消息队列"><a href="#3-2-1-消息队列" class="headerlink" title="3.2.1 消息队列"></a>3.2.1 消息队列</h5><p>列表用来存储多个有序的字符串，既然是有序的，那么就满足消息队列的特点。使用<code>lpush</code>+<code>rpop</code>或者<code>rpush</code>+<code>lpop</code>实现消息队列。除此之外，redis支持阻塞操作，在弹出元素的时候使用阻塞命令来实现阻塞队列。</p>
+<p>在蓝鲸SaaS开发中，Django的Celery本身不提供消息服务，但是可以方便的和第三方提供的消息中间件集成。包括，RabbitMQ、Redis等等。SaaS的本地开发中，Celery也默认选择了Redis作为消息队列。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Celery 消息队列设置 RabbitMQ</span></span><br><span class="line"><span class="comment"># BROKER_URL = 'amqp://guest:guest@localhost:5672//'</span></span><br><span class="line"><span class="comment"># Celery 消息队列设置 Redis</span></span><br><span class="line">BROKER_URL = <span class="string">"redis://localhost:6379/0"</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="3-2-2-栈"><a href="#3-2-2-栈" class="headerlink" title="3.2.2 栈"></a>3.2.2 栈</h5><p>由于列表存储的是有序字符串，满足队列的特点，也就能满足栈先进后出的特点，使用<code>lpush</code>+<code>lpop</code>或者<code>rpush</code>+<code>rpop</code>实现栈。</p>
+<h5 id="3-2-3-文章列表"><a href="#3-2-3-文章列表" class="headerlink" title="3.2.3 文章列表"></a>3.2.3 文章列表</h5><p>因为列表的元素不但是有序的，而且还支持按照索引范围获取元素。因此我们可以使用命令<code>lrange key 0 9</code>分页获取文章列表</p>
+<h3 id="四-集合"><a href="#四-集合" class="headerlink" title="四 集合"></a><strong>四 集合</strong></h3><p>集合类型也可以保存多个字符串元素，与列表不同的是，集合中不允许有重复元素并且集合中的元素是无序的。一个集合最多可以存储<code>2^32-1</code>个元素。</p>
+<h4 id="4-1-内部编码"><a href="#4-1-内部编码" class="headerlink" title="4.1 内部编码"></a><strong>4.1 内部编码</strong></h4><p>集合类型的内部编码有两种：</p>
+<ul>
+<li>intset（整数集合）：当集合中的元素都是整数且元素个数小于<code>set-max-intset-entries</code>配置（默认512个）时，redis会选用intset来作为集合的内部实现，从而减少内存的使用。</li>
+<li>hashtable（哈希表）：当intset不能满足要求时，会使用hashtable。</li>
+</ul>
+<h4 id="4-2-使用场景"><a href="#4-2-使用场景" class="headerlink" title="4.2 使用场景"></a><strong>4.2 使用场景</strong></h4><h5 id="4-2-1-用户标签"><a href="#4-2-1-用户标签" class="headerlink" title="4.2.1 用户标签"></a>4.2.1 用户标签</h5><p>例如一个用户对篮球、足球感兴趣，另一个用户对橄榄球、乒乓球感兴趣，这些兴趣点就是一个标签。有了这些数据就可以得到喜欢同一个标签的人，以及用户的共同感兴趣的标签。给用户打标签的时候需要①给用户打标签，②给标签加用户，需要给这两个操作增加事务。</p>
+<ul>
+<li>给用户打标签</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sadd user:1:tags tag1 tag2</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>给标签添加用户</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sadd tag1:users user:1</span><br><span class="line">sadd tag2:users user:1</span><br></pre></td></tr></table></figure>
+
+<p>使用交集（sinter）求两个user的共同标签</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sinter user:1:tags user:2:tags</span><br></pre></td></tr></table></figure>
+
+<h5 id="4-2-2-抽奖功能"><a href="#4-2-2-抽奖功能" class="headerlink" title="4.2.2 抽奖功能"></a>4.2.2 抽奖功能</h5><p>集合有两个命令支持获取随机数，分别是：</p>
+<ul>
+<li>随机获取count个元素，集合元素个数不变</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">srandmember key [count]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>随机弹出count个元素，元素从集合弹出，集合元素个数改变</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">spop key [count]</span><br></pre></td></tr></table></figure>
+
+<p>用户点击抽奖按钮，参数抽奖，将用户编号放入集合，然后抽奖，分别抽一等奖、二等奖，如果已经抽中一等奖的用户不能参数抽二等奖则使用<code>spop</code>，反之使用<code>srandmember</code>。</p>
+<h3 id="五-有序集合"><a href="#五-有序集合" class="headerlink" title="五 有序集合"></a><strong>五 有序集合</strong></h3><p>有序集合和集合一样，不能有重复元素。但是可以排序，它给每个元素设置一个score作为排序的依据。最多可以存储<code>2^32-1</code>个元素。</p>
+<h4 id="5-1-内部编码"><a href="#5-1-内部编码" class="headerlink" title="5.1 内部编码"></a><strong>5.1 内部编码</strong></h4><p>有序集合类型的内部编码有两种：</p>
+<ul>
+<li>ziplist（压缩列表）：当有序集合的元素个数小于<code>list-max-ziplist-entries</code>配置（默认128个）同时所有值都小于<code>list-max-ziplist-value</code>配置（默认64字节）时使用。ziplist使用更加紧凑的结构实现多个元素的连续存储，更加节省内存。</li>
+<li>skiplist（跳跃表）：当不满足ziplist的要求时，会使用skiplist。</li>
+</ul>
+<h4 id="5-2-使用场景"><a href="#5-2-使用场景" class="headerlink" title="5.2 使用场景"></a><strong>5.2 使用场景</strong></h4><h5 id="5-2-1-排行榜"><a href="#5-2-1-排行榜" class="headerlink" title="5.2.1 排行榜"></a>5.2.1 排行榜</h5><p>用户发布了n篇文章，其他人看到文章后给喜欢的文章点赞，使用score来记录点赞数，有序集合会根据score排行。流程如下</p>
+<p>用户发布一篇文章，初始点赞数为0，即score为0</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">zadd user:article 0 a</span><br></pre></td></tr></table></figure>
+
+<p>有人给文章a点赞，递增<code>1</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">zincrby user:article 1 a</span><br></pre></td></tr></table></figure>
+
+<p>查询点赞前三篇文章</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">zrevrangebyscore user:article 0 2</span><br></pre></td></tr></table></figure>
+
+<p>查询点赞后三篇文章</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">zrangebyscore user:article 0 2</span><br></pre></td></tr></table></figure>
+
+<h5 id="5-2-2-延迟消息队列"><a href="#5-2-2-延迟消息队列" class="headerlink" title="5.2.2 延迟消息队列"></a>5.2.2 延迟消息队列</h5><p>下单系统，下单后需要在15分钟内进行支付，如果15分钟未支付则自动取消订单。将下单后的十五分钟后时间作为score，订单作为value存入redis，消费者轮询去消费，如果消费的大于等于这笔记录的score，则将这笔记录移除队列，取消订单。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a><strong>总结</strong></h3><p>在开发中，字符串类型是用的最多的数据类型，导致我们忽视了redis的其他四种数据类型，在具体场景下选择具体的数据类型对提升redis性能有非常大的帮助。redis虽然支持消息队列的实现，但是并不支持ack。所以redis实现的消息队列不能保证消息的可靠性，除非自己实现消息确认机制，不过这非常麻烦，所以如果是重要的消息还是推荐使用专门的消息队列去做，如RabbitMQ、RocketMQ。</p>
+<hr>
+<p>参考链接：<a href="https://mp.weixin.qq.com/s/FsL-54ALoNUAPcft-u8Leg?v_p=86&WBAPIAnalysisOriUICodes=10000001_10000002&launchid=10000365--x&wm=3333_2001&aid=01A0GdQv0UejmN65Ntcd4pBeamMWOPan5tHaY8rK5tZGJgPOs.&from=10AA393010" target="_blank" rel="noopener">Redis 五大数据类型使用场景</a>  </p>
 ]]></content>
       <categories>
-        <category>Git</category>
+        <category>Redis修炼</category>
       </categories>
       <tags>
-        <tag>Git基础</tag>
+        <tag>Redis使用场景</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>python-wmware</title>
+    <url>/2020/11/15/python-wmware/</url>
+    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>Redis修炼之数据类型</title>
@@ -117,48 +203,100 @@
 <p>参考链接：<a href="https://www.runoob.com/redis/redis-data-types.html" target="_blank" rel="noopener">菜鸟教程——Redis数据类型</a>  </p>
 ]]></content>
       <categories>
-        <category>Redis</category>
+        <category>Redis修炼</category>
       </categories>
       <tags>
-        <tag>Redis</tag>
+        <tag>Redis数据类型</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python中构建MySql连接池</title>
+    <url>/2020/11/09/python-mysql-pool/</url>
+    <content><![CDATA[<blockquote>
+<p><b>背景：为何要使用连接池</b></p>
+</blockquote>
+<p>数据库连接是一种关键的、有限的、昂贵的资源，这一点在多用户的网页应用程序中体现得尤为突出。对数据库连接的管理能显著影响到整个应用程序的伸缩性和健壮性，影响到程序的性能指标。数据库连接池正是针对这个问题提出来的。</p>
+<a id="more"></a>
+
+<blockquote>
+<p><b>连接池的概念</b></p>
+</blockquote>
+<p>数据库连接池（Connection pooling）是程序启动时建立足够的数据库连接，并将这些连接组成一个连接池，由程序动态地对连接池中的连接进行申请，使用，释放。<br>创建数据库连接池是一个很耗时的操作，也容易对数据库造成安全隐患。所以，在程序初始化的时候，集中创建多个数据库连接池，并把他们集中管理，供程序使用，可以保证较快的数据库读写速度，还更加的安全可靠。</p>
+<blockquote>
+<p><b>影响因素</b></p>
+</blockquote>
+<p>数据库连接池在初始化时将创建一定数量的数据库连接放到连接池中，这些数据库连接的数量是由最小数据库连接数制约。无论这些数据库连接是否被使用，连接池都将一直保证至少拥有这么多的连接数量。连接池的最大数据库连接数量限定了这个连接池能占有的最大连接数，当应用程序向连接池请求的连接数超过最大连接数量时，这些请求将被加入到等待队列中。数据库连接池的最小连接数和最大连接数的设置要考虑到下列几个因素：</p>
+<ul>
+<li>最小连接数：<br>是连接池一直保持的数据库连接，所以如果应用程序对数据库连接的使用量不大，将会有大量的数据库连接资源被浪费。</li>
+<li>最大连接数：<br>是连接池能申请的最大连接数，如果数据库连接请求超过此数，后面的数据库连接请求将被加入到等待队列中，这会影响之后的数据库操作。</li>
+<li>最小连接数与最大连接数差距：<br>最小连接数与最大连接数相差太大，那么最先的连接请求将会获利，之后超过最小连接数量的连接请求等价于建立一个新的数据库连接。不过，这些大于最小连接数的数据库连接在使用完不会马上被释放，它将被放到连接池中等待重复使用或是空闲超时后被释放。</li>
+</ul>
+<blockquote>
+<p><b>python实现</b></p>
+</blockquote>
+<p>使用 python 模块 <kbd style="color:#ff7600">DBUtils</kbd> 来实现</p>
+<ul>
+<li>mincached: 最小空闲连接数</li>
+<li>maxcached: 最大空闲连接数</li>
+<li>maxconnections: 最大允许连接数</li>
+</ul>
+<p><strong><em>数据库配置config.py:</em></strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="string">@File  :config.py</span></span><br><span class="line"><span class="string">@Author:Sapphire</span></span><br><span class="line"><span class="string">@Date  :2020/11/9 15:06</span></span><br><span class="line"><span class="string">@Desc  :</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line">DBHOST = <span class="string">"localhost"</span></span><br><span class="line">DBPORT = <span class="number">3306</span></span><br><span class="line">DBUSER = <span class="string">"root"</span></span><br><span class="line">DBPWD = <span class="string">"xxxxx"</span></span><br><span class="line">DBNAME = <span class="string">"xxxxx"</span></span><br><span class="line">DBCHAR = <span class="string">"utf8"</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><em>连接池实现，与实现mysql查询、插入、更新、删除数据，及事务等功能：</em></strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="string">@File  :mysql_pool.py</span></span><br><span class="line"><span class="string">@Author:Sapphire</span></span><br><span class="line"><span class="string">@Date  :2020/11/9 15:02</span></span><br><span class="line"><span class="string">@Desc  :</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="string">1、执行带参数的SQL时，请先用sql语句指定需要输入的条件列表，然后再用tuple/list进行条件批配</span></span><br><span class="line"><span class="string">２、在格式SQL中不需要使用引号指定数据类型，系统会根据输入参数自动识别</span></span><br><span class="line"><span class="string">３、在输入的值中不需要使用转意函数，系统会自动处理</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> MySQLdb</span><br><span class="line"><span class="keyword">from</span> MySQLdb.cursors <span class="keyword">import</span> DictCursor</span><br><span class="line"><span class="keyword">from</span> DBUtils.PooledDB <span class="keyword">import</span> PooledDB</span><br><span class="line"><span class="comment"># from PooledDB import PooledDB</span></span><br><span class="line"><span class="keyword">import</span> mysql_pool.config <span class="keyword">as</span> Config</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> home_application.models <span class="keyword">import</span> AlarmDBConfig</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Mysql</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    MYSQL数据库对象，负责产生数据库连接 , 此类中的连接采用连接池实现获取连接对象：conn = Mysql.getConn()</span></span><br><span class="line"><span class="string">    释放连接对象：conn.close()或del conn</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="comment"># 连接池对象</span></span><br><span class="line">    __pool = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="comment"># 数据库构造函数，从连接池中取出连接，并生成操作游标</span></span><br><span class="line">        self._conn = Mysql.__getConn()</span><br><span class="line">        self._cursor = self._conn.cursor()</span><br><span class="line"></span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__getConn</span><span class="params">()</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        @summary: 静态方法，从连接池中取出连接</span></span><br><span class="line"><span class="string">        @return MySQLdb.connection</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="keyword">if</span> Mysql.__pool <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            __pool = PooledDB(creator=MySQLdb, mincached=<span class="number">1</span>, maxcached=<span class="number">20</span>,</span><br><span class="line">                              host=Config.DBHOST, port=Config.DBPORT,</span><br><span class="line">                              user=Config.DBUSER,</span><br><span class="line">                              passwd=Config.DBPWD, db=Config.DBNAME, use_unicode=<span class="literal">False</span>,</span><br><span class="line">                              charset=Config.DBCHAR, cursorclass=DictCursor)</span><br><span class="line">        <span class="keyword">return</span> __pool.connection()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">getAll</span><span class="params">(self, sql, param=None)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        @summary: 执行查询，并取出所有结果集</span></span><br><span class="line"><span class="string">        @param sql:查询SQL，如果有查询条件，请只指定条件列表，并将条件值使用参数[param]传递进来</span></span><br><span class="line"><span class="string">        @param param: 可选参数，条件列表值（元组/列表）</span></span><br><span class="line"><span class="string">        @return: result list(字典对象)/boolean 查询到的结果集</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="keyword">if</span> param <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            count = self._cursor.execute(sql)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            count = self._cursor.execute(sql, param)</span><br><span class="line">        <span class="keyword">if</span> count &gt; <span class="number">0</span>:</span><br><span class="line">            result = self._cursor.fetchall()</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            result = <span class="literal">False</span></span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">getOne</span><span class="params">(self, sql, param=None)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        @summary: 执行查询，并取出第一条</span></span><br><span class="line"><span class="string">        @param sql:查询SQL，如果有查询条件，请只指定条件列表，并将条件值使用参数[param]传递进来</span></span><br><span class="line"><span class="string">        @param param: 可选参数，条件列表值（元组/列表）</span></span><br><span class="line"><span class="string">        @return: result list/boolean 查询到的结果集</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="keyword">if</span> param <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            count = self._cursor.execute(sql)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            count = self._cursor.execute(sql, param)</span><br><span class="line">        <span class="keyword">if</span> count &gt; <span class="number">0</span>:</span><br><span class="line">            result = self._cursor.fetchone()</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            result = <span class="literal">False</span></span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">getMany</span><span class="params">(self, sql, num, param=None)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        @summary: 执行查询，并取出num条结果</span></span><br><span class="line"><span class="string">        @param sql:查询SQL，如果有查询条件，请只指定条件列表，并将条件值使用参数[param]传递进来</span></span><br><span class="line"><span class="string">        @param num:取得的结果条数</span></span><br><span class="line"><span class="string">        @param param: 可选参数，条件列表值（元组/列表）</span></span><br><span class="line"><span class="string">        @return: result list/boolean 查询到的结果集</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="keyword">if</span> param <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            count = self._cursor.execute(sql)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            count = self._cursor.execute(sql, param)</span><br><span class="line">        <span class="keyword">if</span> count &gt; <span class="number">0</span>:</span><br><span class="line">            result = self._cursor.fetchmany(num)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            result = <span class="literal">False</span></span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">insertOne</span><span class="params">(self, sql, value)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        @summary: 向数据表插入一条记录</span></span><br><span class="line"><span class="string">        @param sql:要插入的SQL格式</span></span><br><span class="line"><span class="string">        @param value:要插入的记录数据tuple/list</span></span><br><span class="line"><span class="string">        @return: insertId 受影响的行数</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        self._cursor.execute(sql, value)</span><br><span class="line">        <span class="keyword">return</span> self.__getInsertId()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">insertMany</span><span class="params">(self, sql, values)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        @summary: 向数据表插入多条记录</span></span><br><span class="line"><span class="string">        @param sql:要插入的SQL格式</span></span><br><span class="line"><span class="string">        @param values:要插入的记录数据tuple(tuple)/list[list]</span></span><br><span class="line"><span class="string">        @return: count 受影响的行数</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        count = self._cursor.executemany(sql, values)</span><br><span class="line">        <span class="keyword">return</span> count</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__getInsertId</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        获取当前连接最后一次插入操作生成的id,如果没有则为０</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        self._cursor.execute(<span class="string">"SELECT @@IDENTITY AS id"</span>)</span><br><span class="line">        result = self._cursor.fetchall()</span><br><span class="line">        <span class="keyword">return</span> result[<span class="number">0</span>][<span class="string">'id'</span>]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__query</span><span class="params">(self, sql, param=None)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> param <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            count = self._cursor.execute(sql)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            count = self._cursor.execute(sql, param)</span><br><span class="line">        <span class="keyword">return</span> count</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">update</span><span class="params">(self, sql, param=None)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        @summary: 更新数据表记录</span></span><br><span class="line"><span class="string">        @param sql: SQL格式及条件，使用(%s,%s)</span></span><br><span class="line"><span class="string">        @param param: 要更新的  值 tuple/list</span></span><br><span class="line"><span class="string">        @return: count 受影响的行数</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="keyword">return</span> self.__query(sql, param)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span><span class="params">(self, sql, param=None)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        @summary: 删除数据表记录</span></span><br><span class="line"><span class="string">        @param sql: SQL格式及条件，使用(%s,%s)</span></span><br><span class="line"><span class="string">        @param param: 要删除的条件 值 tuple/list</span></span><br><span class="line"><span class="string">        @return: count 受影响的行数</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="keyword">return</span> self.__query(sql, param)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">begin</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        @summary: 开启事务</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        self._conn.autocommit(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">end</span><span class="params">(self, option=<span class="string">'commit'</span>)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        @summary: 结束事务</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="keyword">if</span> option == <span class="string">'commit'</span>:</span><br><span class="line">            self._conn.commit()</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self._conn.rollback()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">dispose</span><span class="params">(self, isEnd=<span class="number">1</span>)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        @summary: 释放连接池资源</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="keyword">if</span> isEnd == <span class="number">1</span>:</span><br><span class="line">            self.end(<span class="string">'commit'</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.end(<span class="string">'rollback'</span>)</span><br><span class="line">        self._cursor.close()</span><br><span class="line">        self._conn.close()</span><br></pre></td></tr></table></figure>
+
+
+<p><strong><em>连接池使用示例：</em></strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    mysql = Mysql()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 查找数据</span></span><br><span class="line">    search_sql = <span class="string">"""</span></span><br><span class="line"><span class="string">    SELECT id, event FROM monitortb WHERE event in &#123;&#125; AND status = 'OP'</span></span><br><span class="line"><span class="string">    """</span>.format(<span class="string">"test"</span>)</span><br><span class="line">    search_result = mysql.getAll(search_sql)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 更新数据</span></span><br><span class="line">    increase_sql = <span class="string">"""</span></span><br><span class="line"><span class="string">    UPDATE monitortb SET cnt = cnt + &#123;&#125; WHERE id = &#123;&#125;</span></span><br><span class="line"><span class="string">    """</span>.format([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 插入数据</span></span><br><span class="line">    insert_sql = <span class="string">"""</span></span><br><span class="line"><span class="string">    INSERT INTO monitortb (</span></span><br><span class="line"><span class="string">    intype, innum, level, sysname, pl, clr, cnt, indate, event, status</span></span><br><span class="line"><span class="string">    ) VALUES (</span></span><br><span class="line"><span class="string">    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s</span></span><br><span class="line"><span class="string">    )</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="comment"># 需要插入的多条数据的列表 </span></span><br><span class="line">    insert_value_list = []</span><br><span class="line">    mysql.insertMany(insert_sql, insert_value_list)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 断开连接池</span></span><br><span class="line">    mysql.dispose()</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>数据库连接池</tag>
       </tags>
   </entry>
   <entry>
     <title>红黑树</title>
-    <url>/2020/11/09/2020-11-09/</url>
+    <url>/2020/11/09/red-black-tree/</url>
     <content><![CDATA[<p>红黑树其实就是一种数据结构，设计它的目的就是为了高效地进行增删改查，我们可以从二叉查找树逐渐引入到红黑树：</p>
 <h3 id="一、二叉查找树"><a href="#一、二叉查找树" class="headerlink" title="一、二叉查找树"></a>一、二叉查找树</h3><p>特性：<br>（1）左子树上所有结点的值均小于或等于它的根结点的值；<br>（2）右子树上所有结点的值均大于或等于它的根结点的值。</p>
+<a id="more"></a>
+
 <p>如果想要查找一个数：<br>在查找的时候，先与根节点比较，比根节点大则从右子树查找，比根节点小则从左子树查找，然后重复上面的过程，一直到找到我们需要的元素为止。<br>其实对于添加和删除，原理也是一样的，我们第一步就是找到我们需要插入的位置，然后把元素插入即可。</p>
 <p>缺点：<br><strong><em>普通的二叉查找树在极端情况下可退化成链表，此时的增删查效率都会比较低下。</em></strong></p>
-<p><img src="../picture/Binary_search_tree_2.png" alt="avatar"><br>例如，如果以9位根节点，当依次插入13、15、17、19后，就会发生“一边倒”的情况，二叉查找树的优势完全丧失了。<br>二叉搜索树退化成了链表，搜索的时间复杂度为 O(n)。<br>叉查找树在插入的时候变成了“一条腿”，也就是丧失了平衡，那我们干脆做出一点改进，使用平衡二叉树吧。</p>
+<p><img data-src="/picture/Binary_search_tree_2.png" alt="avatar"><br>例如，如果以9位根节点，当依次插入13、15、17、19后，就会发生“一边倒”的情况，二叉查找树的优势完全丧失了。<br>二叉搜索树退化成了链表，搜索的时间复杂度为 O(n)。<br>叉查找树在插入的时候变成了“一条腿”，也就是丧失了平衡，那我们干脆做出一点改进，使用平衡二叉树吧。</p>
 <h3 id="二、平衡二叉树"><a href="#二、平衡二叉树" class="headerlink" title="二、平衡二叉树"></a>二、平衡二叉树</h3><p>平衡二叉树，也叫作AVL树，</p>
-<p><img src="../picture/Balanced_binary_tree.png" alt="avatar"></p>
+<p><img data-src="/picture/Balanced_binary_tree.png" alt="avatar"></p>
 <p>与二叉查找树相比，拥有以下特性：<br>（1）从任何一个节点出发，左右子树深度之差的绝对值不超过1；<br>（2）左右子树仍然为平衡二叉树。</p>
 <p>如果需要插入一个数：<br>如果该树破坏了平衡，则平衡二叉树相应地会发生左旋或者右旋，二叉树就重新回到了平衡。<br>最终会发现一个结论，那就是平衡二叉树在插入时最多只需要两次旋转就会重新恢复平衡。</p>
 <p>平衡二叉树在查找时既有着二叉查找树的优越性，在插入时还能通过调整继续保持着。<br>那么为什么还要使用到红黑树呢？我觉得可以从以下两个方面来考虑：<br>（1）删除：对于平衡二叉树来说，在最坏情况下，需要维护从被删节点到根节点这条路径上所有节点的平衡性，旋转的量级是O(logN)。<br>但是红黑树就不一样了，最多只需3次旋转就会重新平衡，旋转的量级是O(1)。<br>（2）保持平衡：平衡二叉树高度平衡，这也就意味着在大量插入和删除节点的场景下，平衡二叉树为了保持平衡需要调整的频率会更高。</p>
 <h3 id="三、红黑树"><a href="#三、红黑树" class="headerlink" title="三、红黑树"></a>三、红黑树</h3><p>红黑树是一种自平衡的二叉查找树，是一种高效的查找树；<br>红黑树具有良好的效率，它可在 O(logN) 时间内完成查找、增加、删除等操作；<br>红黑树和名字一样，里面涉及到两种颜色：红色和黑色。</p>
-<p><img src="../picture/red_black_tree.png" alt="avatar"></p>
+<p><img data-src="/picture/red_black_tree.png" alt="avatar"></p>
 <p><em><strong>如图可知，他有如下重要特征：</strong><br>（1）每个节点只有两种颜色：红色和黑色。<br>（2）根节点是黑色的。<br>（3）每个叶子节点（NIL）都是黑色的空节点。<br>（4）从根节点到叶子节点，不会出现两个连续的红色节点。<br>（5）从任何一个节点出发，到叶子节点，这条路径上都有相同数目的黑色节点。</em><br>这段关于 红黑树 的描述来源于<strong>《算法导论》</strong><br>这五条特征看起来真的很复杂，不过正是由于这些复杂的特征才保证了红黑树的良好特性</p>
 <h3 id="四、使用场景："><a href="#四、使用场景：" class="headerlink" title="四、使用场景："></a>四、使用场景：</h3><p>1、java中的HashMap和TreeMap；<br>2、Linux内核中一个常见的数据结构。</p>
 <hr>
-<p>原题链接：<a href="https://www.zhihu.com/question/312327402/answer/1560653215" target="_blank" rel="noopener">红黑树详解</a>  </p>
+<p>参考链接：<a href="https://www.zhihu.com/question/312327402/answer/1560653215" target="_blank" rel="noopener">红黑树详解</a>  </p>
 ]]></content>
       <categories>
-        <category>学习笔记</category>
+        <category>算法结构</category>
       </categories>
       <tags>
-        <tag>算法结构</tag>
+        <tag>红黑树</tag>
       </tags>
   </entry>
   <entry>
     <title>B树与B+树</title>
-    <url>/2020/11/01/2020-11-01/</url>
+    <url>/2020/11/01/B-B-tree/</url>
     <content><![CDATA[<h2 id="一、B树和B-树的区别"><a href="#一、B树和B-树的区别" class="headerlink" title="一、B树和B+树的区别"></a>一、B树和B+树的区别</h2><p>很明显，我们要想弄清楚原因就要知道B树和B+树的区别。为了不长篇大论。我们直接给出他们的形式总结他们的特点。</p>
 <h3 id="1、B树"><a href="#1、B树" class="headerlink" title="1、B树"></a>1、B树</h3><p>B树是一种自平衡的搜索树，形式很简单：</p>
-<p><img src="../picture/b_tree.png" alt="avatar"></p>
+<a id="more"></a>
+
+<p><img data-src="/picture/b_tree.png" alt="avatar"></p>
 <p>这就是一颗B树。针对我们这个问题的最核心的特点如下：<br>（1）多路，非二叉树<br>（2）每个节点既保存索引，又保存数据<br>（3）搜索时相当于二分查找<br>在这里我们假定都已经了解了B树相关的结构。</p>
 <h3 id="2、B-树"><a href="#2、B-树" class="headerlink" title="2、B+树"></a>2、B+树</h3><p>B+树是B-树的变种：</p>
-<p><img src="../picture/b+_tree.png" alt="avatar"></p>
+<p><img data-src="/picture/b+_tree.png" alt="avatar"></p>
 <p>最核心的特点如下：<br>（1）多路非二叉<br>（2）只有叶子节点保存数据<br>（3）搜索时相当于二分查找<br>（4）增加了相邻接点的指向指针。<br>从上面我们可以看出最核心的区别主要有俩，一个是数据的保存位置，一个是相邻节点的指向。<br>就是这俩造成了MongoDB和Mysql的差别。为什么呢？</p>
 <h3 id="3、B树和B-树的区别"><a href="#3、B树和B-树的区别" class="headerlink" title="3、B树和B+树的区别"></a>3、B树和B+树的区别</h3><p>（1）B+树查询时间复杂度固定是logn，B树查询复杂度最好是 O(1)。<br>（2）B+树相邻接点的指针可以大大增加区间访问性，可使用在范围查询等，而B-树每个节点 key 和 data 在一起，则无法区间查找。<br>（3）B+树更适合外部存储，也就是磁盘存储。由于内节点无 data 域，每个节点能索引的范围更大更精确<br>（4）注意这个区别相当重要，是基于（1）（2）（3）的，B树每个节点即保存数据又保存索引，所以磁盘IO的次数很少，B+树只有叶子节点保存，磁盘IO多，但是区间访问比较好。</p>
 <p>有了他们的区别之后，现在我们再来解释这个原因就好多了。</p>
@@ -170,10 +308,10 @@
 <p>原题链接：<a href="https://zhuanlan.zhihu.com/p/102628897" target="_blank" rel="noopener">为什么 MongoDB 索引选择B树，而 Mysql 选择B+树</a>  </p>
 ]]></content>
       <categories>
-        <category>学习笔记</category>
+        <category>算法结构</category>
       </categories>
       <tags>
-        <tag>算法结构</tag>
+        <tag>B树与B+树</tag>
       </tags>
   </entry>
   <entry>
@@ -181,6 +319,8 @@
     <url>/2020/09/26/2020-09-26/</url>
     <content><![CDATA[<p><strong>二叉搜索树的后序遍历序列</strong></p>
 <p><strong>题干</strong>：<br>输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历的结果。<br>如果是则输出Yes,否则输出No。假设输入的数组的任意两个数字都互不相同。</p>
+<a id="more"></a>
+
 <p><strong>解题思路</strong>：<br>1、后续遍历的最后一个节点是根节点<br>2、BST(二叉搜索树)特性：<br>若它的左子树不空，则左子树上所有结点的值均小于它的根结点的值；<br>若它的右子树不空，则右子树上所有结点的值均大于它的根结点的值<br>3、综上，除去末尾根节点，BST的后续遍历中，前面一部分都小于根节点的数是左子树，后一部分都大于根节点的是右子树。<br>不符合则判断不是BST的后序遍历。<br>然后递归剩下的左右子树，直到所有子树都满足以上条件，才判断是BST的后序遍历</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> copy</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    todo 优化：子树序列长度只需 &lt;= 2，则该子树满足BST的后续遍历</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">VerifySquenceOfBST</span><span class="params">(self, sequence)</span>:</span></span><br><span class="line">        <span class="comment"># write code here</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> sequence:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        root = sequence.pop()</span><br><span class="line">        left = []</span><br><span class="line">        right = []</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(len(sequence) + <span class="number">1</span>):</span><br><span class="line">            tmp_list = copy.deepcopy(sequence)</span><br><span class="line">            tmp_list.insert(i, root)</span><br><span class="line">            left = tmp_list[:i + <span class="number">1</span>]</span><br><span class="line">            right = tmp_list[i:]</span><br><span class="line">            <span class="keyword">if</span> max(left) &lt;= root &lt;= min(right):</span><br><span class="line">                left.pop()</span><br><span class="line">                right.pop(<span class="number">0</span>)</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            <span class="keyword">if</span> len(right) &lt;= <span class="number">1</span>:</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">        result_left = self.VerifySquenceOfBST(left) <span class="keyword">if</span> left <span class="keyword">else</span> <span class="literal">True</span></span><br><span class="line">        result_right = self.VerifySquenceOfBST(right) <span class="keyword">if</span> right <span class="keyword">else</span> <span class="literal">True</span></span><br><span class="line">        <span class="keyword">return</span> result_left <span class="keyword">and</span> result_right</span><br></pre></td></tr></table></figure>
 <p>测试用例：</p>
@@ -197,13 +337,81 @@
       </tags>
   </entry>
   <entry>
+    <title>企业(政务)微信浏览器的前端开发兼容问题</title>
+    <url>/2020/08/20/weixin-app/</url>
+    <content><![CDATA[<p><strong>windows版本的企业（政务）微信浏览器基于Chromium 53版本，对ES7某些新特性不兼容</strong></p>
+<p><img data-src="https://www.tapd.cn/tfl/captures/2020-08/tapd_51310665_base64_1597896079_93.png" alt="图片描述"></p>
+<a id="more"></a>
+
+<h3 id="1、不支持Async-Await异步函数"><a href="#1、不支持Async-Await异步函数" class="headerlink" title="1、不支持Async/Await异步函数"></a>1、不支持Async/Await异步函数</h3><p>官方的方法兼容文档：<br><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/async_function" target="_blank" rel="noopener">https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/async_function</a> </p>
+<p><img data-src="https://www.tapd.cn/tfl/captures/2020-08/tapd_51310665_base64_1597903440_31.png" alt="img"></p>
+<h3 id="2、不支持Axios的promise-prototype-finally方法："><a href="#2、不支持Axios的promise-prototype-finally方法：" class="headerlink" title="2、不支持Axios的promise.prototype.finally方法："></a>2、不支持Axios的promise.prototype.finally方法：</h3><p><img data-src="https://www.tapd.cn/tfl/captures/2020-08/tapd_51310665_base64_1597904438_2.png" alt="img"></p>
+<p>解决办法：通过main.js引入依赖</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">npm i promise.prototype.finally</span><br><span class="line">require(&#39;promise.prototype.finally&#39;).shim();</span><br></pre></td></tr></table></figure>
+
+<h3 id="3、本地安装模拟企业（政务）微信内置Chromium-53版本："><a href="#3、本地安装模拟企业（政务）微信内置Chromium-53版本：" class="headerlink" title="3、本地安装模拟企业（政务）微信内置Chromium 53版本："></a>3、本地安装模拟企业（政务）微信内置Chromium 53版本：</h3><h4 id="3-1、下载附件的安装包（Chromium-53版本）"><a href="#3-1、下载附件的安装包（Chromium-53版本）" class="headerlink" title="3.1、下载附件的安装包（Chromium 53版本）"></a>3.1、下载附件的安装包（Chromium 53版本）</h4><p><a href="https://file.tapd.cn/51310665/attachments/download/1151310665001000266/wiki" target="_blank" rel="noopener">点此下载</a>  </p>
+<h4 id="3-2、右键解压成Chrome-7z，继续解压成Chrome-bin文件夹"><a href="#3-2、右键解压成Chrome-7z，继续解压成Chrome-bin文件夹" class="headerlink" title="3.2、右键解压成Chrome.7z，继续解压成Chrome-bin文件夹"></a>3.2、右键解压成Chrome.7z，继续解压成Chrome-bin文件夹</h4><p><img data-src="https://www.tapd.cn/tfl/captures/2020-08/tapd_51310665_base64_1597904944_70.png" alt="img"></p>
+<h4 id="3-3、直接执行Chrome-bin-chrome-exe会跳转到本地最新版的chrome。"><a href="#3-3、直接执行Chrome-bin-chrome-exe会跳转到本地最新版的chrome。" class="headerlink" title="3.3、直接执行Chrome-bin / chrome.exe会跳转到本地最新版的chrome。"></a>3.3、直接执行Chrome-bin / chrome.exe会跳转到本地最新版的chrome。</h4><p>在此目录下编写脚本start.bat，点击脚本即可打开Chromium 53：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">start &quot;&quot; &quot;.&#x2F;chrome.exe&quot;  &quot; --user-data-dir&#x3D;User Data&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img data-src="https://www.tapd.cn/tfl/captures/2020-08/tapd_51310665_base64_1597904997_55.png" alt="img"></p>
+]]></content>
+      <categories>
+        <category>前端开发指南</category>
+      </categories>
+      <tags>
+        <tag>微信轻应用</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用 uWSGI + Nginx 部署 Django 项目</title>
+    <url>/2020/05/20/uWSGI-Nginx-Django/</url>
+    <content><![CDATA[<blockquote>
+<p>摘要</p>
+</blockquote>
+<p>在开发<kbd>Django</kbd>框架时，我们通常使用<kbd>python manage.py runserver</kbd>来运行本地服务,但是这只适用开发环境中使用，此时启动的Django项目通过127.0.0.1:8000的本地端口进行转发，也只能在本地环境下进行访问。那么我们基于Django的SaaS是怎样发布在公网、局域网环境下，并且通过域名访问站点的呢？通常的方案是：我们就需要用到<kbd>uWSGI</kbd>配合<kbd>Nginx(Apache)</kbd>进行代理转发。以下是笔者在实践此方案的过程中整理的一些要点。</p>
+<a id="more"></a>
+<blockquote>
+<p>正文</p>
+</blockquote>
+<h2 id="一、uWSGI简介"><a href="#一、uWSGI简介" class="headerlink" title="一、uWSGI简介"></a>一、uWSGI简介</h2><p>uWSGI是一个快速的、纯C语言开发的、自维护的、对开发者友好的WSGI服务器，旨在提供专业的Python web应用发布和开发。可使用C/C++/Objective-C来为uWSGI编写插件。我们在根目录下的requirements.py中可以找到uWSGI的依赖，Windows环境本地安装依赖的时候一般都会注释掉它，因为uWSGI是运行在Linux上的服务器。可能大家对WSGI、uwsgi、uWSGI这几个概念很头疼，简单地说，WSGI是一个规范协议，定义了Web服务器如何与Python应用程序进行交互；uwsgi和WSGI一样是通信协议，是uWSGI服务器的单独形式，用于自定义传输类型；而uWSGI是重头戏，他是一个web服务器,实现了WSGI协议、uwsgi协议。以下是WSGI，uwsgi，uWSGI的实现过程图解。</p>
+<p><img data-src="uWSGI-Nginx-Django/uwsgi.png" alt="uWSGI"></p>
+<h2 id="二、Nginx简介"><a href="#二、Nginx简介" class="headerlink" title="二、Nginx简介"></a>二、Nginx简介</h2><p>相比uWSGI，Nginx的知名度高了许多，它是一个开源的、支持高性能、高并发的代理服务软件，Nginx不但是一个优秀的web服务软件,还可以作为反想代理和负载均衡,以及缓存服务或使用。<br>实际上，一个uWSGI的web服务器，再加上Django这样的web框架，就已经可以实现网站的功能了。那为什么还需要Nginx呢？经过笔者查阅资料，总结有以下几点：</p>
+<h3 id="2-1、安全问题："><a href="#2-1、安全问题：" class="headerlink" title="2.1、安全问题："></a>2.1、安全问题：</h3><p>程序不能直接被浏览器访问到，而是通过Nginx只开放某个接口，uWSGI本身是内网接口，这样运维人员在Nginx上加上安全性的限制，可以达到保护程序的作用；</p>
+<h3 id="2-2、载均衡问题："><a href="#2-2、载均衡问题：" class="headerlink" title="2.2、载均衡问题："></a>2.2、载均衡问题：</h3><p>一个uWSGI很可能不够用，即使开了多个work也是不行，毕竟一台机器的cpu和内存都是有限的，有了Nginx做代理，一个Nginx可以代理多台uWSGI完成负载均衡；</p>
+<h3 id="2-3、静态文件问题："><a href="#2-3、静态文件问题：" class="headerlink" title="2.3、静态文件问题："></a>2.3、静态文件问题：</h3><p>用Django或是uWSGI这种东西来负责静态文件的处理是很浪费的行为，而且他们本身对文件的处理也不如Nginx好，所以整个静态文件的处理都直接由nginx完成。</p>
+<h2 id="三、uWSGI-Nginx-部署-Django-网站的实践"><a href="#三、uWSGI-Nginx-部署-Django-网站的实践" class="headerlink" title="三、uWSGI + Nginx 部署 Django 网站的实践"></a>三、uWSGI + Nginx 部署 Django 网站的实践</h2><p>接下来笔者将使用uWSGI+Nginx搭建Django网站，此方案的架构图如下：<br><img data-src="uWSGI-Nginx-Django/uwsgi+nginx+django.png" alt="uWSGI"></p>
+<h3 id="3-1、安装配置uWSGI："><a href="#3-1、安装配置uWSGI：" class="headerlink" title="3.1、安装配置uWSGI："></a>3.1、安装配置uWSGI：</h3><h4 id="3-1-1安装uWSGI："><a href="#3-1-1安装uWSGI：" class="headerlink" title="3.1.1安装uWSGI："></a>3.1.1安装uWSGI：</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">pip install uwsgi</span><br></pre></td></tr></table></figure>
+<p>也可以指定版本安装；</p>
+<h4 id="3-1-2-uWSGI配置："><a href="#3-1-2-uWSGI配置：" class="headerlink" title="3.1.2    uWSGI配置："></a>3.1.2    uWSGI配置：</h4><p>实际上，我们可以uwsgi命令配合参数来启动Django项目，但是我们可以把这些参数放在uwsgi9090.ini配置文件中，记录配置并且实现后台运行uWSGI：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[uwsgi]</span><br><span class="line">socket &#x3D; 127.0.0.1:9090</span><br><span class="line">master &#x3D; true         &#x2F;&#x2F;主进程</span><br><span class="line">vhost &#x3D; true          &#x2F;&#x2F;多站模式</span><br><span class="line">no-site &#x3D; true        &#x2F;&#x2F;多站模式时不设置入口模块和文件</span><br><span class="line">workers &#x3D; 2           &#x2F;&#x2F;子进程数</span><br><span class="line">reload-mercy &#x3D; 10     </span><br><span class="line">vacuum &#x3D; true         &#x2F;&#x2F;退出、重启时清理文件</span><br><span class="line">max-requests &#x3D; 1000   </span><br><span class="line">limit-as &#x3D; 512</span><br><span class="line">buffer-size &#x3D; 30000</span><br><span class="line">pidfile &#x3D; &#x2F;var&#x2F;run&#x2F;uwsgi9090.pid    &#x2F;&#x2F;pid文件，用于下面的脚本启动、停止该进程</span><br><span class="line">daemonize &#x3D; &#x2F;website&#x2F;uwsgi9090.log</span><br></pre></td></tr></table></figure>
+<p>如上配置，接下来运行uwsgi uwsgi9090.ini即可uWSGI后台启动Django；</p>
+<h4 id="3-1-3-Django项目根目录的settings-py中配置收集静态资源："><a href="#3-1-3-Django项目根目录的settings-py中配置收集静态资源：" class="headerlink" title="3.1.3    Django项目根目录的settings.py中配置收集静态资源："></a>3.1.3    Django项目根目录的settings.py中配置收集静态资源：</h4><p>配置完毕后运行python manage.py collectstatic</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 静态资源访问的起始url</span></span><br><span class="line">STATIC_URL = <span class="string">'/static/'</span></span><br><span class="line"><span class="comment"># 指定静态资源所在的目录</span></span><br><span class="line">STATICFILES_DIRS = [</span><br><span class="line">    os.path.join(BASE_DIR, <span class="string">'static'</span>)</span><br><span class="line">]</span><br><span class="line"><span class="comment"># 设置收集静态资源的路径(部署时使用)</span></span><br><span class="line">STATIC_ROOT = os.path.join(BASE_DIR, <span class="string">'collect_static/'</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-安装配置Nginx："><a href="#3-2-安装配置Nginx：" class="headerlink" title="3.2    安装配置Nginx："></a>3.2    安装配置Nginx：</h3><h4 id="3-2-1、安装编译工具及库文件："><a href="#3-2-1、安装编译工具及库文件：" class="headerlink" title="3.2.1、安装编译工具及库文件："></a>3.2.1、安装编译工具及库文件：</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum -y install make zlib zlib-devel gcc-c++ libtool  openssl openssl-devel</span><br></pre></td></tr></table></figure>
+<h4 id="3-2-2、编译安装Nginx，版本可自定义："><a href="#3-2-2、编译安装Nginx，版本可自定义：" class="headerlink" title="3.2.2、编译安装Nginx，版本可自定义："></a>3.2.2、编译安装Nginx，版本可自定义：</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /usr/local/src/</span><br><span class="line">wget http://nginx.org/download/nginx-1.6.2.tar.gz</span><br><span class="line">tar zxvf nginx-1.6.2.tar.gz</span><br><span class="line">cd nginx-1.6.2</span><br><span class="line">./configure --prefix=/usr/local/nginx</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-3、找到Nginx的安装目录，打开conf-nginx-conf文件，修改server配置："><a href="#3-2-3、找到Nginx的安装目录，打开conf-nginx-conf文件，修改server配置：" class="headerlink" title="3.2.3、找到Nginx的安装目录，打开conf/nginx.conf文件，修改server配置："></a>3.2.3、找到Nginx的安装目录，打开conf/nginx.conf文件，修改server配置：</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">        listen 443 default_server ssl;  &#x2F;&#x2F;https必须用ssl和443端口，http可以用80</span><br><span class="line">        server_name  xxx.xxx.com;     &#x2F;&#x2F;个人的已经注册过的域名</span><br><span class="line">        location &#x2F; &#123;  </span><br><span class="line">		include  uwsgi_params;</span><br><span class="line">            uwsgi_pass  127.0.0.1:9090;              &#x2F;&#x2F;必须和uwsgi中的设置一致</span><br><span class="line">            uwsgi_param UWSGI_SCRIPT demosite.wsgi;  &#x2F;&#x2F;入口文件，即wsgi.py相对于项目根目录的位置，“.”相当于一层目录</span><br><span class="line">            uwsgi_param UWSGI_CHDIR &#x2F;demosite;       &#x2F;&#x2F;项目根目录</span><br><span class="line">            index  index.html index.htm;</span><br><span class="line">            client_max_body_size 35m;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-4、使用systemctl-restart-nginx重启Nginx服务器。"><a href="#3-2-4、使用systemctl-restart-nginx重启Nginx服务器。" class="headerlink" title="3.2.4、使用systemctl restart nginx重启Nginx服务器。"></a>3.2.4、使用systemctl restart nginx重启Nginx服务器。</h4><h2 id="四、项目启动及维护"><a href="#四、项目启动及维护" class="headerlink" title="四、项目启动及维护"></a>四、项目启动及维护</h2><p>使用<code>ss -lntpd | grep nginx（uwsgi）</code>和<code>ps -ef | grep nginx（uwsgi）</code>来确认nginx、uwsgi是否启动成功、转发代理的端口是否正确。<br>如果为启动失败，请确认配置是否正确，使用systemctl restart nginx重启nginx，使用killall -9 uwsgi杀死uwsgi服务，使用uwsgi uwsgi9090.ini重启uwsgi和Django项目；如果一切正常，我们可以在浏览器中输入nginx.conf中配置的server_name域名，来访问已启动的Django web项目，这样就实现了uWSGI+Nginx部署Django web项目了。</p>
+]]></content>
+      <categories>
+        <category>Django</category>
+      </categories>
+      <tags>
+        <tag>uWSGI + Nginx + Django</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>pearson相关系数</title>
-    <url>/2020/02/26/2020-02-26/</url>
+    <url>/2020/02/26/pearson-formula/</url>
     <content><![CDATA[<p><strong>pearson相关系数</strong></p>
-<p><img src="../picture/pearson%E5%85%AC%E5%BC%8F.png" alt="avatar"></p>
+<p><img data-src="/picture/pearson%E5%85%AC%E5%BC%8F.png" alt="avatar"></p>
 <p>公式定义为： 两个连续变量(X,Y)的pearson相关性系数(Px,y)等于它们之间的协方差cov(X,Y)除以它们各自标准差的乘积(σX,σY)。系数的取值总是在-1.0到1.0之间，接近0的变量被成为无相关性，接近1或者-1被称为具有强相关性。</p>
 <p>简单来说，它用来衡量两个数据集合是否在一条线上面，是否有相关性，这在数据分析中是很有效的。</p>
 <p>用python3实现：</p>
+<a id="more"></a>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> math</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pearson</span><span class="params">(vector1, vector2)</span>:</span></span><br><span class="line">    n = len(vector1)</span><br><span class="line">    <span class="comment">#simple sums</span></span><br><span class="line">    sum1 = sum(float(vector1[i]) <span class="keyword">for</span> i <span class="keyword">in</span> range(n))</span><br><span class="line">    sum2 = sum(float(vector2[i]) <span class="keyword">for</span> i <span class="keyword">in</span> range(n))</span><br><span class="line">    <span class="comment">#sum up the squares</span></span><br><span class="line">    sum1_pow = sum([pow(v, <span class="number">2.0</span>) <span class="keyword">for</span> v <span class="keyword">in</span> vector1])</span><br><span class="line">    sum2_pow = sum([pow(v, <span class="number">2.0</span>) <span class="keyword">for</span> v <span class="keyword">in</span> vector2])</span><br><span class="line">    <span class="comment">#sum up the products</span></span><br><span class="line">    p_sum = sum([vector1[i]*vector2[i] <span class="keyword">for</span> i <span class="keyword">in</span> range(n)])</span><br><span class="line">    <span class="comment">#分子num，分母den</span></span><br><span class="line">    num = p_sum - (sum1*sum2/n)</span><br><span class="line">    den = math.sqrt((sum1_pow-pow(sum1, <span class="number">2</span>)/n)*(sum2_pow-pow(sum2, <span class="number">2</span>)/n))</span><br><span class="line">    <span class="keyword">if</span> den == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0.0</span></span><br><span class="line">    <span class="keyword">return</span> num/den</span><br></pre></td></tr></table></figure>
 <p>选择两组数据</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vector1 &#x3D; [2, 7, 18, 88, 157, 90, 177, 570]</span><br><span class="line">vector2 &#x3D; [3, 5, 15, 90, 180, 88, 160, 580]</span><br><span class="line">print(&#39;result is: &#39; + int(pearson(vector1, vector2)))</span><br></pre></td></tr></table></figure>
@@ -222,16 +430,82 @@
       </tags>
   </entry>
   <entry>
+    <title>Git原理及实践</title>
+    <url>/2019/11/12/git-basis/</url>
+    <content><![CDATA[<h1 id="Git是什么"><a href="#Git是什么" class="headerlink" title="Git是什么?"></a>Git是什么?</h1><h2 id="什么是版本控制？"><a href="#什么是版本控制？" class="headerlink" title="什么是版本控制？"></a>什么是版本控制？</h2><p>版本控制是指对软件开发过程中各种程序代码、配置文件及说明文档等文件变更的管理，是软件配置管理的核心思想之一。</p>
+<h2 id="什么是Git"><a href="#什么是Git" class="headerlink" title="什么是Git?"></a>什么是Git?</h2><p><img data-src="/picture/git_logo.png" alt="avatar"><br>Git 是一个开源的分布式版本控制系统，用于敏捷高效地处理任何或小或大的项目。<br>Git 是 Linus Torvalds 为了帮助管理 Linux 内核开发而开发的一个开放源码的版本控制软件。<br>Git 与常用的版本控制工具 CVS， Subversion 等不同，它采用了分布式版本库的方式，不必服务器端软件支持。</p>
+<a id="more"></a>
+<h2 id="Git-与-SVN-区别"><a href="#Git-与-SVN-区别" class="headerlink" title="Git 与 SVN 区别"></a>Git 与 SVN 区别</h2><p>Git 不仅仅是个版本控制系统，它也是个内容管理系统(CMS)，工作管理系统等。<br>如果你是一个具有使用 SVN 背景的人，你需要做一定的思想转换，来适应 Git 提供的一些概念和特征。<br>Git 与 SVN 区别点：<br>1、Git 是分布式的，SVN 不是：这是 Git 和其它非分布式的版本控制系统，例如 SVN，CVS 等，最核心的区别。<br>2、Git 把内容按元数据方式存储，而 SVN 是按文件：所有的资源控制系统都是把文件的元信息隐藏在一个类似 .svn、.cvs 等的文件夹里。<br>3、Git 分支和 SVN 的分支不同：分支在 SVN 中一点都不特别，其实它就是版本库中的另外一个目录。<br>4、Git 没有一个全局的版本号，而 SVN 有：目前为止这是跟 SVN 相比 Git 缺少的最大的一个特征。<br>5、Git 的内容完整性要优于 SVN：Git 的内容存储使用的是 SHA-1 哈希算法。这能确保代码内容的完整性，确保在遇到磁盘故障和网络问题时降低对版本库的破坏。</p>
+<h1 id="Git的理论基础"><a href="#Git的理论基础" class="headerlink" title="Git的理论基础"></a>Git的理论基础</h1><ul>
+<li>Git的四大工作区域</li>
+<li>Git的工作流程</li>
+<li>Git文件的四种状态</li>
+<li>Git的工作原理</li>
+</ul>
+<h2 id="Git的四大工作区域"><a href="#Git的四大工作区域" class="headerlink" title="Git的四大工作区域"></a>Git的四大工作区域</h2><p><img data-src="/picture/git_4_workspace.png" alt="avatar"></p>
+<ul>
+<li><kbd style="color:#ff7600">Workspace</kbd>：你电脑本地看到的文件和目录，在Git的版本控制下，构成了工作区。</li>
+<li><kbd style="color:#ff7600">Index/Stage</kbd>：暂存区，一般存放在 .git目录下，即.git/index，它又叫待提交更新区，用于临时存放你未提交的改动。比如，你执行git add，这些改动就添加到这个区域啦。</li>
+<li><kbd style="color:#ff7600">Repository</kbd>：本地仓库，你执行git clone 地址，就是把远程仓库克隆到本地仓库。它是一个存放在本地的版本库，其中HEAD指向最新放入仓库的版本。当你执行git commit，文件改动就到本地仓库来了~</li>
+<li><kbd style="color:#ff7600">Remote</kbd>：远程仓库，就是类似github，码云等网站所提供的仓库，可以理解为远程数据交换的仓库~</li>
+</ul>
+<h2 id="Git的工作流程"><a href="#Git的工作流程" class="headerlink" title="Git的工作流程"></a>Git的工作流程</h2><p><img data-src="/picture/git_work_process.png" alt="avatar"></p>
+<h2 id="Git文件的四种状态"><a href="#Git文件的四种状态" class="headerlink" title="Git文件的四种状态"></a>Git文件的四种状态</h2><p>根据一个文件是否已加入版本控制，可以把文件状态分为：Tracked(已跟踪)和Untracked(未跟踪)，而tracked(已跟踪)又包括三种工作状态：Unmodified，Modified，Staged</p>
+<p><img data-src="/picture/git_file_status.png" alt="avatar"></p>
+<ul>
+<li>Untracked: 文件还没有加入到git库，还没参与版本控制，即未跟踪状态。这时候的文件，通过git add 状态，可以变为Staged状态</li>
+<li>Unmodified：文件已经加入git库， 但是呢，还没修改， 就是说版本库中的文件快照内容与文件夹中还完全一致。修改变为Modified. 可用git remove移出版本库， 变为Untracked。</li>
+<li>Modified：文件被修改了，就进入modified状态啦，通过stage命令进入staged状态</li>
+<li>staged：暂存状态. 执行git commit将修改同步到库中，这时库中的文件和本地文件变为一致，为Unmodified状态.</li>
+</ul>
+<h2 id="Git的工作原理"><a href="#Git的工作原理" class="headerlink" title="Git的工作原理"></a>Git的工作原理</h2><p><img data-src="/picture/git_work_principle.png" alt="avatar"></p>
+<h1 id="Git基础命令"><a href="#Git基础命令" class="headerlink" title="Git基础命令"></a>Git基础命令</h1><h2 id="Git命令流程"><a href="#Git命令流程" class="headerlink" title="Git命令流程"></a>Git命令流程</h2><p>以下是命令使用的大致流程<br><img data-src="/picture/git_use_detail.png" alt="avatar"></p>
+<h2 id="Git常用命令集"><a href="#Git常用命令集" class="headerlink" title="Git常用命令集"></a>Git常用命令集</h2><p>遇事不决查文档，<kbd style="color:#ff7600">git -help</kbd> + <kbd style="color:#ff7600">git command -help</kbd></p>
+<h3 id="git-init-初始化仓库"><a href="#git-init-初始化仓库" class="headerlink" title="git init -初始化仓库"></a>git init -初始化仓库</h3><h3 id="git-clone-url-克隆远程版本库"><a href="#git-clone-url-克隆远程版本库" class="headerlink" title="git clone url -克隆远程版本库"></a>git clone url -克隆远程版本库</h3><h3 id="git-remote-add-newRemote-url-添加另一个远程仓库"><a href="#git-remote-add-newRemote-url-添加另一个远程仓库" class="headerlink" title="git remote add newRemote url -添加另一个远程仓库"></a>git remote add newRemote url -添加另一个远程仓库</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git remote add [-t &lt;branch&gt;] [-m &lt;master&gt;] -添加仓库的高级版</span><br><span class="line">git remote [-v | --verbose] -查看远程所有仓库</span><br><span class="line">git remote rename &lt;old&gt; &lt;new&gt; -重命名仓库名</span><br><span class="line">git remote remove &lt;name&gt; -移除本地绑定的远程仓库</span><br></pre></td></tr></table></figure>
+
+<h3 id="git-checkout"><a href="#git-checkout" class="headerlink" title="git checkout"></a>git checkout</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git checkout -b newBranch  [origin&#x2F;newBranch ] 创建开发分支dev，并切换到该分支下在上面基础上[并关联远程分支]</span><br><span class="line">git checkout [file]  丢弃某个文件file(还未add进暂存区)</span><br><span class="line">git checkout .  丢弃所有文件(还未add进暂存区)(已经add了则用reset)</span><br></pre></td></tr></table></figure>
+
+<h3 id="git-add"><a href="#git-add" class="headerlink" title="git add"></a>git add</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git add .	添加当前目录的所有文件到暂存区</span><br><span class="line">git add [dir]	添加指定目录到暂存区，包括子目录</span><br><span class="line">git add [file1]	添加指定文件到暂存区</span><br></pre></td></tr></table></figure>
+
+<h3 id="git-commit"><a href="#git-commit" class="headerlink" title="git commit"></a>git commit</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git commit -m [message] 提交暂存区到仓库区，message为说明信息</span><br><span class="line">git commit [file1] -m [message] 提交暂存区的指定文件到本地仓库</span><br><span class="line">git commit --amend -m [message] 使用一次新的commit，替代上一次提交</span><br></pre></td></tr></table></figure>
+
+<h3 id="git-log"><a href="#git-log" class="headerlink" title="git log"></a>git log</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git log  查看提交历史</span><br><span class="line">git log --oneline 以精简模式显示查看提交历史</span><br><span class="line">git log -p &lt;file&gt; 查看指定文件的提交历史</span><br><span class="line">git blame &lt;file&gt; 一列表方式查看指定文件的提交历史</span><br></pre></td></tr></table></figure>
+
+<h3 id="git-diff"><a href="#git-diff" class="headerlink" title="git diff"></a>git diff</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git diff 显示暂存区和工作区的差异</span><br><span class="line">git diff filepath   filepath路径文件中，工作区与暂存区的比较差异</span><br><span class="line">git diff HEAD filepath 工作区与HEAD ( 当前工作分支)的比较差异</span><br><span class="line">git diff branchName filepath 当前分支的文件与branchName分支的文件的比较差异</span><br><span class="line">git diff commitId filepath 与某一次提交的比较差异</span><br></pre></td></tr></table></figure>
+
+<h3 id="git-status"><a href="#git-status" class="headerlink" title="git status"></a>git status</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git status  查看当前工作区暂存区变动</span><br><span class="line">git status -s  查看当前工作区暂存区变动，概要信息</span><br><span class="line">git status  --show-stash 查询工作区中是否有stash（暂存的文件）</span><br></pre></td></tr></table></figure>
+
+<h3 id="git-pull-git-fetch"><a href="#git-pull-git-fetch" class="headerlink" title="git pull/git fetch"></a>git pull/git fetch</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git pull  拉取远程仓库所有分支更新并合并到本地分支。</span><br><span class="line">git pull origin master 将远程master分支合并到当前本地分支</span><br><span class="line">git pull origin master:master 将远程master分支合并到当前本地master分支，冒号后面表示本地分支</span><br><span class="line">git fetch --all  拉取所有远端的最新代码</span><br><span class="line">git fetch origin master 拉取远程最新master分支代码</span><br></pre></td></tr></table></figure>
+
+<h3 id="git-push"><a href="#git-push" class="headerlink" title="git push"></a>git push</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git push origin master 将本地分支的更新全部推送到远程仓库master分支。</span><br><span class="line">git push origin -d &lt;branchname&gt;   删除远程branchname分支</span><br><span class="line">git push --tags 推送所有标签</span><br></pre></td></tr></table></figure>
+
+<h3 id="git-reset"><a href="#git-reset" class="headerlink" title="git reset"></a>git reset</h3><p><em>使用模式：</em><br><img data-src="/picture/git_reset.png" alt="avatar"></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git reset HEAD --file 回退暂存区里的某个文件，回退到当前版本工作区状态</span><br><span class="line">git reset –-soft 目标版本号 可以把版本库上的提交回退到暂存区，修改记录保留</span><br><span class="line">git reset –-mixed 目标版本号 可以把版本库上的提交回退到工作区，修改记录保留</span><br><span class="line">git reset –-hard  可以把版本库上的提交彻底回退，修改的记录全部revert。</span><br></pre></td></tr></table></figure>
+<p>代码git add到暂存区，并未commit提交，如何回退：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git reset HEAD file 取消暂存</span><br><span class="line">git checkout file 撤销修改</span><br></pre></td></tr></table></figure>
+
+
+<hr>
+<p>参考链接：<br><a href="https://git-scm.com/docs" target="_blank" rel="noopener">Git Reference</a><br><a href="https://git-scm.com/book/zh/v2" target="_blank" rel="noopener">Git Book</a>  </p>
+]]></content>
+      <categories>
+        <category>Git</category>
+      </categories>
+      <tags>
+        <tag>Git基础</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>平平淡淡的一天</title>
-    <url>/2020/02/19/first-blog/</url>
+    <url>/2019/10/19/first-blog/</url>
     <content><![CDATA[<h1 id="我的一天："><a href="#我的一天：" class="headerlink" title="我的一天：  "></a>我的一天：  </h1><hr>
 <p>上午：改bug  </p>
 <hr>
-<p>下午：<del><strong>摸摸鱼</strong></del> 远程培训</p>
+<p>下午：<del><strong>摸摸鱼</strong></del> 远程学习</p>
 <hr>
 <p>晚上：打FF14  </p>
 <hr>
-<p><img src="../picture/first.jpg" alt="avatar"></p>
+<p><img data-src="/picture/first.jpg" alt="avatar"></p>
 <hr>
 ]]></content>
       <categories>
