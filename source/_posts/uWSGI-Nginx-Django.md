@@ -15,7 +15,7 @@ categories: Django
 uWSGI是一个快速的、纯C语言开发的、自维护的、对开发者友好的WSGI服务器，旨在提供专业的Python web应用发布和开发。可使用C/C++/Objective-C来为uWSGI编写插件。我们在根目录下的requirements.py中可以找到uWSGI的依赖，Windows环境本地安装依赖的时候一般都会注释掉它，因为uWSGI是运行在Linux上的服务器。可能大家对WSGI、uwsgi、uWSGI这几个概念很头疼，简单地说，WSGI是一个规范协议，定义了Web服务器如何与Python应用程序进行交互；uwsgi和WSGI一样是通信协议，是uWSGI服务器的单独形式，用于自定义传输类型；而uWSGI是重头戏，他是一个web服务器,实现了WSGI协议、uwsgi协议。以下是WSGI，uwsgi，uWSGI的实现过程图解。
 
 
-![uWSGI](uWSGI-Nginx-Django/uwsgi.png)
+![uWSGI](uwsgi.png)
 
 ## 二、Nginx简介
 
@@ -34,7 +34,7 @@ uWSGI是一个快速的、纯C语言开发的、自维护的、对开发者友�
 
 ## 三、uWSGI + Nginx 部署 Django 网站的实践
 接下来笔者将使用uWSGI+Nginx搭建Django网站，此方案的架构图如下：
-![uWSGI](uWSGI-Nginx-Django/uwsgi+nginx+django.png)
+![uwsgi+nginx+django](uwsgi+nginx+django.png)
 
 ###	3.1、安装配置uWSGI：
 

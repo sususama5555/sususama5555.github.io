@@ -5,8 +5,10 @@
     <mapping directory="$PROJECT_DIR$/.deploy_git" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/source/lib/canvas-ribbon" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/source/lib/pace" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/source/lib/pjax" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/source/lib/three" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/themes/hexo-theme-next" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/themes/next" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/themes/next/source/lib/pjax" vcs="Git" />
   </component>
 </project>

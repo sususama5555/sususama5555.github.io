@@ -7,7 +7,7 @@ categories: 前端开发指南
 
 **windows版本的企业（政务）微信浏览器基于Chromium 53版本，对ES7某些新特性不兼容**
 
-![图片描述](https://www.tapd.cn/tfl/captures/2020-08/tapd_51310665_base64_1597896079_93.png)
+{% asset_img weixin_browser.png %}
 <!--more-->
 
 ### 1、不支持Async/Await异步函数
@@ -15,11 +15,11 @@ categories: 前端开发指南
 官方的方法兼容文档：
 https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/async_function 
 
-![img](https://www.tapd.cn/tfl/captures/2020-08/tapd_51310665_base64_1597903440_31.png)
+{% asset_img browser_compatibility.png %}
 
 ### 2、不支持Axios的promise.prototype.finally方法：
 
-![img](https://www.tapd.cn/tfl/captures/2020-08/tapd_51310665_base64_1597904438_2.png)
+{% asset_img weixin_error.png %}
 
 解决办法：通过main.js引入依赖
 ```
@@ -34,7 +34,7 @@ require('promise.prototype.finally').shim();
 
 #### 3.2、右键解压成Chrome.7z，继续解压成Chrome-bin文件夹 
 
-![img](https://www.tapd.cn/tfl/captures/2020-08/tapd_51310665_base64_1597904944_70.png)
+{% asset_img download_file.png %}
 
 #### 3.3、直接执行Chrome-bin / chrome.exe会跳转到本地最新版的chrome。
 
@@ -44,4 +44,4 @@ require('promise.prototype.finally').shim();
 start "" "./chrome.exe"  " --user-data-dir=User Data"
 ```
 
-![img](https://www.tapd.cn/tfl/captures/2020-08/tapd_51310665_base64_1597904997_55.png)
+{% asset_img file_setting.png %}
