@@ -2,7 +2,7 @@
 title: Redis修炼之数据类型
 date: 2020-11-12 00:34:08
 tags: Redis数据类型
-categories: Redis
+categories: Redis修炼
 ---
 
 >一、Redis 数据类型:
