@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://api.ddoudou.xyz/"/>
-  <updated>2020-11-15T18:01:35.050Z</updated>
+  <updated>2020-11-15T21:24:22.090Z</updated>
   <id>http://api.ddoudou.xyz/</id>
   
   <author>
@@ -21,18 +21,14 @@
     <link href="http://api.ddoudou.xyz/2020/11/16/redis-use-case/"/>
     <id>http://api.ddoudou.xyz/2020/11/16/redis-use-case/</id>
     <published>2020-11-15T16:33:06.000Z</published>
-    <updated>2020-11-15T18:01:35.050Z</updated>
+    <updated>2020-11-15T21:24:22.090Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;blockquote&gt;
-&lt;h2 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot;
-        
-      
+      &lt;blockquote&gt;
+&lt;h2 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h2&gt;&lt;/blockquote&gt;
+&lt;p&gt;接着Redis数据类型来说，来谈谈Redis的具体使用场景，首先回顾一下：&lt;/p&gt;
+&lt;p&gt;Redis是一种基于键值对的NoSQL数据库，它的值主要由string（字符串），hash（哈希），list（列表），set（集合），zset（有序集合）五种基本数据结构构成。那么这些数据结构的使用场景有哪些？以下将用内部编码及使用场景的方式浅析Redis的五种数据类型。&lt;/p&gt;
     
     </summary>
     
@@ -179,12 +175,12 @@
     <link href="http://api.ddoudou.xyz/2020/08/20/weixin-app/"/>
     <id>http://api.ddoudou.xyz/2020/08/20/weixin-app/</id>
     <published>2020-08-20T14:50:54.000Z</published>
-    <updated>2020-11-14T20:03:22.449Z</updated>
+    <updated>2020-11-15T21:44:01.647Z</updated>
     
     <summary type="html">
     
       &lt;p&gt;&lt;strong&gt;windows版本的企业（政务）微信浏览器基于Chromium 53版本，对ES7某些新特性不兼容&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img data-src=&quot;https://www.tapd.cn/tfl/captures/2020-08/tapd_51310665_base64_1597896079_93.png&quot; alt=&quot;图片描述&quot;&gt;&lt;/p&gt;
+&lt;img data-src=&quot;/2020/08/20/weixin-app/weixin_browser.png&quot; class&gt;
     
     </summary>
     
@@ -201,7 +197,7 @@
     <link href="http://api.ddoudou.xyz/2020/05/20/uWSGI-Nginx-Django/"/>
     <id>http://api.ddoudou.xyz/2020/05/20/uWSGI-Nginx-Django/</id>
     <published>2020-05-20T11:47:02.000Z</published>
-    <updated>2020-11-14T20:03:22.445Z</updated>
+    <updated>2020-11-15T21:25:35.093Z</updated>
     
     <summary type="html">
     

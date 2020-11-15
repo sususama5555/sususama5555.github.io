@@ -7,6 +7,9 @@
 <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote>
 <p>接着Redis数据类型来说，来谈谈Redis的具体使用场景，首先回顾一下：</p>
 <p>Redis是一种基于键值对的NoSQL数据库，它的值主要由string（字符串），hash（哈希），list（列表），set（集合），zset（有序集合）五种基本数据结构构成。那么这些数据结构的使用场景有哪些？以下将用内部编码及使用场景的方式浅析Redis的五种数据类型。</p>
+<a id="more"></a>
+
+
 <blockquote>
 <h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2></blockquote>
 <h3 id="一-字符串"><a href="#一-字符串" class="headerlink" title="一 字符串"></a><strong>一 字符串</strong></h3><p>字符串类型是Redis最基础的数据结构，字符串类型可以是<code>JSON</code>、<code>XML</code>甚至是二进制的图片等数据，但是最大值不能超过512MB。</p>
@@ -340,22 +343,24 @@
     <title>企业(政务)微信浏览器的前端开发兼容问题</title>
     <url>/2020/08/20/weixin-app/</url>
     <content><![CDATA[<p><strong>windows版本的企业（政务）微信浏览器基于Chromium 53版本，对ES7某些新特性不兼容</strong></p>
-<p><img data-src="https://www.tapd.cn/tfl/captures/2020-08/tapd_51310665_base64_1597896079_93.png" alt="图片描述"></p>
+<img data-src="/2020/08/20/weixin-app/weixin_browser.png" class>
 <a id="more"></a>
 
 <h3 id="1、不支持Async-Await异步函数"><a href="#1、不支持Async-Await异步函数" class="headerlink" title="1、不支持Async/Await异步函数"></a>1、不支持Async/Await异步函数</h3><p>官方的方法兼容文档：<br><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/async_function" target="_blank" rel="noopener">https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/async_function</a> </p>
-<p><img data-src="https://www.tapd.cn/tfl/captures/2020-08/tapd_51310665_base64_1597903440_31.png" alt="img"></p>
-<h3 id="2、不支持Axios的promise-prototype-finally方法："><a href="#2、不支持Axios的promise-prototype-finally方法：" class="headerlink" title="2、不支持Axios的promise.prototype.finally方法："></a>2、不支持Axios的promise.prototype.finally方法：</h3><p><img data-src="https://www.tapd.cn/tfl/captures/2020-08/tapd_51310665_base64_1597904438_2.png" alt="img"></p>
+<img data-src="/2020/08/20/weixin-app/browser_compatibility.png" class>
+
+<h3 id="2、不支持Axios的promise-prototype-finally方法："><a href="#2、不支持Axios的promise-prototype-finally方法：" class="headerlink" title="2、不支持Axios的promise.prototype.finally方法："></a>2、不支持Axios的promise.prototype.finally方法：</h3><img data-src="/2020/08/20/weixin-app/weixin_error.png" class>
+
 <p>解决办法：通过main.js引入依赖</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">npm i promise.prototype.finally</span><br><span class="line">require(&#39;promise.prototype.finally&#39;).shim();</span><br></pre></td></tr></table></figure>
 
 <h3 id="3、本地安装模拟企业（政务）微信内置Chromium-53版本："><a href="#3、本地安装模拟企业（政务）微信内置Chromium-53版本：" class="headerlink" title="3、本地安装模拟企业（政务）微信内置Chromium 53版本："></a>3、本地安装模拟企业（政务）微信内置Chromium 53版本：</h3><h4 id="3-1、下载附件的安装包（Chromium-53版本）"><a href="#3-1、下载附件的安装包（Chromium-53版本）" class="headerlink" title="3.1、下载附件的安装包（Chromium 53版本）"></a>3.1、下载附件的安装包（Chromium 53版本）</h4><p><a href="https://file.tapd.cn/51310665/attachments/download/1151310665001000266/wiki" target="_blank" rel="noopener">点此下载</a>  </p>
-<h4 id="3-2、右键解压成Chrome-7z，继续解压成Chrome-bin文件夹"><a href="#3-2、右键解压成Chrome-7z，继续解压成Chrome-bin文件夹" class="headerlink" title="3.2、右键解压成Chrome.7z，继续解压成Chrome-bin文件夹"></a>3.2、右键解压成Chrome.7z，继续解压成Chrome-bin文件夹</h4><p><img data-src="https://www.tapd.cn/tfl/captures/2020-08/tapd_51310665_base64_1597904944_70.png" alt="img"></p>
+<h4 id="3-2、右键解压成Chrome-7z，继续解压成Chrome-bin文件夹"><a href="#3-2、右键解压成Chrome-7z，继续解压成Chrome-bin文件夹" class="headerlink" title="3.2、右键解压成Chrome.7z，继续解压成Chrome-bin文件夹"></a>3.2、右键解压成Chrome.7z，继续解压成Chrome-bin文件夹</h4><img data-src="/2020/08/20/weixin-app/download_file.png" class>
+
 <h4 id="3-3、直接执行Chrome-bin-chrome-exe会跳转到本地最新版的chrome。"><a href="#3-3、直接执行Chrome-bin-chrome-exe会跳转到本地最新版的chrome。" class="headerlink" title="3.3、直接执行Chrome-bin / chrome.exe会跳转到本地最新版的chrome。"></a>3.3、直接执行Chrome-bin / chrome.exe会跳转到本地最新版的chrome。</h4><p>在此目录下编写脚本start.bat，点击脚本即可打开Chromium 53：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">start &quot;&quot; &quot;.&#x2F;chrome.exe&quot;  &quot; --user-data-dir&#x3D;User Data&quot;</span><br></pre></td></tr></table></figure>
 
-<p><img data-src="https://www.tapd.cn/tfl/captures/2020-08/tapd_51310665_base64_1597904997_55.png" alt="img"></p>
-]]></content>
+<img data-src="/2020/08/20/weixin-app/file_setting.png" class>]]></content>
       <categories>
         <category>前端开发指南</category>
       </categories>
@@ -375,12 +380,12 @@
 <p>正文</p>
 </blockquote>
 <h2 id="一、uWSGI简介"><a href="#一、uWSGI简介" class="headerlink" title="一、uWSGI简介"></a>一、uWSGI简介</h2><p>uWSGI是一个快速的、纯C语言开发的、自维护的、对开发者友好的WSGI服务器，旨在提供专业的Python web应用发布和开发。可使用C/C++/Objective-C来为uWSGI编写插件。我们在根目录下的requirements.py中可以找到uWSGI的依赖，Windows环境本地安装依赖的时候一般都会注释掉它，因为uWSGI是运行在Linux上的服务器。可能大家对WSGI、uwsgi、uWSGI这几个概念很头疼，简单地说，WSGI是一个规范协议，定义了Web服务器如何与Python应用程序进行交互；uwsgi和WSGI一样是通信协议，是uWSGI服务器的单独形式，用于自定义传输类型；而uWSGI是重头戏，他是一个web服务器,实现了WSGI协议、uwsgi协议。以下是WSGI，uwsgi，uWSGI的实现过程图解。</p>
-<p><img data-src="uWSGI-Nginx-Django/uwsgi.png" alt="uWSGI"></p>
+<p><img data-src="uwsgi.png" alt="uWSGI"></p>
 <h2 id="二、Nginx简介"><a href="#二、Nginx简介" class="headerlink" title="二、Nginx简介"></a>二、Nginx简介</h2><p>相比uWSGI，Nginx的知名度高了许多，它是一个开源的、支持高性能、高并发的代理服务软件，Nginx不但是一个优秀的web服务软件,还可以作为反想代理和负载均衡,以及缓存服务或使用。<br>实际上，一个uWSGI的web服务器，再加上Django这样的web框架，就已经可以实现网站的功能了。那为什么还需要Nginx呢？经过笔者查阅资料，总结有以下几点：</p>
 <h3 id="2-1、安全问题："><a href="#2-1、安全问题：" class="headerlink" title="2.1、安全问题："></a>2.1、安全问题：</h3><p>程序不能直接被浏览器访问到，而是通过Nginx只开放某个接口，uWSGI本身是内网接口，这样运维人员在Nginx上加上安全性的限制，可以达到保护程序的作用；</p>
 <h3 id="2-2、载均衡问题："><a href="#2-2、载均衡问题：" class="headerlink" title="2.2、载均衡问题："></a>2.2、载均衡问题：</h3><p>一个uWSGI很可能不够用，即使开了多个work也是不行，毕竟一台机器的cpu和内存都是有限的，有了Nginx做代理，一个Nginx可以代理多台uWSGI完成负载均衡；</p>
 <h3 id="2-3、静态文件问题："><a href="#2-3、静态文件问题：" class="headerlink" title="2.3、静态文件问题："></a>2.3、静态文件问题：</h3><p>用Django或是uWSGI这种东西来负责静态文件的处理是很浪费的行为，而且他们本身对文件的处理也不如Nginx好，所以整个静态文件的处理都直接由nginx完成。</p>
-<h2 id="三、uWSGI-Nginx-部署-Django-网站的实践"><a href="#三、uWSGI-Nginx-部署-Django-网站的实践" class="headerlink" title="三、uWSGI + Nginx 部署 Django 网站的实践"></a>三、uWSGI + Nginx 部署 Django 网站的实践</h2><p>接下来笔者将使用uWSGI+Nginx搭建Django网站，此方案的架构图如下：<br><img data-src="uWSGI-Nginx-Django/uwsgi+nginx+django.png" alt="uWSGI"></p>
+<h2 id="三、uWSGI-Nginx-部署-Django-网站的实践"><a href="#三、uWSGI-Nginx-部署-Django-网站的实践" class="headerlink" title="三、uWSGI + Nginx 部署 Django 网站的实践"></a>三、uWSGI + Nginx 部署 Django 网站的实践</h2><p>接下来笔者将使用uWSGI+Nginx搭建Django网站，此方案的架构图如下：<br><img data-src="uwsgi+nginx+django.png" alt="uwsgi+nginx+django"></p>
 <h3 id="3-1、安装配置uWSGI："><a href="#3-1、安装配置uWSGI：" class="headerlink" title="3.1、安装配置uWSGI："></a>3.1、安装配置uWSGI：</h3><h4 id="3-1-1安装uWSGI："><a href="#3-1-1安装uWSGI：" class="headerlink" title="3.1.1安装uWSGI："></a>3.1.1安装uWSGI：</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">pip install uwsgi</span><br></pre></td></tr></table></figure>
 <p>也可以指定版本安装；</p>
 <h4 id="3-1-2-uWSGI配置："><a href="#3-1-2-uWSGI配置：" class="headerlink" title="3.1.2    uWSGI配置："></a>3.1.2    uWSGI配置：</h4><p>实际上，我们可以uwsgi命令配合参数来启动Django项目，但是我们可以把这些参数放在uwsgi9090.ini配置文件中，记录配置并且实现后台运行uWSGI：</p>
