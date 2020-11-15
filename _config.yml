@@ -8,12 +8,12 @@ subtitle: ''
 description: '兴趣使然的博客'
 keywords:
 author: Ryan Shu
-language: zh-Hans
+language: zh-CN
 timezone: ''
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://sapphirez.gitee.io
+url: http://api.ddoudou.xyz #http://sapphirez.gitee.io
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
@@ -105,10 +105,10 @@ theme: next
 #  repo: root@47.112.224.238:/var/repo/blog.git,master
 
 #aliyun-3years
-#deploy:
-#  type: git
-#  message: update
-#  repo: root@47.112.240.167:/var/repo/blog.git,master
+deploy:
+  type: git
+  message: update
+  repo: root@47.112.240.167:/var/repo/blog.git,master
 
 #gitee
 #deploy:
@@ -117,10 +117,10 @@ theme: next
 #  repo: https://gitee.com/sapphirez/sapphirez.git,master
 
 #gitee
-deploy:
-  type: git
-  message: github
-  repo: https://github.com/sususama5555/sususama5555.github.io.git,master
+#deploy:
+#  type: git
+#  message: github
+#  repo: https://github.com/sususama5555/sususama5555.github.io.git,master
 
 # Hexo-generator-search
 search:
@@ -161,3 +161,13 @@ live2d:
     show: true
   react:
     opacity: 0.7
+
+symbols_count_time:
+  symbols: true
+  time: true
+  total_symbols: true
+  total_time: true
+  exclude_codeblock: false
+  awl: 4
+  wpm: 275
+  suffix: "mins."

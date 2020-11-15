@@ -163,7 +163,6 @@ sadd user:1:tags tag1 tag2
 
 ```
 sadd tag1:users user:1
-
 sadd tag2:users user:1
 ```
 
@@ -248,3 +247,6 @@ zrangebyscore user:article 0 2
 
 
 在开发中，字符串类型是用的最多的数据类型，导致我们忽视了redis的其他四种数据类型，在具体场景下选择具体的数据类型对提升redis性能有非常大的帮助。redis虽然支持消息队列的实现，但是并不支持ack。所以redis实现的消息队列不能保证消息的可靠性，除非自己实现消息确认机制，不过这非常麻烦，所以如果是重要的消息还是推荐使用专门的消息队列去做，如RabbitMQ、RocketMQ。
+
+******
+参考链接：[Redis 五大数据类型使用场景](https://mp.weixin.qq.com/s/FsL-54ALoNUAPcft-u8Leg?v_p=86&WBAPIAnalysisOriUICodes=10000001_10000002&launchid=10000365--x&wm=3333_2001&aid=01A0GdQv0UejmN65Ntcd4pBeamMWOPan5tHaY8rK5tZGJgPOs.&from=10AA393010)  
