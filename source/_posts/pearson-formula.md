@@ -1,8 +1,11 @@
 ---
 title: 'pearson相关系数'
 date: 2020-02-26 16:09:38
-tags: 大数据分析
-categories: 学习笔记
+tags: 
+- 大数据分析
+- 算法
+categories: 
+- 学习笔记
 ---
 **pearson相关系数**
 

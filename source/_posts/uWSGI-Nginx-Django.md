@@ -1,8 +1,13 @@
 ---
 title: 使用 uWSGI + Nginx 部署 Django 项目 
 date: 2020-05-20 19:47:02
-tags: uWSGI + Nginx + Django
-categories: Django
+tags: 
+- uWSGI
+- Nginx
+- Django
+- 技术文章
+categories: 
+- Django
 ---
 > 摘要
 

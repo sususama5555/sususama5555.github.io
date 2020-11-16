@@ -1,8 +1,12 @@
 ---
-title: Redis修炼之数据类型使用场景
+title: Redis修炼之使用场景
 date: 2020-11-16 00:33:06
-tags: Redis使用场景
-categories: Redis修炼
+tags: 
+- Redis
+- Redis使用场景
+categories: 
+- 数据库
+- Redis修炼
 ---
 
 

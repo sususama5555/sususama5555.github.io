@@ -1,8 +1,11 @@
 ---
 title: Git原理及实践
 date: 2019-11-12 22:45:15
-tags: Git基础
-categories: Git
+tags: 
+- Git
+- 版本控制
+categories: 
+- Git
 ---
 
 # Git是什么?
