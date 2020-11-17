@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Redis修炼之数据类型使用场景</title>
+    <title>Redis修炼之使用场景</title>
     <url>/2020/11/16/redis-use-case/</url>
     <content><![CDATA[<blockquote>
 <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote>
@@ -126,16 +126,13 @@
 <p>参考链接：<a href="https://mp.weixin.qq.com/s/FsL-54ALoNUAPcft-u8Leg?v_p=86&WBAPIAnalysisOriUICodes=10000001_10000002&launchid=10000365--x&wm=3333_2001&aid=01A0GdQv0UejmN65Ntcd4pBeamMWOPan5tHaY8rK5tZGJgPOs.&from=10AA393010" target="_blank" rel="noopener">Redis 五大数据类型使用场景</a>  </p>
 ]]></content>
       <categories>
+        <category>数据库</category>
         <category>Redis修炼</category>
       </categories>
       <tags>
+        <tag>Redis</tag>
         <tag>Redis使用场景</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>python-wmware</title>
-    <url>/2020/11/15/python-wmware/</url>
-    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>Redis修炼之数据类型</title>
@@ -206,10 +203,13 @@
 <p>参考链接：<a href="https://www.runoob.com/redis/redis-data-types.html" target="_blank" rel="noopener">菜鸟教程——Redis数据类型</a>  </p>
 ]]></content>
       <categories>
+        <category>数据库</category>
         <category>Redis修炼</category>
       </categories>
       <tags>
-        <tag>Redis数据类型</tag>
+        <tag>数据库</tag>
+        <tag>Redis</tag>
+        <tag>数据类型</tag>
       </tags>
   </entry>
   <entry>
@@ -254,15 +254,18 @@
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    mysql = Mysql()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 查找数据</span></span><br><span class="line">    search_sql = <span class="string">"""</span></span><br><span class="line"><span class="string">    SELECT id, event FROM monitortb WHERE event in &#123;&#125; AND status = 'OP'</span></span><br><span class="line"><span class="string">    """</span>.format(<span class="string">"test"</span>)</span><br><span class="line">    search_result = mysql.getAll(search_sql)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 更新数据</span></span><br><span class="line">    increase_sql = <span class="string">"""</span></span><br><span class="line"><span class="string">    UPDATE monitortb SET cnt = cnt + &#123;&#125; WHERE id = &#123;&#125;</span></span><br><span class="line"><span class="string">    """</span>.format([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 插入数据</span></span><br><span class="line">    insert_sql = <span class="string">"""</span></span><br><span class="line"><span class="string">    INSERT INTO monitortb (</span></span><br><span class="line"><span class="string">    intype, innum, level, sysname, pl, clr, cnt, indate, event, status</span></span><br><span class="line"><span class="string">    ) VALUES (</span></span><br><span class="line"><span class="string">    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s</span></span><br><span class="line"><span class="string">    )</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="comment"># 需要插入的多条数据的列表 </span></span><br><span class="line">    insert_value_list = []</span><br><span class="line">    mysql.insertMany(insert_sql, insert_value_list)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 断开连接池</span></span><br><span class="line">    mysql.dispose()</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
-        <category>Python</category>
+        <category>数据库</category>
+        <category>MySql修炼</category>
       </categories>
       <tags>
+        <tag>数据库</tag>
         <tag>数据库连接池</tag>
+        <tag>MySql</tag>
       </tags>
   </entry>
   <entry>
     <title>红黑树</title>
-    <url>/2020/11/09/red-black-tree/</url>
+    <url>/2020/11/01/red-black-tree/</url>
     <content><![CDATA[<p>红黑树其实就是一种数据结构，设计它的目的就是为了高效地进行增删改查，我们可以从二叉查找树逐渐引入到红黑树：</p>
 <h3 id="一、二叉查找树"><a href="#一、二叉查找树" class="headerlink" title="一、二叉查找树"></a>一、二叉查找树</h3><p>特性：<br>（1）左子树上所有结点的值均小于或等于它的根结点的值；<br>（2）右子树上所有结点的值均大于或等于它的根结点的值。</p>
 <a id="more"></a>
@@ -283,15 +286,16 @@
 <p>参考链接：<a href="https://www.zhihu.com/question/312327402/answer/1560653215" target="_blank" rel="noopener">红黑树详解</a>  </p>
 ]]></content>
       <categories>
-        <category>算法结构</category>
+        <category>数据结构</category>
       </categories>
       <tags>
+        <tag>数据结构</tag>
         <tag>红黑树</tag>
       </tags>
   </entry>
   <entry>
     <title>B树与B+树</title>
-    <url>/2020/11/01/B-B-tree/</url>
+    <url>/2020/10/17/B-B-tree/</url>
     <content><![CDATA[<h2 id="一、B树和B-树的区别"><a href="#一、B树和B-树的区别" class="headerlink" title="一、B树和B+树的区别"></a>一、B树和B+树的区别</h2><p>很明显，我们要想弄清楚原因就要知道B树和B+树的区别。为了不长篇大论。我们直接给出他们的形式总结他们的特点。</p>
 <h3 id="1、B树"><a href="#1、B树" class="headerlink" title="1、B树"></a>1、B树</h3><p>B树是一种自平衡的搜索树，形式很简单：</p>
 <a id="more"></a>
@@ -311,10 +315,84 @@
 <p>原题链接：<a href="https://zhuanlan.zhihu.com/p/102628897" target="_blank" rel="noopener">为什么 MongoDB 索引选择B树，而 Mysql 选择B+树</a>  </p>
 ]]></content>
       <categories>
-        <category>算法结构</category>
+        <category>数据结构</category>
       </categories>
       <tags>
         <tag>B树与B+树</tag>
+        <tag>数据结构</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>VMware vSphere 之 vCenter 指标采集</title>
+    <url>/2020/10/09/vmware-vsphere/</url>
+    <content><![CDATA[<blockquote>
+<h3 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h3></blockquote>
+<p>VMware vSphere 是 VMware 的虚拟化平台，可将数据中心转换为包括 CPU、存储和网络资源的聚合计算基础架构。vSphere 将这些基础架构作为一个统一的运行环境进行管理，并提供工具来管理加入该环境的数据中心。</p>
+<p>在对接或采集VMware vSphere虚拟化平台的场景中，比如配置八爪鱼，需要对其中的虚拟化数据中心、虚拟化集群、物理机、虚拟机、存储等指标进行多方位的采集，我们根据VMware提供的相应sdk接口，对接到蓝鲸的SaaS中。</p>
+<a id="more"></a>
+<blockquote>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3></blockquote>
+<h3 id="一-vSphere的模型结构"><a href="#一-vSphere的模型结构" class="headerlink" title="一   vSphere的模型结构"></a>一   vSphere的模型结构</h3><h4 id="1-1-模型及关联关系"><a href="#1-1-模型及关联关系" class="headerlink" title="1.1    模型及关联关系"></a>1.1    模型及关联关系</h4><h5 id="1-1-1-名词解释"><a href="#1-1-1-名词解释" class="headerlink" title="1.1.1   名词解释"></a>1.1.1   名词解释</h5><p>VCenter: 虚拟机管理中心，</p>
+<p>DCenter: 虚拟化数据中心，</p>
+<p>Cluster: 虚拟化集群</p>
+<p>Server: 物理机</p>
+<p>Virtual: 虚拟机</p>
+<p>Storage: 存储</p>
+<h5 id="1-1-2-从属关系"><a href="#1-1-2-从属关系" class="headerlink" title="1.1.2   从属关系"></a>1.1.2   从属关系</h5><p>从属关系: VCenter =&gt; DCenter =&gt; Cluster =&gt; Server =&gt; Virtual &amp; Storage</p>
+<h5 id="1-1-3-指标采集"><a href="#1-1-3-指标采集" class="headerlink" title="1.1.3   指标采集"></a>1.1.3   指标采集</h5><p>以上是最常见、最标准的多级结构，管理平台到数据中心，到集群，再到物理机，物理机包含虚拟机和存储单元。但是这并不是固定的，某些情况，我们也可以直接把物理机挂载在数据中心DCenter中，而存储也可以直接关联到集群，这就导致了我们采集各项指标的时候，事先并不知道客户环境是否按照标准化的结构来构建VCenter，关联关系也各不相同，导致采集到的数据与CMDB模型和关联关系不适配。这些问题需要调研的时候确定环境的VCenter结构，并且CMDB建模时与之适配，这才能使得数据采集上报工作正常开展。</p>
+<h3 id="二-vSphere采集"><a href="#二-vSphere采集" class="headerlink" title="二   vSphere采集"></a>二   vSphere采集</h3><h4 id="2-1-对接vSphere"><a href="#2-1-对接vSphere" class="headerlink" title="2.1    对接vSphere"></a>2.1    对接vSphere</h4><h5 id="2-1-1-使用VMware官方sdk"><a href="#2-1-1-使用VMware官方sdk" class="headerlink" title="2.1.1   使用VMware官方sdk"></a>2.1.1   使用VMware官方sdk</h5><p>VMware官方提供了多种多种sdk，由于我们使用Django开发SaaS，直接使用pip安装依赖即可，版本号由vSphere版本确定，现最新版为7.0，6.x是最常见的版本。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">pip install pyvmomi==6.5</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="2-1-2-连接vSphere"><a href="#2-1-2-连接vSphere" class="headerlink" title="2.1.2   连接vSphere"></a>2.1.2   连接vSphere</h5><p>采集之前，我们需要提供vSphere的地址，ip或者有DNS的域名都可以，以及需要vSphere的管理员账号和密码，账号通常为<a href="mailto:administrator@vsphere.local">administrator@vsphere.local</a>。有了以上信息后，我们通过ssl模块连接到vSphere，具体实现如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">connect_vc</span><span class="params">(vcserver)</span>:</span></span><br><span class="line">    <span class="keyword">try</span>: </span><br><span class="line">        context = ssl.SSLContext(ssl.PROTOCOL_TLSv1) </span><br><span class="line">        context.verify_mode = ssl.CERT_NONE  </span><br><span class="line">        si = SmartConnect(host=vcserver[<span class="string">"ip"</span>], user=vcserver[<span class="string">"user"</span>], pwd=vcserver[<span class="string">"password"</span>], port=<span class="number">443</span>, sslContext=context)  </span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        context = ssl._create_unverified_context()  </span><br><span class="line">        context.verify_mode = ssl.CERT_NONE  </span><br><span class="line">        si = SmartConnect(host=vcserver[<span class="string">"ip"</span>], user=vcserver[<span class="string">"user"</span>], pwd=vcserver[<span class="string">"password"</span>], port=<span class="number">443</span>, sslContext=context)  </span><br><span class="line">    <span class="keyword">return</span> si.RetrieveContent()</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-2-采集模型指标"><a href="#2-2-采集模型指标" class="headerlink" title="2.2    采集模型指标"></a>2.2    采集模型指标</h4><p>由于vSphere是层级结构，我们想要采集某一层的指标，就需要从上往下逐层采集，开发时，我们需要引入vSphere的sdk。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pyVim.connect <span class="keyword">import</span> SmartConnect </span><br><span class="line"><span class="keyword">from</span> pyVmomi <span class="keyword">import</span> vim, vmodl</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="2-2-1-VCenter"><a href="#2-2-1-VCenter" class="headerlink" title="2.2.1   VCenter"></a>2.2.1   VCenter</h5><p>VCenter是关联关系最上的一层结构，获取VCenter的信息：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_vc_info</span><span class="params">(content)</span>:</span> </span><br><span class="line">    <span class="string">"""获取VC服务器配置信"""</span> </span><br><span class="line">    hostname = content.setting.QueryOptions(<span class="string">"VirtualCenter.FQDN"</span>)[<span class="number">0</span>].value </span><br><span class="line">    ver = content.about.version </span><br><span class="line">    licensesinfo = [&#123;<span class="string">"name"</span>: l.name, <span class="string">"license"</span>: l.licenseKey, <span class="string">"costUnit"</span>: l.costUnit,  <span class="string">"total"</span>: l.total <span class="keyword">if</span> l.total != <span class="number">0</span> <span class="keyword">else</span> <span class="string">"Unlimited"</span>, <span class="string">"used"</span>: l.used&#125; <span class="keyword">for</span> l <span class="keyword">in</span> content.licenseManager.licenses] </span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">"hostname"</span>: hostname, <span class="string">"version"</span>: ver, <span class="string">"licensesinfo"</span>: licensesinfo&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如上，使用connect_vc连接vSphere返回的content作为参数，实例代码中展示了采集版本和licenses的信息，更多的参数如日志的等级、日志文件大小及数据库信息等，可以自行添加，不做展示。而想要采集该VCenter下有多少DCenter，则需要往下继续采集统计。</p>
+<h5 id="2-2-2-DCenter"><a href="#2-2-2-DCenter" class="headerlink" title="2.2.2   DCenter"></a>2.2.2   DCenter</h5><p>同上，由于一个vSphere只有一个VCenter，所以我们可以直接采集到所有DCenter，不需要额外的参数。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_dcenter</span><span class="params">(self)</span>:</span></span><br><span class="line">    container = self.connect.viewManager.CreateContainerView(self.connect.rootFolder, [vim.Datacenter], <span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">for</span> dcenter <span class="keyword">in</span> container.view:</span><br><span class="line">        dcenter_name = dcenter.name</span><br><span class="line">        dcenter_moid = dcenter._moId</span><br><span class="line">    <span class="keyword">return</span> dcenter_moid</span><br></pre></td></tr></table></figure>
+
+<p>self.connect为连接成功vSphere后返回的content，这样我们就采集到了DCenter的名称及moid（唯一标识），同理，需要额外参数可自行添加，官方文档有详细指标说明。</p>
+<h5 id="2-2-3-Cluster"><a href="#2-2-3-Cluster" class="headerlink" title="2.2.3   Cluster"></a>2.2.3   Cluster</h5><p>Cluster集群是属于DCenter数据中心下的结构，所以我们需要通过数据中心的moid来获取对应集群信息。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_cluster</span><span class="params">(self, dcenter_list)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> dcenter_data <span class="keyword">in</span> dcenter_list:</span><br><span class="line">        moId = dcenter_data[<span class="string">"detail"</span>][<span class="string">"moId"</span>]</span><br><span class="line">        com_info = vm_helper.get_obj_bymoId(self.connect, [vim.Datacenter], moId)</span><br><span class="line">        container = self.connect.viewManager.CreateContainerView(com_info.hostFolder, [vim.ComputeResource], <span class="literal">True</span>)</span><br><span class="line">        <span class="keyword">for</span> cluster <span class="keyword">in</span> container.view:</span><br><span class="line">            cluster_moid = cluster._moId</span><br><span class="line">            get_cluster_resource(content, cluster_moid)</span><br></pre></td></tr></table></figure>
+
+<p>以上代码通过DCenter的moid获取了属于它的全部Cluster信息，我们使用cluster._moId，便可采集到集群的多项指标，也是最常见的需求。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_cluster_resource</span><span class="params">(self, content, cluster_moId)</span>:</span></span><br><span class="line">    <span class="string">"""获取群集资源概况"""</span></span><br><span class="line">    cluster = get_obj_bymoId(content, [vim.ClusterComputeResource], cluster_moId)</span><br><span class="line">    summary = cluster.summary</span><br><span class="line">    totalCpuMhz = summary.totalCpu</span><br><span class="line">    totalMemMB = summary.totalMemory</span><br><span class="line">    capacity_list = []</span><br><span class="line">    freeSpace_list = []</span><br><span class="line">    <span class="keyword">for</span> datastore <span class="keyword">in</span> cluster.datastore:</span><br><span class="line">        capacity_list.append(datastore.summary.capacity)</span><br><span class="line">        freeSpace_list.append(datastore.summary.freeSpace)</span><br><span class="line">    totalDiskTB = <span class="string">"%.3f"</span> % (float(sum(capacity_list)) / <span class="number">1024</span> / <span class="number">1024</span> / <span class="number">1024</span> / <span class="number">1024</span>)</span><br><span class="line">    DiskUsedTB = <span class="string">"%.3f"</span> % (float(sum(capacity_list) - sum(freeSpace_list)) / <span class="number">1024</span> / <span class="number">1024</span> / <span class="number">1024</span> / <span class="number">1024</span>)</span><br><span class="line">    resource_quickstats = cluster.resourcePool.summary.quickStats</span><br><span class="line">    cpuUsedMhz = resource_quickstats.overallCpuUsage</span><br><span class="line">    memUsedMB = resource_quickstats.hostMemoryUsage</span><br><span class="line">    <span class="keyword">return</span> cluster</span><br></pre></td></tr></table></figure>
+
+<p>以上代码中，我演示了如何获取集群CPU、内存、磁盘的一些指标，包括总容量和已使用量等，同理，如需更多指标，参照官方文档的字段说明。</p>
+<h5 id="2-2-4-Server"><a href="#2-2-4-Server" class="headerlink" title="2.2.4   Server"></a>2.2.4   Server</h5><p>物理机是隶属于集群下的，只需提供集群的moid，便可获取物理机列表，物理机各项指标通过对应物理机的moid获取，参照官方文档字段说明，不多赘述。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_server</span><span class="params">(self, cluster_list)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> cluster_data <span class="keyword">in</span> cluster_list:</span><br><span class="line">        moId = cluster_data[<span class="string">"detail"</span>][<span class="string">"moId"</span>]</span><br><span class="line">        com_info = vm_helper.get_obj_bymoId(self.connect, [vim.ComputeResource], moId)</span><br><span class="line">        <span class="keyword">for</span> server <span class="keyword">in</span> com_info.host:</span><br><span class="line">            server_name = server.name</span><br><span class="line">            server_moid = server._moId</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="2-2-5-Virtual-amp-Storage"><a href="#2-2-5-Virtual-amp-Storage" class="headerlink" title="2.2.5   Virtual &amp; Storage"></a>2.2.5   Virtual &amp; Storage</h5><p>虚拟机和存储是挂载在物理机下的，采集方法相同，以下只列出虚拟机的采集方法。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_vm</span><span class="params">(self, server)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> vm <span class="keyword">in</span> server.vm:</span><br><span class="line">        <span class="keyword">if</span> vm.summary.guest.ipAddress:</span><br><span class="line">            vm_ip = vm.summary.guest.ipAddress</span><br><span class="line">            vm_name = vm.name</span><br><span class="line">            vm_moid = vm.moid</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以采集到虚拟机的ip和名称，适用moid可以同集群一般，采集更多指标。</p>
+<h3 id="三-个人总结"><a href="#三-个人总结" class="headerlink" title="三   个人总结"></a>三   个人总结</h3><h4 id="3-1-适用场景分析"><a href="#3-1-适用场景分析" class="headerlink" title="3.1    适用场景分析"></a>3.1    适用场景分析</h4><p>在大多情况下，以上vSphere采集是获取vSphere资产全貌的手段，不推荐作为监控的手段，尤其是在庞大体量的VCenter中，循环且频繁地调用sdk不是长久的方法，或许会对本身产生未知影响。vSphere采集适用的场景为：适用配置八爪鱼获取VCenter下所有层级的实例数据和关联关系，然后录入CMDB，主要为虚拟机的IP，通过IP安装可监控指标的Agent，实现对物理机、虚拟机和存储的指标和健康度。</p>
+<hr>
+<p>更多指标采集参考官方文档：</p>
+<p><a href="https://vdc-download.vmware.com/vmwb-repository/dcr-public/6b586ed2-655c-49d9-9029-bc416323cb22/fa0b429a-a695-4c11-b7d2-2cbc284049dc/doc/index-methods.html" target="_blank" rel="noopener">https://vdc-download.vmware.com/vmwb-repository/dcr-public/6b586ed2-655c-49d9-9029-bc416323cb22/fa0b429a-a695-4c11-b7d2-2cbc284049dc/doc/index-methods.html</a></p>
+]]></content>
+      <categories>
+        <category>Python</category>
+        <category>VMware</category>
+      </categories>
+      <tags>
+        <tag>VMware vSphere</tag>
+        <tag>vCenter</tag>
+        <tag>虚拟化</tag>
+        <tag>技术文章</tag>
       </tags>
   </entry>
   <entry>
@@ -333,10 +411,11 @@
 <p>原题链接：<a href="https://www.nowcoder.com/practice/a861533d45854474ac791d90e447bafd?tpId=13&&tqId=11176&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking" target="_blank" rel="noopener">二叉搜索树的后序遍历序列</a>  </p>
 ]]></content>
       <categories>
-        <category>学习笔记</category>
+        <category>算法修炼</category>
       </categories>
       <tags>
         <tag>剑指offer</tag>
+        <tag>二叉搜索树</tag>
       </tags>
   </entry>
   <entry>
@@ -365,6 +444,7 @@
         <category>前端开发指南</category>
       </categories>
       <tags>
+        <tag>前端</tag>
         <tag>微信轻应用</tag>
       </tags>
   </entry>
@@ -405,7 +485,10 @@
         <category>Django</category>
       </categories>
       <tags>
-        <tag>uWSGI + Nginx + Django</tag>
+        <tag>技术文章</tag>
+        <tag>uWSGI</tag>
+        <tag>Nginx</tag>
+        <tag>Django</tag>
       </tags>
   </entry>
   <entry>
@@ -432,6 +515,7 @@
       </categories>
       <tags>
         <tag>大数据分析</tag>
+        <tag>算法</tag>
       </tags>
   </entry>
   <entry>
@@ -497,7 +581,8 @@
         <category>Git</category>
       </categories>
       <tags>
-        <tag>Git基础</tag>
+        <tag>Git</tag>
+        <tag>版本控制</tag>
       </tags>
   </entry>
   <entry>
@@ -518,6 +603,7 @@
       </categories>
       <tags>
         <tag>第一条博客</tag>
+        <tag>非技术</tag>
       </tags>
   </entry>
 </search>

@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+<script src="https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/autoload.js"></script>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"api.ddoudou.xyz","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="摘要 VMware vSphere 是 VMware 的虚拟化平台，可将数据中心转换为包括 CPU、存储和网络资源的聚合计算基础架构。vSphere 将这些基础架构作为一个统一的运行环境进行管理，并提供工具来管理加入该环境的数据中心。 在对接或采集VMware vSphere虚拟化平台的场景中，比如配置八爪鱼，需要对其中的虚拟化数据中心、虚拟化集群、物理机、虚拟机、存储等指标进行多方位的采集，我">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VMware vSphere 之 vCenter 指标采集">
+<meta property="og:url" content="http://api.ddoudou.xyz/2020/10/09/vmware-vsphere/index.html">
+<meta property="og:site_name" content="Sapphire">
+<meta property="og:description" content="摘要 VMware vSphere 是 VMware 的虚拟化平台，可将数据中心转换为包括 CPU、存储和网络资源的聚合计算基础架构。vSphere 将这些基础架构作为一个统一的运行环境进行管理，并提供工具来管理加入该环境的数据中心。 在对接或采集VMware vSphere虚拟化平台的场景中，比如配置八爪鱼，需要对其中的虚拟化数据中心、虚拟化集群、物理机、虚拟机、存储等指标进行多方位的采集，我">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-10-09T10:06:10.000Z">
+<meta property="article:modified_time" content="2020-11-16T15:57:31.161Z">
+<meta property="article:author" content="Ryan Shu">
+<meta property="article:tag" content="VMware vSphere">
+<meta property="article:tag" content="vCenter">
+<meta property="article:tag" content="虚拟化">
+<meta property="article:tag" content="技术文章">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://api.ddoudou.xyz/2020/10/09/vmware-vsphere/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>VMware vSphere 之 vCenter 指标采集 | Sapphire</title>
+  
+
+
+  <script data-pjax>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cb91e256c80f8b8d7202046261e973af";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--pjax：防止跳转页面音乐暂停-->
+  <script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script>
+<link rel="alternate" href="/atom.xml" title="Sapphire" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sapphire</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/aboutme/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">26</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">12</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">12</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/sususama5555" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://api.ddoudou.xyz/2020/10/09/vmware-vsphere/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/picture/avatar.jpg">
+      <meta itemprop="name" content="Ryan Shu">
+      <meta itemprop="description" content="兴趣使然的博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sapphire">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          VMware vSphere 之 vCenter 指标采集
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-09 18:06:10" itemprop="dateCreated datePublished" datetime="2020-10-09T18:06:10+08:00">2020-10-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-11-16 23:57:31" itemprop="dateModified" datetime="2020-11-16T23:57:31+08:00">2020-11-16</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/VMware/" itemprop="url" rel="index"><span itemprop="name">VMware</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<h3 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h3></blockquote>
+<p>VMware vSphere 是 VMware 的虚拟化平台，可将数据中心转换为包括 CPU、存储和网络资源的聚合计算基础架构。vSphere 将这些基础架构作为一个统一的运行环境进行管理，并提供工具来管理加入该环境的数据中心。</p>
+<p>在对接或采集VMware vSphere虚拟化平台的场景中，比如配置八爪鱼，需要对其中的虚拟化数据中心、虚拟化集群、物理机、虚拟机、存储等指标进行多方位的采集，我们根据VMware提供的相应sdk接口，对接到蓝鲸的SaaS中。</p>
+<a id="more"></a>
+<blockquote>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3></blockquote>
+<h3 id="一-vSphere的模型结构"><a href="#一-vSphere的模型结构" class="headerlink" title="一   vSphere的模型结构"></a>一   vSphere的模型结构</h3><h4 id="1-1-模型及关联关系"><a href="#1-1-模型及关联关系" class="headerlink" title="1.1    模型及关联关系"></a>1.1    模型及关联关系</h4><h5 id="1-1-1-名词解释"><a href="#1-1-1-名词解释" class="headerlink" title="1.1.1   名词解释"></a>1.1.1   名词解释</h5><p>VCenter: 虚拟机管理中心，</p>
+<p>DCenter: 虚拟化数据中心，</p>
+<p>Cluster: 虚拟化集群</p>
+<p>Server: 物理机</p>
+<p>Virtual: 虚拟机</p>
+<p>Storage: 存储</p>
+<h5 id="1-1-2-从属关系"><a href="#1-1-2-从属关系" class="headerlink" title="1.1.2   从属关系"></a>1.1.2   从属关系</h5><p>从属关系: VCenter =&gt; DCenter =&gt; Cluster =&gt; Server =&gt; Virtual &amp; Storage</p>
+<h5 id="1-1-3-指标采集"><a href="#1-1-3-指标采集" class="headerlink" title="1.1.3   指标采集"></a>1.1.3   指标采集</h5><p>以上是最常见、最标准的多级结构，管理平台到数据中心，到集群，再到物理机，物理机包含虚拟机和存储单元。但是这并不是固定的，某些情况，我们也可以直接把物理机挂载在数据中心DCenter中，而存储也可以直接关联到集群，这就导致了我们采集各项指标的时候，事先并不知道客户环境是否按照标准化的结构来构建VCenter，关联关系也各不相同，导致采集到的数据与CMDB模型和关联关系不适配。这些问题需要调研的时候确定环境的VCenter结构，并且CMDB建模时与之适配，这才能使得数据采集上报工作正常开展。</p>
+<h3 id="二-vSphere采集"><a href="#二-vSphere采集" class="headerlink" title="二   vSphere采集"></a>二   vSphere采集</h3><h4 id="2-1-对接vSphere"><a href="#2-1-对接vSphere" class="headerlink" title="2.1    对接vSphere"></a>2.1    对接vSphere</h4><h5 id="2-1-1-使用VMware官方sdk"><a href="#2-1-1-使用VMware官方sdk" class="headerlink" title="2.1.1   使用VMware官方sdk"></a>2.1.1   使用VMware官方sdk</h5><p>VMware官方提供了多种多种sdk，由于我们使用Django开发SaaS，直接使用pip安装依赖即可，版本号由vSphere版本确定，现最新版为7.0，6.x是最常见的版本。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install pyvmomi==6.5</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="2-1-2-连接vSphere"><a href="#2-1-2-连接vSphere" class="headerlink" title="2.1.2   连接vSphere"></a>2.1.2   连接vSphere</h5><p>采集之前，我们需要提供vSphere的地址，ip或者有DNS的域名都可以，以及需要vSphere的管理员账号和密码，账号通常为<a href="mailto:administrator@vsphere.local">administrator@vsphere.local</a>。有了以上信息后，我们通过ssl模块连接到vSphere，具体实现如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">connect_vc</span><span class="params">(vcserver)</span>:</span></span><br><span class="line">    <span class="keyword">try</span>: </span><br><span class="line">        context = ssl.SSLContext(ssl.PROTOCOL_TLSv1) </span><br><span class="line">        context.verify_mode = ssl.CERT_NONE  </span><br><span class="line">        si = SmartConnect(host=vcserver[<span class="string">"ip"</span>], user=vcserver[<span class="string">"user"</span>], pwd=vcserver[<span class="string">"password"</span>], port=<span class="number">443</span>, sslContext=context)  </span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        context = ssl._create_unverified_context()  </span><br><span class="line">        context.verify_mode = ssl.CERT_NONE  </span><br><span class="line">        si = SmartConnect(host=vcserver[<span class="string">"ip"</span>], user=vcserver[<span class="string">"user"</span>], pwd=vcserver[<span class="string">"password"</span>], port=<span class="number">443</span>, sslContext=context)  </span><br><span class="line">    <span class="keyword">return</span> si.RetrieveContent()</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-2-采集模型指标"><a href="#2-2-采集模型指标" class="headerlink" title="2.2    采集模型指标"></a>2.2    采集模型指标</h4><p>由于vSphere是层级结构，我们想要采集某一层的指标，就需要从上往下逐层采集，开发时，我们需要引入vSphere的sdk。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyVim.connect <span class="keyword">import</span> SmartConnect </span><br><span class="line"><span class="keyword">from</span> pyVmomi <span class="keyword">import</span> vim, vmodl</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="2-2-1-VCenter"><a href="#2-2-1-VCenter" class="headerlink" title="2.2.1   VCenter"></a>2.2.1   VCenter</h5><p>VCenter是关联关系最上的一层结构，获取VCenter的信息：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_vc_info</span><span class="params">(content)</span>:</span> </span><br><span class="line">    <span class="string">"""获取VC服务器配置信"""</span> </span><br><span class="line">    hostname = content.setting.QueryOptions(<span class="string">"VirtualCenter.FQDN"</span>)[<span class="number">0</span>].value </span><br><span class="line">    ver = content.about.version </span><br><span class="line">    licensesinfo = [&#123;<span class="string">"name"</span>: l.name, <span class="string">"license"</span>: l.licenseKey, <span class="string">"costUnit"</span>: l.costUnit,  <span class="string">"total"</span>: l.total <span class="keyword">if</span> l.total != <span class="number">0</span> <span class="keyword">else</span> <span class="string">"Unlimited"</span>, <span class="string">"used"</span>: l.used&#125; <span class="keyword">for</span> l <span class="keyword">in</span> content.licenseManager.licenses] </span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">"hostname"</span>: hostname, <span class="string">"version"</span>: ver, <span class="string">"licensesinfo"</span>: licensesinfo&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如上，使用connect_vc连接vSphere返回的content作为参数，实例代码中展示了采集版本和licenses的信息，更多的参数如日志的等级、日志文件大小及数据库信息等，可以自行添加，不做展示。而想要采集该VCenter下有多少DCenter，则需要往下继续采集统计。</p>
+<h5 id="2-2-2-DCenter"><a href="#2-2-2-DCenter" class="headerlink" title="2.2.2   DCenter"></a>2.2.2   DCenter</h5><p>同上，由于一个vSphere只有一个VCenter，所以我们可以直接采集到所有DCenter，不需要额外的参数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_dcenter</span><span class="params">(self)</span>:</span></span><br><span class="line">    container = self.connect.viewManager.CreateContainerView(self.connect.rootFolder, [vim.Datacenter], <span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">for</span> dcenter <span class="keyword">in</span> container.view:</span><br><span class="line">        dcenter_name = dcenter.name</span><br><span class="line">        dcenter_moid = dcenter._moId</span><br><span class="line">    <span class="keyword">return</span> dcenter_moid</span><br></pre></td></tr></table></figure>
+
+<p>self.connect为连接成功vSphere后返回的content，这样我们就采集到了DCenter的名称及moid（唯一标识），同理，需要额外参数可自行添加，官方文档有详细指标说明。</p>
+<h5 id="2-2-3-Cluster"><a href="#2-2-3-Cluster" class="headerlink" title="2.2.3   Cluster"></a>2.2.3   Cluster</h5><p>Cluster集群是属于DCenter数据中心下的结构，所以我们需要通过数据中心的moid来获取对应集群信息。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_cluster</span><span class="params">(self, dcenter_list)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> dcenter_data <span class="keyword">in</span> dcenter_list:</span><br><span class="line">        moId = dcenter_data[<span class="string">"detail"</span>][<span class="string">"moId"</span>]</span><br><span class="line">        com_info = vm_helper.get_obj_bymoId(self.connect, [vim.Datacenter], moId)</span><br><span class="line">        container = self.connect.viewManager.CreateContainerView(com_info.hostFolder, [vim.ComputeResource], <span class="literal">True</span>)</span><br><span class="line">        <span class="keyword">for</span> cluster <span class="keyword">in</span> container.view:</span><br><span class="line">            cluster_moid = cluster._moId</span><br><span class="line">            get_cluster_resource(content, cluster_moid)</span><br></pre></td></tr></table></figure>
+
+<p>以上代码通过DCenter的moid获取了属于它的全部Cluster信息，我们使用cluster._moId，便可采集到集群的多项指标，也是最常见的需求。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_cluster_resource</span><span class="params">(self, content, cluster_moId)</span>:</span></span><br><span class="line">    <span class="string">"""获取群集资源概况"""</span></span><br><span class="line">    cluster = get_obj_bymoId(content, [vim.ClusterComputeResource], cluster_moId)</span><br><span class="line">    summary = cluster.summary</span><br><span class="line">    totalCpuMhz = summary.totalCpu</span><br><span class="line">    totalMemMB = summary.totalMemory</span><br><span class="line">    capacity_list = []</span><br><span class="line">    freeSpace_list = []</span><br><span class="line">    <span class="keyword">for</span> datastore <span class="keyword">in</span> cluster.datastore:</span><br><span class="line">        capacity_list.append(datastore.summary.capacity)</span><br><span class="line">        freeSpace_list.append(datastore.summary.freeSpace)</span><br><span class="line">    totalDiskTB = <span class="string">"%.3f"</span> % (float(sum(capacity_list)) / <span class="number">1024</span> / <span class="number">1024</span> / <span class="number">1024</span> / <span class="number">1024</span>)</span><br><span class="line">    DiskUsedTB = <span class="string">"%.3f"</span> % (float(sum(capacity_list) - sum(freeSpace_list)) / <span class="number">1024</span> / <span class="number">1024</span> / <span class="number">1024</span> / <span class="number">1024</span>)</span><br><span class="line">    resource_quickstats = cluster.resourcePool.summary.quickStats</span><br><span class="line">    cpuUsedMhz = resource_quickstats.overallCpuUsage</span><br><span class="line">    memUsedMB = resource_quickstats.hostMemoryUsage</span><br><span class="line">    <span class="keyword">return</span> cluster</span><br></pre></td></tr></table></figure>
+
+<p>以上代码中，我演示了如何获取集群CPU、内存、磁盘的一些指标，包括总容量和已使用量等，同理，如需更多指标，参照官方文档的字段说明。</p>
+<h5 id="2-2-4-Server"><a href="#2-2-4-Server" class="headerlink" title="2.2.4   Server"></a>2.2.4   Server</h5><p>物理机是隶属于集群下的，只需提供集群的moid，便可获取物理机列表，物理机各项指标通过对应物理机的moid获取，参照官方文档字段说明，不多赘述。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_server</span><span class="params">(self, cluster_list)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> cluster_data <span class="keyword">in</span> cluster_list:</span><br><span class="line">        moId = cluster_data[<span class="string">"detail"</span>][<span class="string">"moId"</span>]</span><br><span class="line">        com_info = vm_helper.get_obj_bymoId(self.connect, [vim.ComputeResource], moId)</span><br><span class="line">        <span class="keyword">for</span> server <span class="keyword">in</span> com_info.host:</span><br><span class="line">            server_name = server.name</span><br><span class="line">            server_moid = server._moId</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="2-2-5-Virtual-amp-Storage"><a href="#2-2-5-Virtual-amp-Storage" class="headerlink" title="2.2.5   Virtual &amp; Storage"></a>2.2.5   Virtual &amp; Storage</h5><p>虚拟机和存储是挂载在物理机下的，采集方法相同，以下只列出虚拟机的采集方法。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_vm</span><span class="params">(self, server)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> vm <span class="keyword">in</span> server.vm:</span><br><span class="line">        <span class="keyword">if</span> vm.summary.guest.ipAddress:</span><br><span class="line">            vm_ip = vm.summary.guest.ipAddress</span><br><span class="line">            vm_name = vm.name</span><br><span class="line">            vm_moid = vm.moid</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以采集到虚拟机的ip和名称，适用moid可以同集群一般，采集更多指标。</p>
+<h3 id="三-个人总结"><a href="#三-个人总结" class="headerlink" title="三   个人总结"></a>三   个人总结</h3><h4 id="3-1-适用场景分析"><a href="#3-1-适用场景分析" class="headerlink" title="3.1    适用场景分析"></a>3.1    适用场景分析</h4><p>在大多情况下，以上vSphere采集是获取vSphere资产全貌的手段，不推荐作为监控的手段，尤其是在庞大体量的VCenter中，循环且频繁地调用sdk不是长久的方法，或许会对本身产生未知影响。vSphere采集适用的场景为：适用配置八爪鱼获取VCenter下所有层级的实例数据和关联关系，然后录入CMDB，主要为虚拟机的IP，通过IP安装可监控指标的Agent，实现对物理机、虚拟机和存储的指标和健康度。</p>
+<hr>
+<p>更多指标采集参考官方文档：</p>
+<p><a href="https://vdc-download.vmware.com/vmwb-repository/dcr-public/6b586ed2-655c-49d9-9029-bc416323cb22/fa0b429a-a695-4c11-b7d2-2cbc284049dc/doc/index-methods.html" target="_blank" rel="noopener">https://vdc-download.vmware.com/vmwb-repository/dcr-public/6b586ed2-655c-49d9-9029-bc416323cb22/fa0b429a-a695-4c11-b7d2-2cbc284049dc/doc/index-methods.html</a></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Ryan Shu
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://api.ddoudou.xyz/2020/10/09/vmware-vsphere/" title="VMware vSphere 之 vCenter 指标采集">http://api.ddoudou.xyz/2020/10/09/vmware-vsphere/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/picture/weixin.png">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/VMware-vSphere/" rel="tag"><i class="fa fa-tag"></i> VMware vSphere</a>
+              <a href="/tags/vCenter/" rel="tag"><i class="fa fa-tag"></i> vCenter</a>
+              <a href="/tags/%E8%99%9A%E6%8B%9F%E5%8C%96/" rel="tag"><i class="fa fa-tag"></i> 虚拟化</a>
+              <a href="/tags/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/" rel="tag"><i class="fa fa-tag"></i> 技术文章</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/26/2020-09-26/" rel="prev" title="记一次持续到凌晨两点半的coding">
+      <i class="fa fa-chevron-left"></i> 记一次持续到凌晨两点半的coding
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/10/17/B-B-tree/" rel="next" title="B树与B+树">
+      B树与B+树 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#摘要"><span class="nav-number">1.</span> <span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#正文"><span class="nav-number">2.</span> <span class="nav-text">正文</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一-vSphere的模型结构"><span class="nav-number">3.</span> <span class="nav-text">一   vSphere的模型结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-模型及关联关系"><span class="nav-number">3.1.</span> <span class="nav-text">1.1    模型及关联关系</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-1-名词解释"><span class="nav-number">3.1.1.</span> <span class="nav-text">1.1.1   名词解释</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-2-从属关系"><span class="nav-number">3.1.2.</span> <span class="nav-text">1.1.2   从属关系</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-3-指标采集"><span class="nav-number">3.1.3.</span> <span class="nav-text">1.1.3   指标采集</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二-vSphere采集"><span class="nav-number">4.</span> <span class="nav-text">二   vSphere采集</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-对接vSphere"><span class="nav-number">4.1.</span> <span class="nav-text">2.1    对接vSphere</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-1-1-使用VMware官方sdk"><span class="nav-number">4.1.1.</span> <span class="nav-text">2.1.1   使用VMware官方sdk</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-1-2-连接vSphere"><span class="nav-number">4.1.2.</span> <span class="nav-text">2.1.2   连接vSphere</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-采集模型指标"><span class="nav-number">4.2.</span> <span class="nav-text">2.2    采集模型指标</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-2-1-VCenter"><span class="nav-number">4.2.1.</span> <span class="nav-text">2.2.1   VCenter</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-2-2-DCenter"><span class="nav-number">4.2.2.</span> <span class="nav-text">2.2.2   DCenter</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-2-3-Cluster"><span class="nav-number">4.2.3.</span> <span class="nav-text">2.2.3   Cluster</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-2-4-Server"><span class="nav-number">4.2.4.</span> <span class="nav-text">2.2.4   Server</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-2-5-Virtual-amp-Storage"><span class="nav-number">4.2.5.</span> <span class="nav-text">2.2.5   Virtual &amp; Storage</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三-个人总结"><span class="nav-number">5.</span> <span class="nav-text">三   个人总结</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-适用场景分析"><span class="nav-number">5.1.</span> <span class="nav-text">3.1    适用场景分析</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ryan Shu"
+      src="/picture/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Ryan Shu</p>
+  <div class="site-description" itemprop="description">兴趣使然的博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/sususama5555" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;sususama5555" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:876324872@qq.com" title="E-Mail → mailto:876324872@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/sapphire5555" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;sapphire5555" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://steamcommunity.com/profiles/76561198294148424/" title="steam → https:&#x2F;&#x2F;steamcommunity.com&#x2F;profiles&#x2F;76561198294148424&#x2F;" rel="noopener" target="_blank"><i class="fab fa-steam fa-fw"></i>steam</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://ddoudou.xyz/" title="http:&#x2F;&#x2F;ddoudou.xyz" rel="noopener" target="_blank">豆豆的博客</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+      <!-- 音乐播放器 -->
+      
+           <div>
+              <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="210" height="110" src="//music.163.com/outchain/player?type=2&id=33911781&auto=1&height=66"></iframe>
+           </div>
+      
+
+      <!-- 滚动条 -->
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备20063016号 </a>
+      <img src="/picture/beian.png" style="display: inline-block;">
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ryan Shu</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">26k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">24 分钟</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+    </div>
+</body>
+</html>
