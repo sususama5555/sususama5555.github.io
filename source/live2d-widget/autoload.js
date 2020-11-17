@@ -2,6 +2,7 @@
 // const live2d_path = "https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/";
 // const live2d_path = "http://47.112.224.238/live2d-widget/";
 const live2d_path = "/live2d-widget/";
+console.log("sapphire live2d success")
 
 // 封装异步加载资源的方法
 function loadExternalResource(url, type) {
