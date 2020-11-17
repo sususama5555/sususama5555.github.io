@@ -207,8 +207,8 @@
         <category>Redis修炼</category>
       </categories>
       <tags>
-        <tag>Redis</tag>
         <tag>数据库</tag>
+        <tag>Redis</tag>
         <tag>数据类型</tag>
       </tags>
   </entry>
