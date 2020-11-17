@@ -2,11 +2,11 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Sapphire</title>
   
-  
+  <subtitle>興趣使然的博客</subtitle>
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://api.ddoudou.xyz/"/>
-  <updated>2020-11-16T15:57:06.572Z</updated>
+  <updated>2020-11-17T17:15:18.438Z</updated>
   <id>http://api.ddoudou.xyz/</id>
   
   <author>
@@ -15,6 +15,42 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Python之使用pyvmomi管理VMware</title>
+    <link href="http://api.ddoudou.xyz/2020/11/17/pyvmomi-sample/"/>
+    <id>http://api.ddoudou.xyz/2020/11/17/pyvmomi-sample/</id>
+    <published>2020-11-17T15:40:48.000Z</published>
+    <updated>2020-11-17T17:15:18.438Z</updated>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;h3 id=&quot;摘要&quot;&gt;&lt;a href=&quot;#摘要&quot; class=&quot;headerlink&quot; title=&quot;摘要&quot;&gt;&lt;/a&gt;摘要&lt;/h3&gt;&lt;/blockquote&gt;
+&lt;p&gt;官方定义：&lt;/p&gt;
+&lt;p&gt;pyVmomi is the Python SDK for the VMware vSphere API that allows you to manage ESX, ESXi, and vCenter.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://link.jianshu.com/?t=https://github.com/vmware/pyvmomi/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;pyVmomi&lt;/a&gt; 是 VMware vSphere API 的一个 Python sdk，我们可以利用它来管理与交互vCenter、ESX、ESXi，获取我们需要的信息。&lt;/p&gt;
+&lt;p&gt;由于工作中需要对接vCenter，实现虚拟化平台、数据中心、物理机、物理机和存储的指标采集及监控，也需要通过启停虚拟机网卡来实现灾备切换，所以本文结合了笔者的经验和 pyVmomi 官方案例。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="Python" scheme="http://api.ddoudou.xyz/categories/Python/"/>
+    
+      <category term="虚拟化" scheme="http://api.ddoudou.xyz/categories/Python/%E8%99%9A%E6%8B%9F%E5%8C%96/"/>
+    
+    
+      <category term="VMware vSphere" scheme="http://api.ddoudou.xyz/tags/VMware-vSphere/"/>
+    
+      <category term="vCenter" scheme="http://api.ddoudou.xyz/tags/vCenter/"/>
+    
+      <category term="虚拟化" scheme="http://api.ddoudou.xyz/tags/%E8%99%9A%E6%8B%9F%E5%8C%96/"/>
+    
+      <category term="Python" scheme="http://api.ddoudou.xyz/tags/Python/"/>
+    
+      <category term="pyvmomi" scheme="http://api.ddoudou.xyz/tags/pyvmomi/"/>
+    
+  </entry>
   
   <entry>
     <title>Redis修炼之使用场景</title>
@@ -67,9 +103,9 @@
       <category term="Redis修炼" scheme="http://api.ddoudou.xyz/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/Redis%E4%BF%AE%E7%82%BC/"/>
     
     
-      <category term="数据库" scheme="http://api.ddoudou.xyz/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
-    
       <category term="Redis" scheme="http://api.ddoudou.xyz/tags/Redis/"/>
+    
+      <category term="数据库" scheme="http://api.ddoudou.xyz/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
     
       <category term="数据类型" scheme="http://api.ddoudou.xyz/tags/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/"/>
     

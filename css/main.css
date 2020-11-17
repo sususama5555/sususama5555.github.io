@@ -1163,7 +1163,7 @@ pre .javascript .function {
   }
 }
 .book-mark-link::before {
-  color: #222;
+  color: #ff7600;
   content: '\f02e';
   font-size: 32px;
   line-height: 1;
@@ -1308,7 +1308,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #3ce5ff;
+  background: #4501ff;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
