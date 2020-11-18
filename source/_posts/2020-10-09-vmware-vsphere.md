@@ -2,6 +2,7 @@
 title: VMware vSphere 之 vCenter 指标采集
 date: 2020-10-09 18:06:10
 tags: 
+- Python
 - VMware vSphere
 - vCenter
 - 虚拟化

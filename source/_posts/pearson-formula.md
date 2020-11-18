@@ -2,6 +2,7 @@
 title: 'pearson相关系数'
 date: 2020-02-26 16:09:38
 tags: 
+- Python
 - 大数据分析
 - 算法
 categories: 

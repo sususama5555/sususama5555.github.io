@@ -2,6 +2,7 @@
 title: Python中构建MySql连接池
 date: 2020-11-09 23:17:35
 tags: 
+- Python
 - 数据库
 - 数据库连接池
 - MySql

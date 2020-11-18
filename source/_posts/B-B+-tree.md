@@ -58,4 +58,4 @@ MongoDB使用B树，所有节点都有Data域，只要找到指定索引就可�
 Mysql作为一个关系型数据库，数据的关联性是非常强的，区间访问是常见的一种情况，B+树由于数据全部存储在叶子节点，并且通过指针串在一起，这样就很容易的进行区间遍历甚至全部遍历。
 
 ******
-原题链接：[为什么 MongoDB 索引选择B树，而 Mysql 选择B+树](https://zhuanlan.zhihu.com/p/102628897)  
+参考链接：[为什么 MongoDB 索引选择B树，而 Mysql 选择B+树](https://zhuanlan.zhihu.com/p/102628897)  
