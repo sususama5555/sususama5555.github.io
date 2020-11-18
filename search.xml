@@ -1,6 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Python之多线程与多进程</title>
+    <url>/2020/11/18/python-thread-process/</url>
+    <content><![CDATA[<blockquote>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3></blockquote>
+<p>现代操作系统比如Mac OS X，UNIX，Linux，Windows等，都是支持“多任务”的操作系统，操作系统可以同时运行多个任务。</p>
+<p>对于操作系统来说，一个任务就是一个进程（Process），比如打开一个浏览器就是启动一个浏览器进程，打开一个记事本就启动了一个记事本进程，打开两个记事本就启动了两个记事本进程，打开一个Word就启动了一个Word进程。</p>
+<p>有些进程还不止同时干一件事，比如Word，它可以同时进行打字、拼写检查、打印等事情。在一个进程内部，要同时干多件事，就需要同时运行多个“子任务”，我们把进程内的这些“子任务”称为线程（Thread）。</p>
+<p>多任务的实现有3种方式：</p>
+<ul>
+<li>多进程模式；</li>
+<li>多线程模式；</li>
+<li>多进程 + 多线程模式。</li>
+</ul>
+<p>Python既支持多进程，又支持多线程，线程是最小的执行单元，而进程由至少一个线程组成。如何调度进程和线程，完全由操作系统决定，程序自己不能决定什么时候执行，执行多长时间。</p>
+<p>多进程和多线程的程序涉及到同步、数据共享的问题，编写起来更复杂。</p>
+<a id="more"></a>
+
+<h3 id="线程模块"><a href="#线程模块" class="headerlink" title="线程模块"></a>线程模块</h3><p>Python3 通过两个标准库 _thread 和 threading 提供对线程的支持。</p>
+<p>_thread 提供了低级别的、原始的线程以及一个简单的锁，它相比于 threading 模块的功能还是比较有限的。</p>
+<p>threading 模块除了包含 _thread 模块中的所有方法外，还提供的其他方法：</p>
+<ul>
+<li>threading.currentThread(): 返回当前的线程变量。</li>
+<li>threading.enumerate(): 返回一个包含正在运行的线程的list。正在运行指线程启动后、结束前，不包括启动前和终止后的线程。</li>
+<li>threading.activeCount(): 返回正在运行的线程数量，与len(threading.enumerate())有相同的结果。</li>
+</ul>
+<p>除了使用方法外，线程模块同样提供了Thread类来处理线程，Thread类提供了以下方法:</p>
+<ul>
+<li>run(): 用以表示线程活动的方法。</li>
+<li>start():启动线程活动。</li>
+<li>join([time]): 等待至线程中止。这阻塞调用线程直至线程的join() 方法被调用中止-正常退出或者抛出未处理的异常-或者是可选的超时发生。</li>
+<li>isAlive(): 返回线程是否活动的。</li>
+<li>getName(): 返回线程名。</li>
+<li>setName(): 设置线程名。</li>
+</ul>
+<hr>
+<h4 id="使用-threading-模块创建线程"><a href="#使用-threading-模块创建线程" class="headerlink" title="使用 threading 模块创建线程"></a>使用 threading 模块创建线程</h4><p>我们可以通过直接从 threading.Thread 继承创建一个新的子类，并实例化后调用 start() 方法启动新线程，即它调用了线程的 run() 方法：</p>
+<h5 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h5><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">exitFlag = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">myThread</span> <span class="params">(threading.Thread)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, threadID, name, counter)</span>:</span></span><br><span class="line">        threading.Thread.__init__(self)</span><br><span class="line">        self.threadID = threadID</span><br><span class="line">        self.name = name</span><br><span class="line">        self.counter = counter</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">print</span> (<span class="string">"开始线程："</span> + self.name)</span><br><span class="line">        print_time(self.name, self.counter, <span class="number">5</span>)</span><br><span class="line">        <span class="keyword">print</span> (<span class="string">"退出线程："</span> + self.name)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">print_time</span><span class="params">(threadName, delay, counter)</span>:</span></span><br><span class="line">    <span class="keyword">while</span> counter:</span><br><span class="line">        <span class="keyword">if</span> exitFlag:</span><br><span class="line">            threadName.exit()</span><br><span class="line">        time.sleep(delay)</span><br><span class="line">        <span class="keyword">print</span> (<span class="string">"%s: %s"</span> % (threadName, time.ctime(time.time())))</span><br><span class="line">        counter -= <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建新线程</span></span><br><span class="line">thread1 = myThread(<span class="number">1</span>, <span class="string">"Thread-1"</span>, <span class="number">1</span>)</span><br><span class="line">thread2 = myThread(<span class="number">2</span>, <span class="string">"Thread-2"</span>, <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 开启新线程</span></span><br><span class="line">thread1.start()</span><br><span class="line">thread2.start()</span><br><span class="line">thread1.join()</span><br><span class="line">thread2.join()</span><br><span class="line"><span class="keyword">print</span> (<span class="string">"退出主线程"</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="线程同步"><a href="#线程同步" class="headerlink" title="线程同步"></a>线程同步</h4><p>如果多个线程共同对某个数据修改，则可能出现不可预料的结果，为了保证数据的正确性，需要对多个线程进行同步。</p>
+<p>使用 Thread 对象的 Lock 和 Rlock 可以实现简单的线程同步，这两个对象都有 acquire 方法和 release 方法，对于那些需要每次只允许一个线程操作的数据，可以将其操作放到 acquire 和 release 方法之间。如下：</p>
+<p>多线程的优势在于可以同时运行多个任务（至少感觉起来是这样）。但是当线程需要共享数据时，可能存在数据不同步的问题。</p>
+<p>考虑这样一种情况：一个列表里所有元素都是0，线程”set”从后向前把所有元素改成1，而线程”print”负责从前往后读取列表并打印。</p>
+<p>那么，可能线程”set”开始改的时候，线程”print”便来打印列表了，输出就成了一半0一半1，这就是数据的不同步。为了避免这种情况，引入了锁的概念。</p>
+<p>锁有两种状态——锁定和未锁定。每当一个线程比如”set”要访问共享数据时，必须先获得锁定；如果已经有别的线程比如”print”获得锁定了，那么就让线程”set”暂停，也就是同步阻塞；等到线程”print”访问完毕，释放锁以后，再让线程”set”继续。</p>
+<p>经过这样的处理，打印列表时要么全部输出0，要么全部输出1，不会再出现一半0一半1的尴尬场面。</p>
+<h5 id="实例-1"><a href="#实例-1" class="headerlink" title="实例"></a>实例</h5><p>在以上代码加以改进，实现线程同步：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">myThread</span> <span class="params">(threading.Thread)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, threadID, name, counter)</span>:</span></span><br><span class="line">        threading.Thread.__init__(self)</span><br><span class="line">        self.threadID = threadID</span><br><span class="line">        self.name = name</span><br><span class="line">        self.counter = counter</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">print</span> (<span class="string">"开启线程： "</span> + self.name)</span><br><span class="line">        <span class="comment"># 获取锁，用于线程同步</span></span><br><span class="line">        threadLock.acquire()</span><br><span class="line">        print_time(self.name, self.counter, <span class="number">3</span>)</span><br><span class="line">        <span class="comment"># 释放锁，开启下一个线程</span></span><br><span class="line">        threadLock.release()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">print_time</span><span class="params">(threadName, delay, counter)</span>:</span></span><br><span class="line">    <span class="keyword">while</span> counter:</span><br><span class="line">        time.sleep(delay)</span><br><span class="line">        <span class="keyword">print</span> (<span class="string">"%s: %s"</span> % (threadName, time.ctime(time.time())))</span><br><span class="line">        counter -= <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建线程锁</span></span><br><span class="line">threadLock = threading.Lock()</span><br><span class="line">threads = []</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建新线程</span></span><br><span class="line">thread1 = myThread(<span class="number">1</span>, <span class="string">"Thread-1"</span>, <span class="number">1</span>)</span><br><span class="line">thread2 = myThread(<span class="number">2</span>, <span class="string">"Thread-2"</span>, <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 开启新线程</span></span><br><span class="line">thread1.start()</span><br><span class="line">thread2.start()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加线程到线程列表</span></span><br><span class="line">threads.append(thread1)</span><br><span class="line">threads.append(thread2)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 等待所有线程完成</span></span><br><span class="line"><span class="keyword">for</span> t <span class="keyword">in</span> threads:</span><br><span class="line">    t.join()</span><br><span class="line"><span class="keyword">print</span> (<span class="string">"退出主线程"</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="线程优先级队列（-Queue）"><a href="#线程优先级队列（-Queue）" class="headerlink" title="线程优先级队列（ Queue）"></a>线程优先级队列（ Queue）</h4><p>Python 的 Queue 模块中提供了同步的、线程安全的队列类，包括FIFO（先入先出)队列Queue，LIFO（后入先出）队列LifoQueue，和优先级队列 PriorityQueue。</p>
+<p>这些队列都实现了锁原语，能够在多线程中直接使用，可以使用队列来实现线程间的同步。</p>
+<p>Queue 模块中的常用方法:</p>
+<ul>
+<li>Queue.qsize() 返回队列的大小</li>
+<li>Queue.empty() 如果队列为空，返回True,反之False</li>
+<li>Queue.full() 如果队列满了，返回True,反之False</li>
+<li>Queue.full 与 maxsize 大小对应</li>
+<li>Queue.get([block[, timeout]])获取队列，timeout等待时间</li>
+<li>Queue.get_nowait() 相当Queue.get(False)</li>
+<li>Queue.put(item) 写入队列，timeout等待时间</li>
+<li>Queue.put_nowait(item) 相当Queue.put(item, False)</li>
+<li>Queue.task_done() 在完成一项工作之后，Queue.task_done()函数向任务已经完成的队列发送一个信号</li>
+<li>Queue.join() 实际上意味着等到队列为空，再执行别的操作</li>
+</ul>
+<h5 id="实例-2"><a href="#实例-2" class="headerlink" title="实例"></a>实例</h5><p>以下是在线程优先级队列Queue下的多线程实现：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#!&#x2F;usr&#x2F;bin&#x2F;python3</span><br><span class="line"></span><br><span class="line">import queue</span><br><span class="line">import threading</span><br><span class="line">import time</span><br><span class="line"></span><br><span class="line">exitFlag &#x3D; 0</span><br><span class="line"></span><br><span class="line">class myThread (threading.Thread):</span><br><span class="line">    def __init__(self, threadID, name, q):</span><br><span class="line">        threading.Thread.__init__(self)</span><br><span class="line">        self.threadID &#x3D; threadID</span><br><span class="line">        self.name &#x3D; name</span><br><span class="line">        self.q &#x3D; q</span><br><span class="line">    def run(self):</span><br><span class="line">        print (&quot;开启线程：&quot; + self.name)</span><br><span class="line">        process_data(self.name, self.q)</span><br><span class="line">        print (&quot;退出线程：&quot; + self.name)</span><br><span class="line"></span><br><span class="line">def process_data(threadName, q):</span><br><span class="line">    while not exitFlag:</span><br><span class="line">        queueLock.acquire()</span><br><span class="line">        if not workQueue.empty():</span><br><span class="line">            data &#x3D; q.get()</span><br><span class="line">            queueLock.release()</span><br><span class="line">            print (&quot;%s processing %s&quot; % (threadName, data))</span><br><span class="line">        else:</span><br><span class="line">            queueLock.release()</span><br><span class="line">        time.sleep(1)</span><br><span class="line"></span><br><span class="line">threadList &#x3D; [&quot;Thread-1&quot;, &quot;Thread-2&quot;, &quot;Thread-3&quot;]</span><br><span class="line">nameList &#x3D; [&quot;One&quot;, &quot;Two&quot;, &quot;Three&quot;, &quot;Four&quot;, &quot;Five&quot;]</span><br><span class="line">queueLock &#x3D; threading.Lock()</span><br><span class="line">workQueue &#x3D; queue.Queue(10)</span><br><span class="line">threads &#x3D; []</span><br><span class="line">threadID &#x3D; 1</span><br><span class="line"></span><br><span class="line"># 创建新线程</span><br><span class="line">for tName in threadList:</span><br><span class="line">    thread &#x3D; myThread(threadID, tName, workQueue)</span><br><span class="line">    thread.start()</span><br><span class="line">    threads.append(thread)</span><br><span class="line">    threadID +&#x3D; 1</span><br><span class="line"></span><br><span class="line"># 填充队列</span><br><span class="line">queueLock.acquire()</span><br><span class="line">for word in nameList:</span><br><span class="line">    workQueue.put(word)</span><br><span class="line">queueLock.release()</span><br><span class="line"></span><br><span class="line"># 等待队列清空</span><br><span class="line">while not workQueue.empty():</span><br><span class="line">    pass</span><br><span class="line"></span><br><span class="line"># 通知线程是时候退出</span><br><span class="line">exitFlag &#x3D; 1</span><br><span class="line"></span><br><span class="line"># 等待所有线程完成</span><br><span class="line">for t in threads:</span><br><span class="line">    t.join()</span><br><span class="line">print (&quot;退出主线程&quot;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="多进程"><a href="#多进程" class="headerlink" title="多进程"></a>多进程</h3><p>Unix/Linux操作系统提供了一个<code>fork()</code>系统调用，它非常特殊。普通的函数调用，调用一次，返回一次，但是<code>fork()</code>调用一次，返回两次，因为操作系统自动把当前进程（称为父进程）复制了一份（称为子进程），然后，分别在父进程和子进程内返回。Python的<code>os</code>模块封装了常见的系统调用，其中就包括<code>fork</code>，可以在Python程序中轻松创建子进程。</p>
+<p>但是Python是跨平台的，自然也应该提供一个跨平台的多进程支持。<code>multiprocessing</code>模块就是跨平台版本的多进程模块。</p>
+<h4 id="multiprocessing"><a href="#multiprocessing" class="headerlink" title="multiprocessing"></a>multiprocessing</h4><p><code>multiprocessing</code>模块提供了一个<code>Process</code>类来代表一个进程对象：</p>
+<h5 id="实例-3"><a href="#实例-3" class="headerlink" title="实例"></a>实例</h5><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Process</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># 子进程要执行的代码</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">run_proc</span><span class="params">(name)</span>:</span></span><br><span class="line">    print(<span class="string">'Run child process %s (%s)...'</span> % (name, os.getpid()))</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</span><br><span class="line">    print(<span class="string">'Parent process %s.'</span> % os.getpid())</span><br><span class="line">    p = Process(target=run_proc, args=(<span class="string">'test'</span>,))</span><br><span class="line">    print(<span class="string">'Child process will start.'</span>)</span><br><span class="line">    p.start()</span><br><span class="line">    p.join()</span><br><span class="line">    print(<span class="string">'Child process end.'</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>创建子进程时，只需要传入一个执行函数和函数的参数，创建一个<code>Process</code>实例，用<code>start()</code>方法启动，<code>join()</code>方法可以等待子进程结束后再继续往下运行，通常用于进程间的同步。</p>
+<h4 id="进程池Pool"><a href="#进程池Pool" class="headerlink" title="进程池Pool"></a>进程池Pool</h4><p>如果要启动大量的子进程，可以用进程池的方式批量创建子进程：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Pool</span><br><span class="line"><span class="keyword">import</span> os, time, random</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">long_time_task</span><span class="params">(name)</span>:</span></span><br><span class="line">    print(<span class="string">'Run task %s (%s)...'</span> % (name, os.getpid()))</span><br><span class="line">    start = time.time()</span><br><span class="line">    time.sleep(random.random() * <span class="number">3</span>)</span><br><span class="line">    end = time.time()</span><br><span class="line">    print(<span class="string">'Task %s runs %0.2f seconds.'</span> % (name, (end - start)))</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</span><br><span class="line">    print(<span class="string">'Parent process %s.'</span> % os.getpid())</span><br><span class="line">    p = Pool(<span class="number">4</span>)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">5</span>):</span><br><span class="line">        p.apply_async(long_time_task, args=(i,))</span><br><span class="line">    print(<span class="string">'Waiting for all subprocesses done...'</span>)</span><br><span class="line">    p.close()</span><br><span class="line">    p.join()</span><br><span class="line">    print(<span class="string">'All subprocesses done.'</span>)</span><br></pre></td></tr></table></figure>
+
+<p>其中 <code>p.apply_async(long_time_task, args=(i,))</code> 中，<code>args</code>需要以元组形式传入目标任务<code>long_time_task</code>的参数。</p>
+<p>对<code>Pool</code>对象调用<code>join()</code>方法会等待所有子进程执行完毕，调用<code>join()</code>之前必须先调用<code>close()</code>，调用<code>close()</code>之后就不能继续添加新的<code>Process</code>了。</p>
+<p><code>Pool</code>的默认大小是CPU的核数，所以只有当子进程数大于CPU数时，才能形成阻塞的现象。</p>
+<h4 id="子进程-subprocess"><a href="#子进程-subprocess" class="headerlink" title="子进程 subprocess"></a>子进程 subprocess</h4><p>很多时候，子进程并不是自身，而是一个外部进程。我们创建了子进程后，还需要控制子进程的输入和输出。</p>
+<p><code>subprocess</code>模块可以让我们非常方便地启动一个子进程，然后控制其输入和输出。</p>
+<h5 id="实例："><a href="#实例：" class="headerlink" title="实例："></a>实例：</h5><p><code>subprocess</code>可以实现<code>os</code>模块的功能，启动一个子进程，然后在当前操作系统下执行命令和脚本。(subprocess具体功能可以放到os模块和文件IO学习)</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> subprocess</span><br><span class="line"></span><br><span class="line">print(<span class="string">'$ nslookup www.python.org'</span>)</span><br><span class="line">r = subprocess.call([<span class="string">'nslookup'</span>, <span class="string">'www.python.org'</span>])</span><br><span class="line">print(<span class="string">'Exit code:'</span>, r)</span><br></pre></td></tr></table></figure>
+
+<h4 id="进程间通信"><a href="#进程间通信" class="headerlink" title="进程间通信"></a>进程间通信</h4><p><code>Process</code>之间肯定是需要通信的，操作系统提供了很多机制来实现进程间的通信。Python的<code>multiprocessing</code>模块包装了底层的机制，提供了<code>Queue</code>、<code>Pipes</code>等多种方式来交换数据。</p>
+<h5 id="实例-4"><a href="#实例-4" class="headerlink" title="实例"></a>实例</h5><p>我们以<code>Queue</code>为例，在父进程中创建两个子进程，一个往<code>Queue</code>里写数据，一个从<code>Queue</code>里读数据：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Process, Queue</span><br><span class="line"><span class="keyword">import</span> os, time, random</span><br><span class="line"></span><br><span class="line"><span class="comment"># 写数据进程执行的代码:</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">write</span><span class="params">(q)</span>:</span></span><br><span class="line">    print(<span class="string">'Process to write: %s'</span> % os.getpid())</span><br><span class="line">    <span class="keyword">for</span> value <span class="keyword">in</span> [<span class="string">'A'</span>, <span class="string">'B'</span>, <span class="string">'C'</span>]:</span><br><span class="line">        print(<span class="string">'Put %s to queue...'</span> % value)</span><br><span class="line">        q.put(value)</span><br><span class="line">        time.sleep(random.random())</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读数据进程执行的代码:</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read</span><span class="params">(q)</span>:</span></span><br><span class="line">    print(<span class="string">'Process to read: %s'</span> % os.getpid())</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        value = q.get(<span class="literal">True</span>)</span><br><span class="line">        print(<span class="string">'Get %s from queue.'</span> % value)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</span><br><span class="line">    <span class="comment"># 父进程创建Queue，并传给各个子进程：</span></span><br><span class="line">    q = Queue()</span><br><span class="line">    pw = Process(target=write, args=(q,))</span><br><span class="line">    pr = Process(target=read, args=(q,))</span><br><span class="line">    <span class="comment"># 启动子进程pw，写入:</span></span><br><span class="line">    pw.start()</span><br><span class="line">    <span class="comment"># 启动子进程pr，读取:</span></span><br><span class="line">    pr.start()</span><br><span class="line">    <span class="comment"># 等待pw结束:</span></span><br><span class="line">    pw.join()</span><br><span class="line">    <span class="comment"># pr进程里是死循环，无法等待其结束，只能强行终止:</span></span><br><span class="line">    pr.terminate()</span><br></pre></td></tr></table></figure>
+
+<h4 id="进程小结"><a href="#进程小结" class="headerlink" title="进程小结"></a>进程小结</h4><p>在Unix/Linux下，可以使用<code>fork()</code>调用实现多进程。</p>
+<p>要实现跨平台的多进程，可以使用<code>multiprocessing</code>模块。</p>
+<p>进程间通信是通过<code>Queue</code>、<code>Pipes</code>等实现的。</p>
+<h3 id="多线程和多进程的效率比较"><a href="#多线程和多进程的效率比较" class="headerlink" title="多线程和多进程的效率比较"></a>多线程和多进程的效率比较</h3><p>资料显示，如果多线程的进程是<strong>CPU密集型</strong>的，那多线程并不能有多少效率上的提升，相反还可能会因为线程的频繁切换，导致效率下降，推荐使用多进程；如果是<strong>IO密集型</strong>，多线程进程可以利用IO阻塞等待时的空闲时间执行其他线程，提升效率。所以我们根据实验对比不同场景的效率。</p>
+<h4 id="实验结果"><a href="#实验结果" class="headerlink" title="实验结果"></a>实验结果</h4><table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="left">CPU密集型操作</th>
+<th align="left">IO密集型操作</th>
+<th>网络请求密集型操作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">线性操作</td>
+<td align="left">94.91824996469</td>
+<td align="left">22.46199995279</td>
+<td>7.3296000004</td>
+</tr>
+<tr>
+<td align="left">多线程操作</td>
+<td align="left">101.1700000762</td>
+<td align="left">24.8605000973</td>
+<td>0.5053332647</td>
+</tr>
+<tr>
+<td align="left">多进程操作</td>
+<td align="left">53.8899999857</td>
+<td align="left">12.7840000391</td>
+<td>0.5045000315</td>
+</tr>
+</tbody></table>
+<p>通过上面的结果，我们可以看到：</p>
+<ul>
+<li>多线程在IO密集型的操作下似乎也没有很大的优势（也许IO操作的任务再繁重一些就能体现出优势），在CPU密集型的操作下明显地比单线程线性执行性能更差，但是对于网络请求这种忙等阻塞线程的操作，多线程的优势便非常显著了。</li>
+<li>多进程无论是在CPU密集型还是IO密集型以及网络请求密集型（经常发生线程阻塞的操作）中，都能体现出性能的优势。不过在类似网络请求密集型的操作上，与多线程相差无几，但却更占用CPU等资源，所以对于这种情况下，我们可以选择多线程来执行。</li>
+</ul>
+<hr>
+<p>参考链接：</p>
+<p><a href="https://www.runoob.com/w3cnote/python-single-thread-multi-thread-and-multi-process.html" target="_blank" rel="noopener">Python中单线程、多线程和多进程的效率对比实验</a>  </p>
+<p><a href="https://www.liaoxuefeng.com/wiki/1016959663602400/1017628290184064" target="_blank" rel="noopener">Python中多任务的解决方案之进程和线程</a></p>
+<p><a href="https://www.runoob.com/python3/python3-multithreading.html" target="_blank" rel="noopener">Pyhton3多线程的使用</a></p>
+]]></content>
+      <categories>
+        <category>Python</category>
+        <category>多任务</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>多线程</tag>
+        <tag>多进程</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python之使用pyvmomi管理VMware</title>
     <url>/2020/11/17/pyvmomi-sample/</url>
     <content><![CDATA[<blockquote>
@@ -44,10 +187,10 @@
         <category>虚拟化</category>
       </categories>
       <tags>
+        <tag>Python</tag>
         <tag>VMware vSphere</tag>
         <tag>vCenter</tag>
         <tag>虚拟化</tag>
-        <tag>Python</tag>
         <tag>pyvmomi</tag>
       </tags>
   </entry>
@@ -309,6 +452,7 @@
         <category>MySql修炼</category>
       </categories>
       <tags>
+        <tag>Python</tag>
         <tag>数据库</tag>
         <tag>数据库连接池</tag>
         <tag>MySql</tag>
@@ -363,7 +507,7 @@
 <p>MongoDB使用B树，所有节点都有Data域，只要找到指定索引就可以进行访问，无疑单次查询平均快于Mysql。</p>
 <h4 id="2、Mysql"><a href="#2、Mysql" class="headerlink" title="2、Mysql"></a>2、Mysql</h4><p>Mysql作为一个关系型数据库，数据的关联性是非常强的，区间访问是常见的一种情况，B+树由于数据全部存储在叶子节点，并且通过指针串在一起，这样就很容易的进行区间遍历甚至全部遍历。</p>
 <hr>
-<p>原题链接：<a href="https://zhuanlan.zhihu.com/p/102628897" target="_blank" rel="noopener">为什么 MongoDB 索引选择B树，而 Mysql 选择B+树</a>  </p>
+<p>参考链接：<a href="https://zhuanlan.zhihu.com/p/102628897" target="_blank" rel="noopener">为什么 MongoDB 索引选择B树，而 Mysql 选择B+树</a>  </p>
 ]]></content>
       <categories>
         <category>数据结构</category>
@@ -440,6 +584,7 @@
         <category>VMware</category>
       </categories>
       <tags>
+        <tag>Python</tag>
         <tag>VMware vSphere</tag>
         <tag>vCenter</tag>
         <tag>虚拟化</tag>
@@ -465,6 +610,7 @@
         <category>算法修炼</category>
       </categories>
       <tags>
+        <tag>Python</tag>
         <tag>剑指offer</tag>
         <tag>二叉搜索树</tag>
       </tags>
@@ -565,6 +711,7 @@
         <category>学习笔记</category>
       </categories>
       <tags>
+        <tag>Python</tag>
         <tag>大数据分析</tag>
         <tag>算法</tag>
       </tags>

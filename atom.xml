@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://api.ddoudou.xyz/"/>
-  <updated>2020-11-17T17:15:18.438Z</updated>
+  <updated>2020-11-18T17:02:33.667Z</updated>
   <id>http://api.ddoudou.xyz/</id>
   
   <author>
@@ -15,6 +15,45 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Python之多线程与多进程</title>
+    <link href="http://api.ddoudou.xyz/2020/11/18/python-thread-process/"/>
+    <id>http://api.ddoudou.xyz/2020/11/18/python-thread-process/</id>
+    <published>2020-11-18T15:31:07.000Z</published>
+    <updated>2020-11-18T17:02:33.667Z</updated>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;h3 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h3&gt;&lt;/blockquote&gt;
+&lt;p&gt;现代操作系统比如Mac OS X，UNIX，Linux，Windows等，都是支持“多任务”的操作系统，操作系统可以同时运行多个任务。&lt;/p&gt;
+&lt;p&gt;对于操作系统来说，一个任务就是一个进程（Process），比如打开一个浏览器就是启动一个浏览器进程，打开一个记事本就启动了一个记事本进程，打开两个记事本就启动了两个记事本进程，打开一个Word就启动了一个Word进程。&lt;/p&gt;
+&lt;p&gt;有些进程还不止同时干一件事，比如Word，它可以同时进行打字、拼写检查、打印等事情。在一个进程内部，要同时干多件事，就需要同时运行多个“子任务”，我们把进程内的这些“子任务”称为线程（Thread）。&lt;/p&gt;
+&lt;p&gt;多任务的实现有3种方式：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;多进程模式；&lt;/li&gt;
+&lt;li&gt;多线程模式；&lt;/li&gt;
+&lt;li&gt;多进程 + 多线程模式。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Python既支持多进程，又支持多线程，线程是最小的执行单元，而进程由至少一个线程组成。如何调度进程和线程，完全由操作系统决定，程序自己不能决定什么时候执行，执行多长时间。&lt;/p&gt;
+&lt;p&gt;多进程和多线程的程序涉及到同步、数据共享的问题，编写起来更复杂。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="Python" scheme="http://api.ddoudou.xyz/categories/Python/"/>
+    
+      <category term="多任务" scheme="http://api.ddoudou.xyz/categories/Python/%E5%A4%9A%E4%BB%BB%E5%8A%A1/"/>
+    
+    
+      <category term="Python" scheme="http://api.ddoudou.xyz/tags/Python/"/>
+    
+      <category term="多线程" scheme="http://api.ddoudou.xyz/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"/>
+    
+      <category term="多进程" scheme="http://api.ddoudou.xyz/tags/%E5%A4%9A%E8%BF%9B%E7%A8%8B/"/>
+    
+  </entry>
   
   <entry>
     <title>Python之使用pyvmomi管理VMware</title>
@@ -40,13 +79,13 @@
       <category term="虚拟化" scheme="http://api.ddoudou.xyz/categories/Python/%E8%99%9A%E6%8B%9F%E5%8C%96/"/>
     
     
+      <category term="Python" scheme="http://api.ddoudou.xyz/tags/Python/"/>
+    
       <category term="VMware vSphere" scheme="http://api.ddoudou.xyz/tags/VMware-vSphere/"/>
     
       <category term="vCenter" scheme="http://api.ddoudou.xyz/tags/vCenter/"/>
     
       <category term="虚拟化" scheme="http://api.ddoudou.xyz/tags/%E8%99%9A%E6%8B%9F%E5%8C%96/"/>
-    
-      <category term="Python" scheme="http://api.ddoudou.xyz/tags/Python/"/>
     
       <category term="pyvmomi" scheme="http://api.ddoudou.xyz/tags/pyvmomi/"/>
     
@@ -116,7 +155,7 @@
     <link href="http://api.ddoudou.xyz/2020/11/09/python-mysql-pool/"/>
     <id>http://api.ddoudou.xyz/2020/11/09/python-mysql-pool/</id>
     <published>2020-11-09T15:17:35.000Z</published>
-    <updated>2020-11-16T15:50:11.974Z</updated>
+    <updated>2020-11-18T16:58:30.354Z</updated>
     
     <summary type="html">
     
@@ -132,6 +171,8 @@
     
       <category term="MySql修炼" scheme="http://api.ddoudou.xyz/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/MySql%E4%BF%AE%E7%82%BC/"/>
     
+    
+      <category term="Python" scheme="http://api.ddoudou.xyz/tags/Python/"/>
     
       <category term="数据库" scheme="http://api.ddoudou.xyz/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
     
@@ -170,7 +211,7 @@
     <link href="http://api.ddoudou.xyz/2020/10/17/B-B-tree/"/>
     <id>http://api.ddoudou.xyz/2020/10/17/B-B-tree/</id>
     <published>2020-10-17T11:07:22.000Z</published>
-    <updated>2020-11-16T15:56:05.797Z</updated>
+    <updated>2020-11-18T16:48:33.696Z</updated>
     
     <summary type="html">
     
@@ -194,7 +235,7 @@
     <link href="http://api.ddoudou.xyz/2020/10/09/vmware-vsphere/"/>
     <id>http://api.ddoudou.xyz/2020/10/09/vmware-vsphere/</id>
     <published>2020-10-09T10:06:10.000Z</published>
-    <updated>2020-11-16T15:57:31.161Z</updated>
+    <updated>2020-11-18T16:58:27.291Z</updated>
     
     <summary type="html">
     
@@ -211,6 +252,8 @@
       <category term="VMware" scheme="http://api.ddoudou.xyz/categories/Python/VMware/"/>
     
     
+      <category term="Python" scheme="http://api.ddoudou.xyz/tags/Python/"/>
+    
       <category term="VMware vSphere" scheme="http://api.ddoudou.xyz/tags/VMware-vSphere/"/>
     
       <category term="vCenter" scheme="http://api.ddoudou.xyz/tags/vCenter/"/>
@@ -226,7 +269,7 @@
     <link href="http://api.ddoudou.xyz/2020/09/26/2020-09-26/"/>
     <id>http://api.ddoudou.xyz/2020/09/26/2020-09-26/</id>
     <published>2020-09-25T18:34:12.000Z</published>
-    <updated>2020-11-16T15:50:48.573Z</updated>
+    <updated>2020-11-18T16:58:23.055Z</updated>
     
     <summary type="html">
     
@@ -238,6 +281,8 @@
     
       <category term="算法修炼" scheme="http://api.ddoudou.xyz/categories/%E7%AE%97%E6%B3%95%E4%BF%AE%E7%82%BC/"/>
     
+    
+      <category term="Python" scheme="http://api.ddoudou.xyz/tags/Python/"/>
     
       <category term="剑指offer" scheme="http://api.ddoudou.xyz/tags/%E5%89%91%E6%8C%87offer/"/>
     
@@ -304,7 +349,7 @@
     <link href="http://api.ddoudou.xyz/2020/02/26/pearson-formula/"/>
     <id>http://api.ddoudou.xyz/2020/02/26/pearson-formula/</id>
     <published>2020-02-26T08:09:38.000Z</published>
-    <updated>2020-11-16T15:50:11.940Z</updated>
+    <updated>2020-11-18T16:58:43.016Z</updated>
     
     <summary type="html">
     
@@ -319,6 +364,8 @@
     
       <category term="学习笔记" scheme="http://api.ddoudou.xyz/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
     
+    
+      <category term="Python" scheme="http://api.ddoudou.xyz/tags/Python/"/>
     
       <category term="大数据分析" scheme="http://api.ddoudou.xyz/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/"/>
     
