@@ -1,6 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Python之Celery</title>
+    <url>/2020/11/20/celery/</url>
+    <content><![CDATA[<blockquote>
+<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3></blockquote>
+<ul>
+<li>Celery 是一款非常简单、灵活、可靠的分布式系统，可用于处理大量消息，并且提供了一整套操作此系统的一系列工具。</li>
+<li>Celery 是一款专注于实时处理的异步任务队列，可用于处理实时数据以及任务调度。</li>
+</ul>
+<h3 id="Celery架构"><a href="#Celery架构" class="headerlink" title="Celery架构"></a>Celery架构</h3><p>Celery的架构由三部分组成，消息中间件（message broker），任务执行单元（worker）和任务执行结果存储（task result store）组成。</p>
+<img data-src="/2020/11/20/celery/celery-architecture.png" class>
+
+<a id="more"></a>
+
+<h4 id="消息中间件"><a href="#消息中间件" class="headerlink" title="消息中间件"></a>消息中间件</h4><p>Celery本身不提供消息服务，但是可以方便的和第三方提供的消息中间件集成。包括，RabbitMQ Redis等等</p>
+<h4 id="任务执行单元"><a href="#任务执行单元" class="headerlink" title="任务执行单元"></a>任务执行单元</h4><p>Worker是Celery提供的任务执行的单元，worker并发的运行在分布式的系统节点中。</p>
+<h4 id="任务结果存储"><a href="#任务结果存储" class="headerlink" title="任务结果存储"></a>任务结果存储</h4><p>Task result store用来存储Worker执行的任务的结果，Celery支持以不同方式存储任务的结果，包括AMQP, redis等</p>
+<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>异步任务：将耗时操作任务提交给Celery去异步执行，比如发送短信/邮件、消息推送、音视频处理等等</p>
+<p>定时任务：定时执行某件事情，比如每天数据统计</p>
+<h3 id="Celery的安装配置"><a href="#Celery的安装配置" class="headerlink" title="Celery的安装配置"></a>Celery的安装配置</h3><p><code>pip install celery</code></p>
+<p>中间人（Broker）消息中间件：RabbitMQ / Redis</p>
+<h4 id="RabbitMQ"><a href="#RabbitMQ" class="headerlink" title="RabbitMQ"></a>RabbitMQ</h4><p>RabbitMQ 是默认的中间人（Broker），只需要配置连接的URL即可，不需要安装额外的的配置以及初始化配置信息</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">broker_url = <span class="string">'amqp://myuser:mypassword@localhost:5672/myvhost'</span></span><br></pre></td></tr></table></figure>
+
+<p>有关 Celery 各种中间人（Broker）的配置列表，请查阅代理设置，并且按照说明设置用户名和密码。</p>
+<p><code>RabbitMQ</code>的安装和使用这里不多赘述，有空新开一篇文章讲解</p>
+<h4 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h4><p>Redis 的配置非常的简单，只需要配置 Redis 的 URL ：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">app.conf.broker_url &#x3D; &#39;redis:&#x2F;&#x2F;localhost:6379&#x2F;0&#39;</span><br></pre></td></tr></table></figure>
+
+<p>URL 的格式为：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">redis:&#x2F;&#x2F;:password@hostname:port&#x2F;db_number</span><br></pre></td></tr></table></figure>
+
+<p>URL 的所有配置都可以自定义配置的，默认使用的是 localhost 的 6379 端口中 0 数据库。（ Redis 默认有 16 个数据库）</p>
+<p>Celery 也可以连接 Redis 哨兵也是非常简单的：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">app.conf.broker_url = <span class="string">'sentinel://localhost:26379;sentinel://localhost:26380;sentinel://localhost:26381'</span></span><br><span class="line">app.conf.broker_transport_options = &#123;<span class="string">'master_name'</span>:<span class="string">'cluster1'</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="RabbitMQ-Redis-比较"><a href="#RabbitMQ-Redis-比较" class="headerlink" title="RabbitMQ / Redis 比较"></a>RabbitMQ / Redis 比较</h4><ul>
+<li><p><a href="https://www.rabbitmq.com/" target="_blank" rel="noopener">RabbitMQ</a> 的功能比较齐全、稳定、便于安装。在生产环境来说是首选的。</p>
+</li>
+<li><p><a href="https://redis.io/" target="_blank" rel="noopener">Redis</a> 功能比较全，但是如果突然停止运行或断电会造成数据丢失。</p>
+</li>
+</ul>
+<p>个人比较喜欢Redis作为Broker，Redis安装和使用比较简单，之所以Redis能够用作消息队列，因为其中的列表数据类型，可以存储多个有序的字符串，既然是有序的，就满足消息队列的特点，使用<code>lpush</code>+<code>rpop</code>或者<code>rpush</code>+<code>lpop</code>实现消息队列。除此之外，redis支持阻塞操作，在弹出元素的时候使用阻塞命令来实现阻塞队列。</p>
+<p>以上已经在Redis分类的文章中有写到，新版Redis的特性也能更好地支持消息队列，这一块的知识后续新开一个文章进行学习。</p>
+<h3 id="Celery异步任务"><a href="#Celery异步任务" class="headerlink" title="Celery异步任务"></a>Celery异步任务</h3><h4 id="创建任务"><a href="#创建任务" class="headerlink" title="创建任务"></a>创建任务</h4><p>tasks.py：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line">app = Celery(<span class="string">'tasks'</span>, broker=<span class="string">'amqp://guest@localhost//'</span>)</span><br><span class="line"><span class="meta">@app.task</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(x, y)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> x + y</span><br></pre></td></tr></table></figure>
+
+<h4 id="调用任务"><a href="#调用任务" class="headerlink" title="调用任务"></a>调用任务</h4><p>需要调用我们创建的实例任务，可以通过 <code>delay()</code> 进行调用。</p>
+<p><code>delay()</code> 是 <code>apply_async()</code> 的快捷方法，可以更好的控制任务的执行（详情：<a href><code>调用任务：Calling Tasks</code></a>）：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> tasks <span class="keyword">import</span> add</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>add.delay(<span class="number">4</span>, <span class="number">4</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="保存结果"><a href="#保存结果" class="headerlink" title="保存结果"></a>保存结果</h4><p>如果需要跟踪任务的状态，Celery 需要在某处存储任务的状态信息。Celery 内置了一些后端结果：<a href="https://www.sqlalchemy.org/" target="_blank" rel="noopener">SQLAlchemy/Django</a> ORM、<a href="http://memcached.org/" target="_blank" rel="noopener">Memcached</a>、<a href="https://redis.io/" target="_blank" rel="noopener">Redis</a>、 RPC (<a href="https://www.rabbitmq.com/" target="_blank" rel="noopener">RabbitMQ</a>/AMQP)以及自定义的后端结果存储中间件。</p>
+<p>针对本次实例，我们使用 RPC 作为结果后端，将状态信息作为临时消息回传。后端通过 backend 参数指定给 Celery（或者通过配置模块中的 result_backend 选项设定）：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">app = Celery(<span class="string">'tasks'</span>, backend=<span class="string">'rpc://'</span>, broker=<span class="string">'pyamqp://'</span>)</span><br></pre></td></tr></table></figure>
+
+<p>例如，可以使用Redis作为Celery结果后端，使用RabbitMQ作为中间人（Broker）可以使用以下配置（这种组合比较流行）：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">app = Celery(<span class="string">'tasks'</span>, backend=<span class="string">'redis://localhost'</span>, broker=<span class="string">'pyamqp://'</span>)</span><br></pre></td></tr></table></figure>
+
+<p><code>ready()</code> 可以检测是否已经处理完毕：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>result = add.delay(<span class="number">4</span>, <span class="number">4</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>result.ready()</span><br><span class="line"><span class="literal">False</span></span><br></pre></td></tr></table></figure>
+
+<p>整个任务执行过程为异步的，如果一直等待任务完成，会将异步调用转换为同步调用：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>result.get(timeout=<span class="number">1</span>)</span><br><span class="line"><span class="number">8</span></span><br></pre></td></tr></table></figure>
+
+<p>如果任务出现异常，<code>get()</code> 会再次引发异常，可以通过 propagate 参数进行覆盖：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>result.get(propagate=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
+
+<p>如果任务出现异常，可以通过以下命令进行回溯：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>result.traceback</span><br></pre></td></tr></table></figure>
+
+<h3 id="Celery执行定时任务"><a href="#Celery执行定时任务" class="headerlink" title="Celery执行定时任务"></a>Celery执行定时任务</h3><p><code>celery beat</code> 是一个调度程序；它定期启动任务，然后由集群中的可用节点执行任务。</p>
+<h4 id="设定时间让celery执行一个任务"><a href="#设定时间让celery执行一个任务" class="headerlink" title="设定时间让celery执行一个任务"></a>设定时间让celery执行一个任务</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> celery_app_task <span class="keyword">import</span> add</span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"></span><br><span class="line">ctime = datetime.now()</span><br><span class="line"><span class="comment"># 默认用utc时间</span></span><br><span class="line">utc_ctime = datetime.utcfromtimestamp(ctime.timestamp())</span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> timedelta</span><br><span class="line">time_delay = timedelta(seconds=<span class="number">10</span>)</span><br><span class="line">task_time = utc_ctime + time_delay</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用apply_async并设定时间</span></span><br><span class="line">result = add.apply_async(args=[<span class="number">4</span>, <span class="number">3</span>], eta=task_time)</span><br></pre></td></tr></table></figure>
+
+<h4 id="类似于contab的定时任务"><a href="#类似于contab的定时任务" class="headerlink" title="类似于contab的定时任务"></a>类似于contab的定时任务</h4><p>多任务结构中celery.py配置如下</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> timedelta</span><br><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"><span class="keyword">from</span> celery.schedules <span class="keyword">import</span> crontab</span><br><span class="line"></span><br><span class="line">cel = Celery(<span class="string">'tasks'</span>, broker=<span class="string">'redis://127.0.0.1:6379/1'</span>, backend=<span class="string">'redis://127.0.0.1:6379/2'</span>, include=[</span><br><span class="line">    <span class="string">'celery_task.tasks1'</span>,</span><br><span class="line">    <span class="string">'celery_task.tasks2'</span>,</span><br><span class="line">])</span><br><span class="line">cel.conf.timezone = <span class="string">'Asia/Shanghai'</span></span><br><span class="line">cel.conf.enable_utc = <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">cel.conf.beat_schedule = &#123;</span><br><span class="line">    <span class="comment"># 名字随意命名</span></span><br><span class="line">    <span class="string">'add-every-10-seconds'</span>: &#123;</span><br><span class="line">        <span class="comment"># 执行tasks1下的test_celery函数</span></span><br><span class="line">        <span class="string">'task'</span>: <span class="string">'celery_task.tasks1.test_celery'</span>,</span><br><span class="line">        <span class="comment"># 每隔2秒执行一次</span></span><br><span class="line">        <span class="comment"># 'schedule': 1.0,</span></span><br><span class="line">        <span class="comment"># 'schedule': crontab(minute="*/1"),</span></span><br><span class="line">        <span class="string">'schedule'</span>: timedelta(seconds=<span class="number">2</span>),</span><br><span class="line">        <span class="comment"># 传递参数</span></span><br><span class="line">        <span class="string">'args'</span>: (<span class="string">'test'</span>,)</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="comment"># 'add-every-12-seconds': &#123;</span></span><br><span class="line">    <span class="comment">#     'task': 'celery_task.tasks1.test_celery',</span></span><br><span class="line">    <span class="comment">#     每年4月11号，8点42分执行</span></span><br><span class="line">    <span class="comment">#     'schedule': crontab(minute=42, hour=8, day_of_month=11, month_of_year=4),</span></span><br><span class="line">    <span class="comment">#     'schedule': crontab(minute=42, hour=8, day_of_month=11, month_of_year=4),</span></span><br><span class="line">    <span class="comment">#     'args': (16, 16)</span></span><br><span class="line">    <span class="comment"># &#125;,</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>启动一个beat：celery beat -A celery_task -l info</p>
+<p>启动work执行：celery worker -A celery_task -l info -P  eventlet</p>
+<h3 id="Django中使用Celery"><a href="#Django中使用Celery" class="headerlink" title="Django中使用Celery"></a>Django中使用Celery</h3><p>在Django项目中异步任务和周期任务是必不可少的：</p>
+<h4 id="添加Celery配置项"><a href="#添加Celery配置项" class="headerlink" title="添加Celery配置项"></a>添加Celery配置项</h4><p>在项目目录下创建celeryconfig.py（也可以写在settings.py中）</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> djcelery</span><br><span class="line">djcelery.setup_loader()</span><br><span class="line"><span class="comment"># CELERY 配置，申明任务的文件路径，即包含有 @task 装饰器的函数文件</span></span><br><span class="line">CELERY_IMPORTS=(</span><br><span class="line">    <span class="string">'app01.tasks'</span>,</span><br><span class="line">)</span><br><span class="line"><span class="comment"># 有些情况可以防止死锁</span></span><br><span class="line">CELERYD_FORCE_EXECV=<span class="literal">True</span></span><br><span class="line"><span class="comment"># 设置并发worker数量</span></span><br><span class="line">CELERYD_CONCURRENCY=<span class="number">4</span></span><br><span class="line"><span class="comment"># 允许重试</span></span><br><span class="line">CELERY_ACKS_LATE=<span class="literal">True</span></span><br><span class="line"><span class="comment"># 每个worker最多执行100个任务被销毁，可以防止内存泄漏</span></span><br><span class="line">CELERYD_MAX_TASKS_PER_CHILD=<span class="number">100</span></span><br><span class="line"><span class="comment"># 超时时间</span></span><br><span class="line">CELERYD_TASK_TIME_LIMIT=<span class="number">12</span>*<span class="number">30</span></span><br><span class="line"></span><br><span class="line">CELERYBEAT_SCHEDULER = <span class="string">"djcelery.schedulers.DatabaseScheduler"</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="在app目录下创建tasks-py"><a href="#在app目录下创建tasks-py" class="headerlink" title="在app目录下创建tasks.py"></a>在app目录下创建tasks.py</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> task</span><br><span class="line"><span class="meta">@task</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(a,b)</span>:</span></span><br><span class="line">    <span class="keyword">with</span> open(<span class="string">'a.text'</span>, <span class="string">'a'</span>, encoding=<span class="string">'utf-8'</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(<span class="string">'a'</span>)</span><br><span class="line">    print(a+b)</span><br></pre></td></tr></table></figure>
+
+<h4 id="视图函数views-py"><a href="#视图函数views-py" class="headerlink" title="视图函数views.py"></a>视图函数views.py</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> django.shortcuts <span class="keyword">import</span> render,HttpResponse</span><br><span class="line"><span class="keyword">from</span> app01.tasks <span class="keyword">import</span> add</span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="comment"># result=add.delay(2,3)</span></span><br><span class="line">    ctime = datetime.now()</span><br><span class="line">    <span class="comment"># 默认用utc时间</span></span><br><span class="line">    utc_ctime = datetime.utcfromtimestamp(ctime.timestamp())</span><br><span class="line">    <span class="keyword">from</span> datetime <span class="keyword">import</span> timedelta</span><br><span class="line">    time_delay = timedelta(seconds=<span class="number">5</span>)</span><br><span class="line">    task_time = utc_ctime + time_delay</span><br><span class="line">    result = add.apply_async(args=[<span class="number">4</span>, <span class="number">3</span>], eta=task_time)</span><br><span class="line">    print(result.id)</span><br><span class="line">    <span class="keyword">return</span> HttpResponse(<span class="string">'ok'</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="Django的settings-py"><a href="#Django的settings-py" class="headerlink" title="Django的settings.py"></a>Django的settings.py</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 注册app</span></span><br><span class="line">INSTALLED_APPS = [</span><br><span class="line">    <span class="string">'djcelery'</span>,</span><br><span class="line">    <span class="string">'app'</span></span><br><span class="line">]</span><br><span class="line"><span class="keyword">from</span> djagocele <span class="keyword">import</span> celeryconfig</span><br><span class="line">BROKER_BACKEND=<span class="string">'redis'</span></span><br><span class="line">BROKER_URL=<span class="string">'redis://127.0.0.1:6379/1'</span></span><br><span class="line">CELERY_RESULT_BACKEND=<span class="string">'redis://127.0.0.1:6379/2'</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="周期任务"><a href="#周期任务" class="headerlink" title="周期任务"></a>周期任务</h4><p>celery beat是用来开启定时任务调度的，一般用法为：启动celery beat，然后启动worker，让beat去调用worker里面的任务。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> celery.schedules <span class="keyword">import</span> crontab</span><br><span class="line"><span class="keyword">from</span> celery.task <span class="keyword">import</span> task, periodic_task</span><br><span class="line"></span><br><span class="line"><span class="comment"># crontab设置每天8点</span></span><br><span class="line"><span class="comment"># @periodic_task(run_every=(crontab(minute=0, hour=8)))</span></span><br><span class="line"><span class="comment"># crontab设置每分钟</span></span><br><span class="line"><span class="meta">@periodic_task(run_every=crontab(minute="*/1"))</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">distribute_task</span><span class="params">()</span>:</span></span><br><span class="line">    now = datetime.datetime.now()</span><br><span class="line">    <span class="comment"># 使用周期任务调动异步任务</span></span><br><span class="line">    get_alarm_list.apply_async(args=(now,))</span><br><span class="line">    </span><br><span class="line"><span class="meta">@task()</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_alarm_list</span><span class="params">(source_time)</span>:</span></span><br><span class="line">    print(source_time)</span><br></pre></td></tr></table></figure>
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>写了这么多，从Celery简介、架构，到消息队列选型，再Python中如何使用Celery、Django项目怎么配置集成Celery，也算是Celery的超详细讲解了。</p>
+<p>想要学习Celery更多的设计、调度、优化、路由、并发、信号、调试、测试、扩展等详细内容，可以参考 <a href="https://www.celerycn.io/" target="_blank" rel="noopener">https://www.celerycn.io/</a></p>
+<hr>
+<p>参考链接：</p>
+<p><a href="https://github.com/celery/celery" target="_blank" rel="noopener">Celery 源码 - Github</a></p>
+<p><a href="https://github.com/celery/django-celery" target="_blank" rel="noopener">django-celery - Github</a></p>
+<p><a href="https://github.com/celery/django-celery-beat" target="_blank" rel="noopener">django-celery-beat 源码 - Github</a></p>
+<p><a href="https://www.celerycn.io/" target="_blank" rel="noopener">《Celery 中文手册》</a>  </p>
+<p><a href="https://www.jianshu.com/p/620052aadbff" target="_blank" rel="noopener">Celery - 简书</a></p>
+]]></content>
+      <categories>
+        <category>Python</category>
+        <category>Celery</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>Redis</tag>
+        <tag>Celery</tag>
+        <tag>Django</tag>
+        <tag>RabbitMQ</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python之多线程与多进程</title>
     <url>/2020/11/18/python-thread-process/</url>
     <content><![CDATA[<blockquote>
@@ -683,9 +796,9 @@
       </categories>
       <tags>
         <tag>技术文章</tag>
+        <tag>Django</tag>
         <tag>uWSGI</tag>
         <tag>Nginx</tag>
-        <tag>Django</tag>
       </tags>
   </entry>
   <entry>

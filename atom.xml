@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://api.ddoudou.xyz/"/>
-  <updated>2020-11-18T17:02:33.667Z</updated>
+  <updated>2020-11-19T19:00:58.293Z</updated>
   <id>http://api.ddoudou.xyz/</id>
   
   <author>
@@ -15,6 +15,44 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Python之Celery</title>
+    <link href="http://api.ddoudou.xyz/2020/11/20/celery/"/>
+    <id>http://api.ddoudou.xyz/2020/11/20/celery/</id>
+    <published>2020-11-19T17:11:44.000Z</published>
+    <updated>2020-11-19T19:00:58.293Z</updated>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;h3 id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot; class=&quot;headerlink&quot; title=&quot;简介&quot;&gt;&lt;/a&gt;简介&lt;/h3&gt;&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;Celery 是一款非常简单、灵活、可靠的分布式系统，可用于处理大量消息，并且提供了一整套操作此系统的一系列工具。&lt;/li&gt;
+&lt;li&gt;Celery 是一款专注于实时处理的异步任务队列，可用于处理实时数据以及任务调度。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;Celery架构&quot;&gt;&lt;a href=&quot;#Celery架构&quot; class=&quot;headerlink&quot; title=&quot;Celery架构&quot;&gt;&lt;/a&gt;Celery架构&lt;/h3&gt;&lt;p&gt;Celery的架构由三部分组成，消息中间件（message broker），任务执行单元（worker）和任务执行结果存储（task result store）组成。&lt;/p&gt;
+&lt;img data-src=&quot;/2020/11/20/celery/celery-architecture.png&quot; class&gt;
+    
+    </summary>
+    
+    
+      <category term="Python" scheme="http://api.ddoudou.xyz/categories/Python/"/>
+    
+      <category term="Celery" scheme="http://api.ddoudou.xyz/categories/Python/Celery/"/>
+    
+    
+      <category term="Python" scheme="http://api.ddoudou.xyz/tags/Python/"/>
+    
+      <category term="Redis" scheme="http://api.ddoudou.xyz/tags/Redis/"/>
+    
+      <category term="Celery" scheme="http://api.ddoudou.xyz/tags/Celery/"/>
+    
+      <category term="Django" scheme="http://api.ddoudou.xyz/tags/Django/"/>
+    
+      <category term="RabbitMQ" scheme="http://api.ddoudou.xyz/tags/RabbitMQ/"/>
+    
+  </entry>
   
   <entry>
     <title>Python之多线程与多进程</title>
@@ -336,11 +374,11 @@
     
       <category term="技术文章" scheme="http://api.ddoudou.xyz/tags/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/"/>
     
+      <category term="Django" scheme="http://api.ddoudou.xyz/tags/Django/"/>
+    
       <category term="uWSGI" scheme="http://api.ddoudou.xyz/tags/uWSGI/"/>
     
       <category term="Nginx" scheme="http://api.ddoudou.xyz/tags/Nginx/"/>
-    
-      <category term="Django" scheme="http://api.ddoudou.xyz/tags/Django/"/>
     
   </entry>
   
