@@ -154,10 +154,28 @@ git reset HEAD file 取消暂存
 git checkout file 撤销修改
 ```
 
+### git 配置
+
+```
+git config --global user.name  "username"
+git config --global user.email  "username"  
+```
+
+#### 配置密码
+
+```
+git config –system –unset credential.helper
+git config –global http.emptyAuth true
+```
+
+#### Windows凭据管理 git 密码
+
+进入控制面板 -> 用户账号 -> 凭据管理器 -> windows凭据 -> 普通凭据，在里面找到对应git域名，点开编辑密码，更新为最新密码之后就可以正常操作了。
+
 
 ******
 参考链接：
-[Git Reference](https://git-scm.com/docs)  
+[Git Reference](https://git-scm.com/docs) 
 [Git Book](https://git-scm.com/book/zh/v2)  
 
 
