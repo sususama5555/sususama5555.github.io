@@ -1,6 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Django之ORM操作</title>
+    <url>/2020/11/21/django-orm/</url>
+    <content><![CDATA[<h1 id="查询类操作"><a href="#查询类操作" class="headerlink" title="查询类操作"></a>查询类操作</h1><h2 id="查询所有的结果"><a href="#查询所有的结果" class="headerlink" title="查询所有的结果"></a>查询所有的结果</h2><p>相当sql中的select * from</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">list = Test.objects.all()</span><br></pre></td></tr></table></figure>
+
+<h2 id="条件查询filter相关sql中的where"><a href="#条件查询filter相关sql中的where" class="headerlink" title="条件查询filter相关sql中的where"></a>条件查询filter相关sql中的where</h2><p>用于过滤查询结果</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">result = Test.objects.filter(id=<span class="number">1</span>, name=’test’) <span class="comment"># 传多个参数</span></span><br></pre></td></tr></table></figure>
+
+<p>如果多条件与查询，直接用逗号隔开，filter函数里面的参数都是Test Model中的字段</p>
+<h2 id="获取单个对象"><a href="#获取单个对象" class="headerlink" title="获取单个对象"></a>获取单个对象</h2><p>get方法的参数一般为Model的主键，如果找不到会报错</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">test_obj = Test.objects.get(id=<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="限制返回的结果数据的数量"><a href="#限制返回的结果数据的数量" class="headerlink" title="限制返回的结果数据的数量"></a>限制返回的结果数据的数量</h2><p>相当于sql中的limit，其中order_by是用于排序，如果根据字段a倒序排序，就是order_by(“-time”)</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">Test.objects.order_by(<span class="string">'name'</span>)[<span class="number">0</span>:<span class="number">2</span>]</span><br></pre></td></tr></table></figure>
+
+<h2 id="链式查询"><a href="#链式查询" class="headerlink" title="链式查询"></a>链式查询</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">Test.objects.filter(name=’test’).order_by(“-ctime”)</span><br></pre></td></tr></table></figure>
+
+<h2 id="多条件参数查询"><a href="#多条件参数查询" class="headerlink" title="多条件参数查询"></a>多条件参数查询</h2><p>传字典，构造查询条件</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">data = Test.objects.filter(**query_dict).order_by(“-ctime”).values</span><br></pre></td></tr></table></figure>
+
+<p>其中query_dict为一个字典，key为条件字段，value为条件值</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">query_dict = &#123;<span class="string">'id'</span>:<span class="number">123</span>,<span class="string">'name'</span>:’yyp’&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="传Q对象"><a href="#传Q对象" class="headerlink" title="传Q对象"></a>传Q对象</h2><h3 id="构造查询条件"><a href="#构造查询条件" class="headerlink" title="构造查询条件"></a>构造查询条件</h3><ol>
+<li><p>在 filter() 等函式中关键字参数彼此之间都是 “and” 关系。但是要执行更复杂的查询(比如，实现筛选条件的 or 关系)，可以使用 Q 对象。</p>
+</li>
+<li><p>Q对象包括 AND 关系和OR 关系</p>
+</li>
+<li><p>Q 对象可以用&amp;和 | 运算符进行连接。当某个操作连接两个 Q 对象时，就会产生一个新的等价的 Q 对象。</p>
+<ul>
+<li>第一步，构造Q对象：<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> django.db.models <span class="keyword">import</span> Q</span><br><span class="line">Q(name__startswith=’h’) | Q(name__startswith=’p’)</span><br></pre></td></tr></table></figure></li>
+<li>第二步，Q对象以查询参数方式使用，多个Q对象是and关系:<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">Test.objects.filter(</span><br><span class="line">Q(date=’<span class="number">2018</span><span class="number">-10</span><span class="number">-10</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>’),</span><br><span class="line">Q(name__startswith=’h’) | Q(name__startswith=’p’)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>filter() 等函数可以接受 Q对象和条件参数，但Q对象必须放在条件参数前面 </p>
+</blockquote>
+<h3 id="传入条件查询"><a href="#传入条件查询" class="headerlink" title="传入条件查询"></a>传入条件查询</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">q1 = Q()</span><br><span class="line">q1.connector = <span class="string">'OR'</span>              <span class="comment">#连接方式</span></span><br><span class="line">q1.children.append((<span class="string">'id'</span>, <span class="number">1</span>))</span><br><span class="line">q1.children.append((<span class="string">'id'</span>, <span class="number">2</span>))</span><br><span class="line">q1.children.append((<span class="string">'id'</span>, <span class="number">3</span>))</span><br><span class="line"></span><br><span class="line">models.Tb1.objects.filter(q1)</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="合并条件查询"><a href="#合并条件查询" class="headerlink" title="合并条件查询"></a>合并条件查询</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">con = Q()</span><br><span class="line"></span><br><span class="line">q1 = Q()</span><br><span class="line">q1.connector = <span class="string">'OR'</span></span><br><span class="line">q1.children.append((<span class="string">'id'</span>, <span class="number">1</span>))</span><br><span class="line">q1.children.append((<span class="string">'id'</span>, <span class="number">2</span>))</span><br><span class="line">q1.children.append((<span class="string">'id'</span>, <span class="number">3</span>))</span><br><span class="line"></span><br><span class="line">q2 = Q()</span><br><span class="line">q2.connector = <span class="string">'OR'</span></span><br><span class="line">q2.children.append((<span class="string">'status'</span>, <span class="string">'在线'</span>))</span><br><span class="line"></span><br><span class="line">con.add(q1, <span class="string">'AND'</span>)</span><br><span class="line">con.add(q2, <span class="string">'AND'</span>)</span><br><span class="line"></span><br><span class="line">models.Tb1.objects.filter(con)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="过滤不满足条件的操作"><a href="#过滤不满足条件的操作" class="headerlink" title="过滤不满足条件的操作"></a>过滤不满足条件的操作</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">data = Test.objects.exclude(id=<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="增加类操作"><a href="#增加类操作" class="headerlink" title="增加类操作"></a>增加类操作</h1><h2 id="新增一条记录"><a href="#新增一条记录" class="headerlink" title="新增一条记录"></a>新增一条记录</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">test1 = Test(name=<span class="string">'yyp'</span>)</span><br><span class="line">test1.save()</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="更新类操作"><a href="#更新类操作" class="headerlink" title="更新类操作"></a>更新类操作</h1><h2 id="先查询获取对象，再修改对象的值，再保存"><a href="#先查询获取对象，再修改对象的值，再保存" class="headerlink" title="先查询获取对象，再修改对象的值，再保存"></a>先查询获取对象，再修改对象的值，再保存</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">test1 = Test.objects.get(id=<span class="number">1</span>)</span><br><span class="line">test1.name = <span class="string">'Google'</span></span><br><span class="line">test1.save()</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="条件链式更新"><a href="#条件链式更新" class="headerlink" title="条件链式更新"></a>条件链式更新</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">Test.objects.filter(id=<span class="number">1</span>).update(name=‘Google’)</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="删除类操作"><a href="#删除类操作" class="headerlink" title="删除类操作"></a>删除类操作</h1><h2 id="先查询获取要删除的对象，然后直接delete操作"><a href="#先查询获取要删除的对象，然后直接delete操作" class="headerlink" title="先查询获取要删除的对象，然后直接delete操作"></a>先查询获取要删除的对象，然后直接delete操作</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 删除id=1的数据</span></span><br><span class="line">test1 = Test.objects.get(id=<span class="number">1</span>)</span><br><span class="line">test1.delete()</span><br></pre></td></tr></table></figure>
+
+<h2 id="条件删除："><a href="#条件删除：" class="headerlink" title="条件删除："></a>条件删除：</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">Test.objects.filter(id=<span class="number">1</span>).delete()</span><br></pre></td></tr></table></figure>
+
+<h2 id="QuerySet相关"><a href="#QuerySet相关" class="headerlink" title="QuerySet相关"></a>QuerySet相关</h2><p>Django中model查询出来的结构类型为QuerySet，本质是一个查询对象集。</p>
+<h2 id="将多个查询结果转换为字典列表"><a href="#将多个查询结果转换为字典列表" class="headerlink" title="将多个查询结果转换为字典列表"></a>将多个查询结果转换为字典列表</h2><figure class="highlight"><table><tr><td class="code"><pre><span class="line"><span class="comment"># all()方法查询出来的是QuerySet，用values方法转成字典集</span></span><br><span class="line">data= Test.objects.all().values()</span><br><span class="line">data_dict_list = list(data)</span><br><span class="line">&lt;QuerySet [&lt;Test:  test&gt;]&gt;    ----&gt;&lt;QuerySet [&#123;“id”:XXX, “name”:XXX&#125;]&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="QuerySet对象转换成字典对象"><a href="#QuerySet对象转换成字典对象" class="headerlink" title="QuerySet对象转换成字典对象"></a>QuerySet对象转换成字典对象</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">fromdjango.forms.models <span class="keyword">import</span> model_to_dict</span><br><span class="line">data = Test.objects.get(id=<span class="number">1</span>)</span><br><span class="line">data_dict = model_to_dict(data)</span><br></pre></td></tr></table></figure>
+
+<h2 id="序列化成json数据"><a href="#序列化成json数据" class="headerlink" title="序列化成json数据"></a>序列化成json数据</h2><p>对于很多web开发接口的时候，要返回的是json数据，而django从DB查询出来的是对象集，可以考虑django-rest-framework 库的serializers类，具体可参考：<a href="https://q1mi.github.io/Django-REST-framework-documentation/tutorial/1-serialization_zh/" target="_blank" rel="noopener"><strong>Tutorial 1: 序列化</strong></a></p>
+<h1 id="查询条件总结"><a href="#查询条件总结" class="headerlink" title="查询条件总结"></a>查询条件总结</h1><h2 id="字段名-op"><a href="#字段名-op" class="headerlink" title="字段名__op:"></a>字段名__op:</h2><p>__exact 精确等于 like ‘aaa’</p>
+<p>__iexact精确等于忽略大小写ilike‘aaa’</p>
+<p>__contains 包含 like ‘%aaa%’</p>
+<p>__icontains包含忽略大小写ilike‘%aaa%’，但是对于sqlite来说，contains的作用效果等同于icontains。</p>
+<p>__gt大于</p>
+<p>__gte大于等于</p>
+<p>__lt小于</p>
+<p>__lte小于等于</p>
+<p>__in 存在于一个list范围内</p>
+<p>__startswith以…开头</p>
+<p>__istartswith以…开头忽略大小写</p>
+<p>__endswith以…结尾</p>
+<p>__iendswith以…结尾，忽略大小写</p>
+<p>__range 在…范围内</p>
+<p>__year 日期字段的年份</p>
+<p>__month 日期字段的月份</p>
+<p>__day 日期字段的日</p>
+<p>__isnull=True/False</p>
+<h2 id="使用sql语句进行查询："><a href="#使用sql语句进行查询：" class="headerlink" title="使用sql语句进行查询："></a>使用sql语句进行查询：</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">fromdjango.db <span class="keyword">import</span> connection</span><br><span class="line">cursor = connection.cursor()</span><br><span class="line">cursor.execute(“select * <span class="keyword">from</span> Test where name = %s”, <span class="string">"yyp"</span>)</span><br><span class="line">row = cursor.fetchone()</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<p>参考链接：<br><a href="https://mp.weixin.qq.com/s/okaGAbNkFLhwZXvZV7eUBw" target="_blank" rel="noopener">【经验分享】Django开发中常用到的数据库操作总结</a> </p>
+]]></content>
+      <categories>
+        <category>Django</category>
+        <category>ORM</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>数据库</tag>
+        <tag>Django</tag>
+        <tag>ORM</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python之Celery</title>
     <url>/2020/11/20/celery/</url>
     <content><![CDATA[<blockquote>
@@ -91,7 +204,7 @@
 <h4 id="周期任务"><a href="#周期任务" class="headerlink" title="周期任务"></a>周期任务</h4><p>celery beat是用来开启定时任务调度的，一般用法为：启动celery beat，然后启动worker，让beat去调用worker里面的任务。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> celery.schedules <span class="keyword">import</span> crontab</span><br><span class="line"><span class="keyword">from</span> celery.task <span class="keyword">import</span> task, periodic_task</span><br><span class="line"></span><br><span class="line"><span class="comment"># crontab设置每天8点</span></span><br><span class="line"><span class="comment"># @periodic_task(run_every=(crontab(minute=0, hour=8)))</span></span><br><span class="line"><span class="comment"># crontab设置每分钟</span></span><br><span class="line"><span class="meta">@periodic_task(run_every=crontab(minute="*/1"))</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">distribute_task</span><span class="params">()</span>:</span></span><br><span class="line">    now = datetime.datetime.now()</span><br><span class="line">    <span class="comment"># 使用周期任务调动异步任务</span></span><br><span class="line">    get_alarm_list.apply_async(args=(now,))</span><br><span class="line">    </span><br><span class="line"><span class="meta">@task()</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_alarm_list</span><span class="params">(source_time)</span>:</span></span><br><span class="line">    print(source_time)</span><br></pre></td></tr></table></figure>
 
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>写了这么多，从Celery简介、架构，到消息队列选型，再Python中如何使用Celery、Django项目怎么配置集成Celery，也算是Celery的超详细讲解了。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>写了这么多，从Celery简介、架构，到消息队列选型，再Python中如何使用Celery、Django项目怎么配置集成Celery，也算是Celery的超详细讲解了，用了这么久Celery，总算填了一个坑哈哈。</p>
 <p>想要学习Celery更多的设计、调度、优化、路由、并发、信号、调试、测试、扩展等详细内容，可以参考 <a href="https://www.celerycn.io/" target="_blank" rel="noopener">https://www.celerycn.io/</a></p>
 <hr>
 <p>参考链接：</p>
@@ -884,7 +997,11 @@
 <p>代码git add到暂存区，并未commit提交，如何回退：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git reset HEAD file 取消暂存</span><br><span class="line">git checkout file 撤销修改</span><br></pre></td></tr></table></figure>
 
+<h3 id="git-配置"><a href="#git-配置" class="headerlink" title="git 配置"></a>git 配置</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git config --global user.name  &quot;username&quot;</span><br><span class="line">git config --global user.email  &quot;username&quot;</span><br></pre></td></tr></table></figure>
 
+<h4 id="配置密码"><a href="#配置密码" class="headerlink" title="配置密码"></a>配置密码</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git config –system –unset credential.helper</span><br><span class="line">git config –global http.emptyAuth true</span><br></pre></td></tr></table></figure>
+
+<h4 id="Windows凭据管理-git-密码"><a href="#Windows凭据管理-git-密码" class="headerlink" title="Windows凭据管理 git 密码"></a>Windows凭据管理 git 密码</h4><p>进入控制面板 -&gt; 用户账号 -&gt; 凭据管理器 -&gt; windows凭据 -&gt; 普通凭据，在里面找到对应git域名，点开编辑密码，更新为最新密码之后就可以正常操作了。</p>
 <hr>
 <p>参考链接：<br><a href="https://git-scm.com/docs" target="_blank" rel="noopener">Git Reference</a><br><a href="https://git-scm.com/book/zh/v2" target="_blank" rel="noopener">Git Book</a>  </p>
 ]]></content>

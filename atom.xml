@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://api.ddoudou.xyz/"/>
-  <updated>2020-11-19T19:00:58.293Z</updated>
+  <updated>2020-11-20T20:30:32.376Z</updated>
   <id>http://api.ddoudou.xyz/</id>
   
   <author>
@@ -17,11 +17,46 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>Django之ORM操作</title>
+    <link href="http://api.ddoudou.xyz/2020/11/21/django-orm/"/>
+    <id>http://api.ddoudou.xyz/2020/11/21/django-orm/</id>
+    <published>2020-11-20T19:07:42.000Z</published>
+    <updated>2020-11-20T20:30:32.376Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;查询类操作&quot;&gt;&lt;a href=&quot;#查询类操作&quot; class=&quot;headerlink&quot; title=&quot;查询类操作&quot;&gt;&lt;/a&gt;查询类操作&lt;/h1&gt;&lt;h2 id=&quot;查询所有的结果&quot;&gt;&lt;a href=&quot;#查询所有的结果&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Django" scheme="http://api.ddoudou.xyz/categories/Django/"/>
+    
+      <category term="ORM" scheme="http://api.ddoudou.xyz/categories/Django/ORM/"/>
+    
+    
+      <category term="Python" scheme="http://api.ddoudou.xyz/tags/Python/"/>
+    
+      <category term="数据库" scheme="http://api.ddoudou.xyz/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+      <category term="Django" scheme="http://api.ddoudou.xyz/tags/Django/"/>
+    
+      <category term="ORM" scheme="http://api.ddoudou.xyz/tags/ORM/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Python之Celery</title>
     <link href="http://api.ddoudou.xyz/2020/11/20/celery/"/>
     <id>http://api.ddoudou.xyz/2020/11/20/celery/</id>
     <published>2020-11-19T17:11:44.000Z</published>
-    <updated>2020-11-19T19:00:58.293Z</updated>
+    <updated>2020-11-19T19:13:36.848Z</updated>
     
     <summary type="html">
     
@@ -416,7 +451,7 @@
     <link href="http://api.ddoudou.xyz/2019/11/12/git-basis/"/>
     <id>http://api.ddoudou.xyz/2019/11/12/git-basis/</id>
     <published>2019-11-12T14:45:15.000Z</published>
-    <updated>2020-11-16T15:50:11.970Z</updated>
+    <updated>2020-11-20T19:21:25.336Z</updated>
     
     <summary type="html">
     
