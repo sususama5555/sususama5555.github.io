@@ -1,6 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Python之全局解释器锁GIL</title>
+    <url>/2020/11/23/python-GIL/</url>
+    <content><![CDATA[<blockquote>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote>
+<p>GIL(Global Interpreter Lock)，也称为全局解释器，官方解释为：</p>
+<blockquote>
+<p>In CPython, the global interpreter lock, or GIL, is a mutex that prevents multiple native threads from executing Python bytecodes at once. This lock is necessary mainly because CPython’s memory management is not thread-safe. (However, since the GIL exists, other features have grown to depend on the guarantees that it enforces.)</p>
+</blockquote>
+<p>主要意思为：</p>
+<blockquote>
+<p>GIL是一个互斥锁，它防止多个线程同时执行Python字节码。这个锁是必要的，主要是因为CPython的内存管理不是线程安全的</p>
+</blockquote>
+<a id="more"></a>
+
+<h3 id="Python解释器有哪些"><a href="#Python解释器有哪些" class="headerlink" title="Python解释器有哪些"></a>Python解释器有哪些</h3><ol>
+<li>CPython: 官方默认版本，使用C语言开发，是Python使用最广泛的解释器，有GIL.</li>
+<li>IPython: IPython是基于CPython之上的交互式解释器，其它方面和CPython相同.</li>
+<li>PyPy: PyPy采用JIT(Just In Time)也就是即时编译编译器，对Python代码执行动态编译，目的是加快执行速度，有GIL.</li>
+<li>Jython: 运行在Java平台上的解释器，把Python代码编译为Java字节码执行，没有GIL.</li>
+<li>IronPython: IronPython和Jython类似，只不过IronPython是运行在微软.Net平台上的Python解释器，可以直接把Python代码编译成.Net的字节码，没有GIL.</li>
+</ol>
+<h2 id="GIL的背景"><a href="#GIL的背景" class="headerlink" title="GIL的背景"></a>GIL的背景</h2><p>由于物理上得限制，各CPU厂商在核心频率上的比赛已经被多核所取代。为了更有效的利用多核处理器的性能，就出现了多线程的编程方式，而随之带来的就是线程间数据一致性和状态同步的困难。</p>
+<p>Python当然也逃不开，为了利用多核，Python开始支持多线程。而解决多线程之间数据完整性和状态同步的最简单方法自然就是加锁。于是有了GIL这把超级大锁，而当越来越多的代码库开发者接受了这种设定后，他们开始大量依赖这种特性（即默认python内部对象是thread-safe的，无需在实现时考虑额外的内存锁和同步操作）。</p>
+<h2 id="GIL为什么会存在？"><a href="#GIL为什么会存在？" class="headerlink" title="GIL为什么会存在？"></a>GIL为什么会存在？</h2><p>GIL的问题其实是由于近十几年来应用程序和操作系统逐步从多任务单核心演进到多任务多核心导致的 , 在一个古老的单核CPU上调度多个线程任务，大家相互共享一个全局锁，谁在CPU执行，谁就占有这把锁，直到这个线程因为IO操作或者Timer Tick到期让出CPU，没有在执行的线程就安静的等待着这把锁（除了等待之外，他们应该也无事可做）。下面这个图演示了一个单核CPU的线程调度方式：</p>
+<img data-src="/2020/11/23/python-GIL/python-gil-single.jpg" class>
+
+<p>在一个现代多核心的处理器上，上面的模型就有很大优化空间了，原来只能等待的线程任务，现在可以在其它空闲的核心上调度并发执行。由于古老GIL机制，如果线程2需要在CPU 2 上执行，它需要先等待在CPU 1 上执行的线程1释放GIL（记住：GIL是全局的）。如果线程1是因为 i/o 阻塞让出的GIL，那么线程2必定拿到Gil。但如果线程1是因为timer ticks计数满100让出GIL，那么这个时候线程1和线程2公平竞争。但要命的是，在Python 2.x, 线程1不会动态的调整自身的优先级，所以很大概率下次被选中执行的还是线程1，在很多个这样的选举周期内，线程2只能安静的看着线程1拿着GIL在CPU 1上欢快的执行。</p>
+<img data-src="/2020/11/23/python-GIL/python-gil-muti.jpg" class>
+
+<p>在稍微极端一点的情况下，比如线程1使用了while True在CPU 1 上执行，那就真是“一核有难，八核围观”了，如下图所示：</p>
+<img data-src="/2020/11/23/python-GIL/python-gil-octo.jpg" class>
+
+<h2 id="GIL的影响"><a href="#GIL的影响" class="headerlink" title="GIL的影响"></a>GIL的影响</h2><p>从上文的介绍和官方的定义来看，GIL无疑就是一把全局排他锁。毫无疑问全局锁的存在会对多线程的效率有不小影响。甚至就几乎等于Python是个单线程的程序。</p>
+<h3 id="GIL对多线程Python程序的影响"><a href="#GIL对多线程Python程序的影响" class="headerlink" title="GIL对多线程Python程序的影响"></a>GIL对多线程Python程序的影响</h3><p>程序的性能受到计算密集型(CPU)的程序限制和I/O密集型的程序限制影响，那什么是计算密集型和I/O密集型程序?</p>
+<h4 id="计算密集型-CPU"><a href="#计算密集型-CPU" class="headerlink" title="计算密集型(CPU)"></a>计算密集型(CPU)</h4><p>高度使用CPU的程序，例如: 进行数学计算，矩阵运算，搜索，图像处理等.</p>
+<h4 id="I-O密集型"><a href="#I-O密集型" class="headerlink" title="I/O密集型"></a>I/O密集型</h4><p>I/0(Input/Output)程序是进行数据传输，例如: 文件操作，数据库，网络数据等</p>
+<h3 id="顺序执行单线程和并发执行多线程的效率对比"><a href="#顺序执行单线程和并发执行多线程的效率对比" class="headerlink" title="顺序执行单线程和并发执行多线程的效率对比"></a>顺序执行单线程和并发执行多线程的效率对比</h3><h4 id="顺序执行单线程-single-thread-py"><a href="#顺序执行单线程-single-thread-py" class="headerlink" title="- 顺序执行单线程(single_thread.py)"></a>- 顺序执行单线程(single_thread.py)</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test_counter</span><span class="params">()</span>:</span></span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> range(<span class="number">100000000</span>):</span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    start_time = time.time()</span><br><span class="line">    <span class="keyword">for</span> tid <span class="keyword">in</span> range(<span class="number">2</span>):</span><br><span class="line">        t1 = threading.Thread(target=test_counter)</span><br><span class="line">        t1.start()</span><br><span class="line">        t1.join()</span><br><span class="line">    end_time = time.time()</span><br><span class="line">    print(<span class="string">"Total time:&#123;&#125;"</span>.format(end_time-start_time))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+
+<p>执行结果:</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">Total</span> <span class="selector-tag">time</span>: 11<span class="selector-class">.299654722213745</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="并发执行两个线程-multi-thread-py"><a href="#并发执行两个线程-multi-thread-py" class="headerlink" title="- 并发执行两个线程(multi_thread.py)"></a>- 并发执行两个线程(multi_thread.py)</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test_counter</span><span class="params">()</span>:</span></span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> range(<span class="number">100000000</span>):</span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    thread_array = &#123;&#125;</span><br><span class="line">    start_time = time.time()</span><br><span class="line">    <span class="keyword">for</span> tid <span class="keyword">in</span> range(<span class="number">2</span>):</span><br><span class="line">        t = threading.Thread(target=test_counter)</span><br><span class="line">        t.start()</span><br><span class="line">        thread_array[tid] = t</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>):</span><br><span class="line">        thread_array[i].join()</span><br><span class="line">    end_time = time.time()</span><br><span class="line">    print(<span class="string">"Total time:&#123;&#125;"</span>.format(end_time-start_time))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+
+<p>执行结果:</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">Total</span> <span class="selector-tag">time</span><span class="selector-pseudo">:13.7098388671875</span></span><br></pre></td></tr></table></figure>
+
+<p>GIL对I/O绑定多线程程序的性能影响不大，因为线程在等待I/O时共享锁.</p>
+<p>GIL对计算型绑定多线程程序有影响，例如: 使用线程处理部分图像的程序，不仅会因锁定而成为单线程，而且还会看到执行时间的增加，这种增加是由锁的获取和释放开销的结果.</p>
+<h2 id="如何处理Python中的GIL"><a href="#如何处理Python中的GIL" class="headerlink" title="如何处理Python中的GIL"></a>如何处理Python中的GIL</h2><ul>
+<li>计算密集型程序<ul>
+<li>使用多进程(什么是多进程呢，后续道来)</li>
+<li>使用其它语言(将计算密集程序放到其它语言中执行)</li>
+<li>替换解释器(可以自己尝试)</li>
+<li>等大神解决GIL</li>
+</ul>
+</li>
+<li>I/O密集型程序<ul>
+<li>使用多线程</li>
+<li>使用多进程</li>
+<li>使用多进程 + 多线程</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p>参考链接：</p>
+<p><a href="http://www.dabeaz.com/python/UnderstandingGIL.pdf" target="_blank" rel="noopener">Understanding the Python GIL</a>  </p>
+<p><a href="https://realpython.com/python-gil/" target="_blank" rel="noopener">What Is the Python Global Interpreter Lock (GIL)?</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/75780308" target="_blank" rel="noopener">深入理解Python中的GIL（全局解释器锁）</a></p>
+]]></content>
+      <categories>
+        <category>Python</category>
+        <category>GIL</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>多线程</tag>
+        <tag>GIL</tag>
+        <tag>全局解释器锁</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Django之ORM操作</title>
     <url>/2020/11/21/django-orm/</url>
     <content><![CDATA[<h1 id="查询类操作"><a href="#查询类操作" class="headerlink" title="查询类操作"></a>查询类操作</h1><h2 id="查询所有的结果"><a href="#查询所有的结果" class="headerlink" title="查询所有的结果"></a>查询所有的结果</h2><p>相当sql中的select * from</p>

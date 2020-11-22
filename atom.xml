@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://api.ddoudou.xyz/"/>
-  <updated>2020-11-20T20:30:32.376Z</updated>
+  <updated>2020-11-22T17:29:38.088Z</updated>
   <id>http://api.ddoudou.xyz/</id>
   
   <author>
@@ -15,6 +15,44 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Python之全局解释器锁GIL</title>
+    <link href="http://api.ddoudou.xyz/2020/11/23/python-GIL/"/>
+    <id>http://api.ddoudou.xyz/2020/11/23/python-GIL/</id>
+    <published>2020-11-22T16:54:11.000Z</published>
+    <updated>2020-11-22T17:29:38.088Z</updated>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;h2 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h2&gt;&lt;/blockquote&gt;
+&lt;p&gt;GIL(Global Interpreter Lock)，也称为全局解释器，官方解释为：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;In CPython, the global interpreter lock, or GIL, is a mutex that prevents multiple native threads from executing Python bytecodes at once. This lock is necessary mainly because CPython’s memory management is not thread-safe. (However, since the GIL exists, other features have grown to depend on the guarantees that it enforces.)&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;主要意思为：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;GIL是一个互斥锁，它防止多个线程同时执行Python字节码。这个锁是必要的，主要是因为CPython的内存管理不是线程安全的&lt;/p&gt;
+&lt;/blockquote&gt;
+    
+    </summary>
+    
+    
+      <category term="Python" scheme="http://api.ddoudou.xyz/categories/Python/"/>
+    
+      <category term="GIL" scheme="http://api.ddoudou.xyz/categories/Python/GIL/"/>
+    
+    
+      <category term="Python" scheme="http://api.ddoudou.xyz/tags/Python/"/>
+    
+      <category term="多线程" scheme="http://api.ddoudou.xyz/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"/>
+    
+      <category term="GIL" scheme="http://api.ddoudou.xyz/tags/GIL/"/>
+    
+      <category term="全局解释器锁" scheme="http://api.ddoudou.xyz/tags/%E5%85%A8%E5%B1%80%E8%A7%A3%E9%87%8A%E5%99%A8%E9%94%81/"/>
+    
+  </entry>
   
   <entry>
     <title>Django之ORM操作</title>
