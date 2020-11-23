@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://api.ddoudou.xyz/"/>
-  <updated>2020-11-22T17:29:38.088Z</updated>
+  <updated>2020-11-23T18:18:17.213Z</updated>
   <id>http://api.ddoudou.xyz/</id>
   
   <author>
@@ -15,6 +15,64 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>蓝鲸开发框架进阶</title>
+    <link href="http://api.ddoudou.xyz/2020/11/24/bk-django-framework-advanced/"/>
+    <id>http://api.ddoudou.xyz/2020/11/24/bk-django-framework-advanced/</id>
+    <published>2020-11-23T17:57:51.000Z</published>
+    <updated>2020-11-23T18:18:17.213Z</updated>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;h2 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h2&gt;&lt;/blockquote&gt;
+&lt;p&gt;之前的文章描述了蓝鲸开发框架的基础指南，以下将继续上文，讲述蓝鲸开发框架的进阶使用，包括登陆与用户对接、数据库配置、Django的配置修改，和中间件及公共方法。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="蓝鲸" scheme="http://api.ddoudou.xyz/categories/%E8%93%9D%E9%B2%B8/"/>
+    
+      <category term="开发框架" scheme="http://api.ddoudou.xyz/categories/%E8%93%9D%E9%B2%B8/%E5%BC%80%E5%8F%91%E6%A1%86%E6%9E%B6/"/>
+    
+    
+      <category term="Python" scheme="http://api.ddoudou.xyz/tags/Python/"/>
+    
+      <category term="Django" scheme="http://api.ddoudou.xyz/tags/Django/"/>
+    
+      <category term="蓝鲸" scheme="http://api.ddoudou.xyz/tags/%E8%93%9D%E9%B2%B8/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>初识蓝鲸开发框架</title>
+    <link href="http://api.ddoudou.xyz/2020/11/24/bk-django-framework/"/>
+    <id>http://api.ddoudou.xyz/2020/11/24/bk-django-framework/</id>
+    <published>2020-11-23T17:34:52.000Z</published>
+    <updated>2020-11-23T18:18:11.309Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;蓝鲸-Python-开发框架简介&quot;&gt;&lt;a href=&quot;#蓝鲸-Python-开发框架简介&quot; class=&quot;headerlink&quot; title=&quot;蓝鲸 Python 开发框架简介&quot;&gt;&lt;/a&gt;蓝鲸 Python 开发框架简介&lt;/h2&gt;&lt;p&gt;Python 开发框架是集成了蓝鲸系统功能，方便开发者可以快速在蓝鲸 PaaS 平台上开发 SaaS 的 Python 框架。&lt;/p&gt;
+&lt;p&gt;该开发框架基于 Django 框架架构，并在此基础上进行扩展，增加蓝鲸系统的特有功能，&lt;/p&gt;
+&lt;p&gt;例如：身份验证、ESB 调用及模板渲染等功能，以便开发者可以更专注于 SaaS 的逻辑开发。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="蓝鲸" scheme="http://api.ddoudou.xyz/categories/%E8%93%9D%E9%B2%B8/"/>
+    
+      <category term="开发框架" scheme="http://api.ddoudou.xyz/categories/%E8%93%9D%E9%B2%B8/%E5%BC%80%E5%8F%91%E6%A1%86%E6%9E%B6/"/>
+    
+    
+      <category term="Python" scheme="http://api.ddoudou.xyz/tags/Python/"/>
+    
+      <category term="Django" scheme="http://api.ddoudou.xyz/tags/Django/"/>
+    
+      <category term="蓝鲸" scheme="http://api.ddoudou.xyz/tags/%E8%93%9D%E9%B2%B8/"/>
+    
+  </entry>
   
   <entry>
     <title>Python之全局解释器锁GIL</title>
@@ -59,17 +117,17 @@
     <link href="http://api.ddoudou.xyz/2020/11/21/django-orm/"/>
     <id>http://api.ddoudou.xyz/2020/11/21/django-orm/</id>
     <published>2020-11-20T19:07:42.000Z</published>
-    <updated>2020-11-20T20:30:32.376Z</updated>
+    <updated>2020-11-23T17:31:46.865Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;h1 id=&quot;查询类操作&quot;&gt;&lt;a href=&quot;#查询类操作&quot; class=&quot;headerlink&quot; title=&quot;查询类操作&quot;&gt;&lt;/a&gt;查询类操作&lt;/h1&gt;&lt;h2 id=&quot;查询所有的结果&quot;&gt;&lt;a href=&quot;#查询所有的结果&quot; class=&quot;headerlink&quot;
-        
-      
+      &lt;blockquote&gt;
+&lt;h1 id=&quot;Django-ORM&quot;&gt;&lt;a href=&quot;#Django-ORM&quot; class=&quot;headerlink&quot; title=&quot;Django ORM&quot;&gt;&lt;/a&gt;Django ORM&lt;/h1&gt;&lt;/blockquote&gt;
+&lt;p&gt;Django 模型使用自带的 ORM。&lt;/p&gt;
+&lt;p&gt;&lt;kbd&gt;对象关系映射&lt;/kbd&gt;（Object Relational Mapping，简称 ORM ）用于实现面向对象编程语言里不同类型系统的数据之间的转换。&lt;/p&gt;
+&lt;p&gt;ORM 在业务逻辑层和数据库层之间充当了桥梁的作用。&lt;/p&gt;
+&lt;p&gt;ORM 是通过使用描述对象和数据库之间的映射的元数据，将程序中的对象自动持久化到数据库中。&lt;/p&gt;
+&lt;img data-src=&quot;/2020/11/21/django-orm/django-orm1.png&quot; class&gt;
     
     </summary>
     
@@ -119,9 +177,9 @@
     
       <category term="Redis" scheme="http://api.ddoudou.xyz/tags/Redis/"/>
     
-      <category term="Celery" scheme="http://api.ddoudou.xyz/tags/Celery/"/>
-    
       <category term="Django" scheme="http://api.ddoudou.xyz/tags/Django/"/>
+    
+      <category term="Celery" scheme="http://api.ddoudou.xyz/tags/Celery/"/>
     
       <category term="RabbitMQ" scheme="http://api.ddoudou.xyz/tags/RabbitMQ/"/>
     
@@ -253,9 +311,9 @@
       <category term="Redis修炼" scheme="http://api.ddoudou.xyz/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/Redis%E4%BF%AE%E7%82%BC/"/>
     
     
-      <category term="数据库" scheme="http://api.ddoudou.xyz/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
-    
       <category term="Redis" scheme="http://api.ddoudou.xyz/tags/Redis/"/>
+    
+      <category term="数据库" scheme="http://api.ddoudou.xyz/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
     
       <category term="数据类型" scheme="http://api.ddoudou.xyz/tags/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/"/>
     

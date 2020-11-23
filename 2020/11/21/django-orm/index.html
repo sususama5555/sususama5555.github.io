@@ -32,21 +32,24 @@
     var CONFIG = {"hostname":"api.ddoudou.xyz","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#ff7600","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="查询类操作查询所有的结果相当sql中的select * from 1list &#x3D; Test.objects.all()  条件查询filter相关sql中的where用于过滤查询结果 1result &#x3D; Test.objects.filter(id&#x3D;1, name&#x3D;’test’) # 传多个参数  如果多条件与查询，直接用逗号隔开，filter函数里面的参数都是Test Model中的字段 获取单">
+  <meta name="description" content="Django ORM Django 模型使用自带的 ORM。 对象关系映射（Object Relational Mapping，简称 ORM ）用于实现面向对象编程语言里不同类型系统的数据之间的转换。 ORM 在业务逻辑层和数据库层之间充当了桥梁的作用。 ORM 是通过使用描述对象和数据库之间的映射的元数据，将程序中的对象自动持久化到数据库中。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Django之ORM操作">
 <meta property="og:url" content="http://api.ddoudou.xyz/2020/11/21/django-orm/index.html">
 <meta property="og:site_name" content="Sapphire">
-<meta property="og:description" content="查询类操作查询所有的结果相当sql中的select * from 1list &#x3D; Test.objects.all()  条件查询filter相关sql中的where用于过滤查询结果 1result &#x3D; Test.objects.filter(id&#x3D;1, name&#x3D;’test’) # 传多个参数  如果多条件与查询，直接用逗号隔开，filter函数里面的参数都是Test Model中的字段 获取单">
+<meta property="og:description" content="Django ORM Django 模型使用自带的 ORM。 对象关系映射（Object Relational Mapping，简称 ORM ）用于实现面向对象编程语言里不同类型系统的数据之间的转换。 ORM 在业务逻辑层和数据库层之间充当了桥梁的作用。 ORM 是通过使用描述对象和数据库之间的映射的元数据，将程序中的对象自动持久化到数据库中。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://api.ddoudou.xyz/2020/11/21/django-orm/django-orm1.png">
+<meta property="og:image" content="http://api.ddoudou.xyz/2020/11/21/django-orm/orm-object.png">
 <meta property="article:published_time" content="2020-11-20T19:07:42.000Z">
-<meta property="article:modified_time" content="2020-11-20T20:30:32.376Z">
+<meta property="article:modified_time" content="2020-11-23T17:31:46.865Z">
 <meta property="article:author" content="Ryan Shu">
 <meta property="article:tag" content="Python">
 <meta property="article:tag" content="数据库">
 <meta property="article:tag" content="Django">
 <meta property="article:tag" content="ORM">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://api.ddoudou.xyz/2020/11/21/django-orm/django-orm1.png">
 
 <link rel="canonical" href="http://api.ddoudou.xyz/2020/11/21/django-orm/">
 
@@ -154,17 +157,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">35</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">36</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">17</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">19</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">17</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">19</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -244,10 +247,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-11-21 03:07:42 / 修改时间：04:30:32" itemprop="dateCreated datePublished" datetime="2020-11-21T03:07:42+08:00">2020-11-21</time>
+              <time title="创建时间：2020-11-21 03:07:42" itemprop="dateCreated datePublished" datetime="2020-11-21T03:07:42+08:00">2020-11-21</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-11-24 01:31:46" itemprop="dateModified" datetime="2020-11-24T01:31:46+08:00">2020-11-24</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -268,14 +277,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.7k</span>
+              <span>3.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -287,7 +296,32 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="查询类操作"><a href="#查询类操作" class="headerlink" title="查询类操作"></a>查询类操作</h1><h2 id="查询所有的结果"><a href="#查询所有的结果" class="headerlink" title="查询所有的结果"></a>查询所有的结果</h2><p>相当sql中的select * from</p>
+        <blockquote>
+<h1 id="Django-ORM"><a href="#Django-ORM" class="headerlink" title="Django ORM"></a>Django ORM</h1></blockquote>
+<p>Django 模型使用自带的 ORM。</p>
+<p><kbd>对象关系映射</kbd>（Object Relational Mapping，简称 ORM ）用于实现面向对象编程语言里不同类型系统的数据之间的转换。</p>
+<p>ORM 在业务逻辑层和数据库层之间充当了桥梁的作用。</p>
+<p>ORM 是通过使用描述对象和数据库之间的映射的元数据，将程序中的对象自动持久化到数据库中。</p>
+<img data-src="/2020/11/21/django-orm/django-orm1.png" class>
+
+<a id="more"></a>
+
+<h2 id="使用-ORM-的好处："><a href="#使用-ORM-的好处：" class="headerlink" title="使用 ORM 的好处："></a>使用 ORM 的好处：</h2><ul>
+<li>提高开发效率。</li>
+<li>不同数据库可以平滑切换。</li>
+</ul>
+<h2 id="使用-ORM-的缺点："><a href="#使用-ORM-的缺点：" class="headerlink" title="使用 ORM 的缺点："></a>使用 ORM 的缺点：</h2><ul>
+<li>ORM 代码转换为 SQL 语句时，需要花费一定的时间，执行效率会有所降低。</li>
+<li>长期写 ORM 代码，会降低编写 SQL 语句的能力。</li>
+</ul>
+<h2 id="ORM-解析过程"><a href="#ORM-解析过程" class="headerlink" title="ORM 解析过程:"></a>ORM 解析过程:</h2><ul>
+<li>1、ORM 会将 Python 代码转成为 SQL 语句。</li>
+<li>2、SQL 语句通过 pymysql 传送到数据库服务端。</li>
+<li>3、在数据库中执行 SQL 语句并将结果返回。</li>
+</ul>
+<h2 id="ORM-对应关系表："><a href="#ORM-对应关系表：" class="headerlink" title="ORM 对应关系表："></a>ORM 对应关系表：</h2><img data-src="/2020/11/21/django-orm/orm-object.png" class>
+
+<h1 id="查询类操作"><a href="#查询类操作" class="headerlink" title="查询类操作"></a>查询类操作</h1><h2 id="查询所有的结果"><a href="#查询所有的结果" class="headerlink" title="查询所有的结果"></a>查询所有的结果</h2><p>相当sql中的select * from</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">list = Test.objects.all()</span><br></pre></td></tr></table></figure>
 
 <h2 id="条件查询filter相关sql中的where"><a href="#条件查询filter相关sql中的where" class="headerlink" title="条件查询filter相关sql中的where"></a>条件查询filter相关sql中的where</h2><p>用于过滤查询结果</p>
@@ -518,7 +552,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#查询类操作"><span class="nav-number">1.</span> <span class="nav-text">查询类操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#查询所有的结果"><span class="nav-number">1.1.</span> <span class="nav-text">查询所有的结果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#条件查询filter相关sql中的where"><span class="nav-number">1.2.</span> <span class="nav-text">条件查询filter相关sql中的where</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#获取单个对象"><span class="nav-number">1.3.</span> <span class="nav-text">获取单个对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#限制返回的结果数据的数量"><span class="nav-number">1.4.</span> <span class="nav-text">限制返回的结果数据的数量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#链式查询"><span class="nav-number">1.5.</span> <span class="nav-text">链式查询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多条件参数查询"><span class="nav-number">1.6.</span> <span class="nav-text">多条件参数查询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#传Q对象"><span class="nav-number">1.7.</span> <span class="nav-text">传Q对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#构造查询条件"><span class="nav-number">1.7.1.</span> <span class="nav-text">构造查询条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#传入条件查询"><span class="nav-number">1.7.2.</span> <span class="nav-text">传入条件查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#合并条件查询"><span class="nav-number">1.7.3.</span> <span class="nav-text">合并条件查询</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#过滤不满足条件的操作"><span class="nav-number">1.8.</span> <span class="nav-text">过滤不满足条件的操作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#增加类操作"><span class="nav-number">2.</span> <span class="nav-text">增加类操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#新增一条记录"><span class="nav-number">2.1.</span> <span class="nav-text">新增一条记录</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#更新类操作"><span class="nav-number">3.</span> <span class="nav-text">更新类操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#先查询获取对象，再修改对象的值，再保存"><span class="nav-number">3.1.</span> <span class="nav-text">先查询获取对象，再修改对象的值，再保存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#条件链式更新"><span class="nav-number">3.2.</span> <span class="nav-text">条件链式更新</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#删除类操作"><span class="nav-number">4.</span> <span class="nav-text">删除类操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#先查询获取要删除的对象，然后直接delete操作"><span class="nav-number">4.1.</span> <span class="nav-text">先查询获取要删除的对象，然后直接delete操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#条件删除："><span class="nav-number">4.2.</span> <span class="nav-text">条件删除：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#QuerySet相关"><span class="nav-number">4.3.</span> <span class="nav-text">QuerySet相关</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#将多个查询结果转换为字典列表"><span class="nav-number">4.4.</span> <span class="nav-text">将多个查询结果转换为字典列表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#QuerySet对象转换成字典对象"><span class="nav-number">4.5.</span> <span class="nav-text">QuerySet对象转换成字典对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#序列化成json数据"><span class="nav-number">4.6.</span> <span class="nav-text">序列化成json数据</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#查询条件总结"><span class="nav-number">5.</span> <span class="nav-text">查询条件总结</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#字段名-op"><span class="nav-number">5.1.</span> <span class="nav-text">字段名__op:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用sql语句进行查询："><span class="nav-number">5.2.</span> <span class="nav-text">使用sql语句进行查询：</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Django-ORM"><span class="nav-number">1.</span> <span class="nav-text">Django ORM</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用-ORM-的好处："><span class="nav-number">1.1.</span> <span class="nav-text">使用 ORM 的好处：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用-ORM-的缺点："><span class="nav-number">1.2.</span> <span class="nav-text">使用 ORM 的缺点：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ORM-解析过程"><span class="nav-number">1.3.</span> <span class="nav-text">ORM 解析过程:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ORM-对应关系表："><span class="nav-number">1.4.</span> <span class="nav-text">ORM 对应关系表：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#查询类操作"><span class="nav-number">2.</span> <span class="nav-text">查询类操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#查询所有的结果"><span class="nav-number">2.1.</span> <span class="nav-text">查询所有的结果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#条件查询filter相关sql中的where"><span class="nav-number">2.2.</span> <span class="nav-text">条件查询filter相关sql中的where</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#获取单个对象"><span class="nav-number">2.3.</span> <span class="nav-text">获取单个对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#限制返回的结果数据的数量"><span class="nav-number">2.4.</span> <span class="nav-text">限制返回的结果数据的数量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#链式查询"><span class="nav-number">2.5.</span> <span class="nav-text">链式查询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多条件参数查询"><span class="nav-number">2.6.</span> <span class="nav-text">多条件参数查询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#传Q对象"><span class="nav-number">2.7.</span> <span class="nav-text">传Q对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#构造查询条件"><span class="nav-number">2.7.1.</span> <span class="nav-text">构造查询条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#传入条件查询"><span class="nav-number">2.7.2.</span> <span class="nav-text">传入条件查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#合并条件查询"><span class="nav-number">2.7.3.</span> <span class="nav-text">合并条件查询</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#过滤不满足条件的操作"><span class="nav-number">2.8.</span> <span class="nav-text">过滤不满足条件的操作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#增加类操作"><span class="nav-number">3.</span> <span class="nav-text">增加类操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#新增一条记录"><span class="nav-number">3.1.</span> <span class="nav-text">新增一条记录</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#更新类操作"><span class="nav-number">4.</span> <span class="nav-text">更新类操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#先查询获取对象，再修改对象的值，再保存"><span class="nav-number">4.1.</span> <span class="nav-text">先查询获取对象，再修改对象的值，再保存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#条件链式更新"><span class="nav-number">4.2.</span> <span class="nav-text">条件链式更新</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#删除类操作"><span class="nav-number">5.</span> <span class="nav-text">删除类操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#先查询获取要删除的对象，然后直接delete操作"><span class="nav-number">5.1.</span> <span class="nav-text">先查询获取要删除的对象，然后直接delete操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#条件删除："><span class="nav-number">5.2.</span> <span class="nav-text">条件删除：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#QuerySet相关"><span class="nav-number">5.3.</span> <span class="nav-text">QuerySet相关</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#将多个查询结果转换为字典列表"><span class="nav-number">5.4.</span> <span class="nav-text">将多个查询结果转换为字典列表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#QuerySet对象转换成字典对象"><span class="nav-number">5.5.</span> <span class="nav-text">QuerySet对象转换成字典对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#序列化成json数据"><span class="nav-number">5.6.</span> <span class="nav-text">序列化成json数据</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#查询条件总结"><span class="nav-number">6.</span> <span class="nav-text">查询条件总结</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#字段名-op"><span class="nav-number">6.1.</span> <span class="nav-text">字段名__op:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用sql语句进行查询："><span class="nav-number">6.2.</span> <span class="nav-text">使用sql语句进行查询：</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -534,20 +568,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-count">19</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-count">19</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-count">36</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -629,13 +663,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">52k</span>
+    <span title="站点总字数">66k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">47 分钟</span>
+    <span title="站点阅读时长">1:01</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

@@ -1,6 +1,491 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>蓝鲸开发框架进阶</title>
+    <url>/2020/11/24/bk-django-framework-advanced/</url>
+    <content><![CDATA[<blockquote>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote>
+<p>之前的文章描述了蓝鲸开发框架的基础指南，以下将继续上文，讲述蓝鲸开发框架的进阶使用，包括登陆与用户对接、数据库配置、Django的配置修改，和中间件及公共方法。</p>
+<a id="more"></a>
+
+<h1 id="开发框架使用进阶"><a href="#开发框架使用进阶" class="headerlink" title="开发框架使用进阶"></a>开发框架使用进阶</h1><h2 id="登录模块"><a href="#登录模块" class="headerlink" title="登录模块"></a>登录模块</h2><h3 id="豁免登录"><a href="#豁免登录" class="headerlink" title="豁免登录"></a>豁免登录</h3><p>目前所有的 view 访问全部强制要求登录鉴权, 用户可以豁免一些 view 的登录限制，主要用于对外提供 API。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> blueapps.account.decorators <span class="keyword">import</span> login_exempt</span><br><span class="line"></span><br><span class="line"><span class="meta">@login_exempt</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">myview</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">"hello world"</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="User-Model-获取-amp-使用方式"><a href="#User-Model-获取-amp-使用方式" class="headerlink" title="User Model 获取 &amp; 使用方式"></a>User Model 获取 &amp; 使用方式</h2><h3 id="获取-User-Model"><a href="#获取-User-Model" class="headerlink" title="获取 User Model"></a>获取 User Model</h3><p>通过 <code>from blueapps.account import get_user_model</code> 可得到 User Model</p>
+<h3 id="User-方法属性说明"><a href="#User-方法属性说明" class="headerlink" title="User 方法属性说明"></a>User 方法属性说明</h3><ul>
+<li>username</li>
+</ul>
+<p>用户唯一标识，如 QQ 号</p>
+<ul>
+<li>nickname</li>
+</ul>
+<p>用于前端展示的用户名，如 QQ 昵称</p>
+<ul>
+<li>avatar_url</li>
+</ul>
+<p>用户头像 URL</p>
+<ul>
+<li>get_full_name</li>
+</ul>
+<p>用于前端展示的完整用户名，如 QQ 昵称</p>
+<h3 id="User-扩展属性说明"><a href="#User-扩展属性说明" class="headerlink" title="User 扩展属性说明"></a>User 扩展属性说明</h3><ul>
+<li>get_property(key)</li>
+</ul>
+<p>用户获取水平扩展属性</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> blueapps.account <span class="keyword">import</span> get_user_model</span><br><span class="line"></span><br><span class="line">user = get_user_model().objects.get(username=xxx)</span><br><span class="line">user.get_property(key)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>set_property(key,value)</li>
+</ul>
+<p>用户设置水平扩展属性</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> blueapps.account <span class="keyword">import</span> get_user_model</span><br><span class="line"></span><br><span class="line">user = get_user_model().objects.get(username=xxx)</span><br><span class="line">user.set_property(key, value)</span><br></pre></td></tr></table></figure>
+
+<h3 id="在模板中使用-User-作为外键"><a href="#在模板中使用-User-作为外键" class="headerlink" title="在模板中使用 User 作为外键"></a>在模板中使用 User 作为外键</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf <span class="keyword">import</span> settings</span><br><span class="line"><span class="keyword">from</span> django.db <span class="keyword">import</span> models</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SomeModel</span><span class="params">(models.Model)</span>:</span></span><br><span class="line">    person = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=<span class="string">u"用户"</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Django-APP-管理员设置"><a href="#Django-APP-管理员设置" class="headerlink" title="Django APP 管理员设置"></a>Django APP 管理员设置</h3><p>修改 config/default.py 的 INIT_SUPERUSER 配置，填写用户名列表，默认值是应用创建人，列表中的人员将拥有预发布环境和正式环境的管理员权限。需要注意的是，该配置需要在首次提测和上线前修改，之后的修改将不会生效。 如果不小心将唯一的管理员权限去掉了，有两种方式新增管理员：</p>
+<ul>
+<li>通过 migrations 实现</li>
+</ul>
+<p>在你的 APP 目录下，找到 migrations 文件夹，新建文件 {INDEX}_init_superuser.py：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> django.db <span class="keyword">import</span> migrations</span><br><span class="line"><span class="keyword">from</span> django.conf <span class="keyword">import</span> settings</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">load_data</span><span class="params">(apps, schema_editor)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    添加用户为管理员</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    User = apps.get_model(<span class="string">"account"</span>, <span class="string">"User"</span>)</span><br><span class="line">    <span class="keyword">for</span> name <span class="keyword">in</span> settings.INIT_SUPERUSER:</span><br><span class="line">        User.objects.update_or_create(</span><br><span class="line">            username=name,</span><br><span class="line">            defaults=&#123;<span class="string">'is_staff'</span>: <span class="literal">True</span>, <span class="string">'is_active'</span>: <span class="literal">True</span>, <span class="string">'is_superuser'</span>: <span class="literal">True</span>&#125;</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Migration</span><span class="params">(migrations.Migration)</span>:</span></span><br><span class="line">    dependencies = [</span><br><span class="line">        (<span class="string">'&#123;APP&#125;'</span>, <span class="string">'&#123;APP_LAST_MIGRATION&#125;'</span>)</span><br><span class="line">    ]</span><br><span class="line">    operations = [</span><br><span class="line">        migrations.RunPython(load_data)</span><br><span class="line">    ]</span><br></pre></td></tr></table></figure>
+
+<p>其中，{APP} 表示你的当前 APP，{APP_LAST_MIGRATION} 表示当前 mirgations 文件中最新一个文件名（如 “0003_auto_20180301_1732”），{INDEX} 表示最新一个文件名的前缀数字加 1（如 “0003_auto_20180301_1732” 的前缀数字是 “0003”，那么 {INDEX} 设置为 “0004”）。</p>
+<ul>
+<li>通过 views 实现</li>
+</ul>
+<p>在你的 APP 目录的 views 文件中，添加如下代码：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf <span class="keyword">import</span> settings</span><br><span class="line"><span class="keyword">from</span> django.http <span class="keyword">import</span> HttpResponse</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> blueapps.account <span class="keyword">import</span> get_user_model</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">load_data</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    添加用户为管理员</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    User = get_user_model()</span><br><span class="line">    <span class="keyword">for</span> name <span class="keyword">in</span> settings.INIT_SUPERUSER:</span><br><span class="line">        User.objects.update_or_create(</span><br><span class="line">            username=name,</span><br><span class="line">            defaults=&#123;<span class="string">'is_staff'</span>: <span class="literal">True</span>, <span class="string">'is_active'</span>: <span class="literal">True</span>, <span class="string">'is_superuser'</span>: <span class="literal">True</span>&#125;</span><br><span class="line">        )</span><br><span class="line">    <span class="keyword">return</span> HttpResponse(<span class="string">'Success'</span>)</span><br></pre></td></tr></table></figure>
+
+<p>然后配置一条 URL 路由规则到该 view，提测、上线后访问对应 URL 就可以初始化管理员了。</p>
+<h2 id="配置修改指引"><a href="#配置修改指引" class="headerlink" title="配置修改指引"></a>配置修改指引</h2><h3 id="settings-主要配置"><a href="#settings-主要配置" class="headerlink" title="settings 主要配置"></a>settings 主要配置</h3><p><strong>注意</strong>：不要修改 settings.py ，配置项修改请在 config 目录下的文件中进行。</p>
+<p>其中，如果修改 config/default.py 配置项对所有的运行环境生效（正式环境、预发布环境、本地环境）； 修改 config/prod.py 配置项只会对正式环境生效； 修改 config/stag.py 配置项只会对预发布环境生效； 修改 config/dev.py 配置项只会对本地开发环境生效； 在多人开发时，为了避免 config/dev.py 中的配置互相影响，每个开发者都可以在项目根目录下新增 local_settings.py 文件，来添加各开发者不同的本地开发配置，如 DATABASES，并在提交代码时忽略 local_settings.py 文件。</p>
+<ul>
+<li>自定义 Django APP</li>
+</ul>
+<p>请修改 config/default.py 的 INSTALLED_APPS</p>
+<ul>
+<li>自定义中间件</li>
+</ul>
+<p>请修改 config/default.py 的 MIDDLEWARE</p>
+<ul>
+<li>自定义数据库</li>
+</ul>
+<p>如无必要请不要覆盖默认 default 数据库，正式环境和预发布环境分别修改 config/prod.py 和 config/stag.py，使用 DATABASES.update() 方法。 本地环境请修改 config/dev.py 的 DATABASES。</p>
+<ul>
+<li>自定义日志级别</li>
+</ul>
+<p>日志级别默认是 INFO，如需修改：</p>
+<ol>
+<li><p>所有环境下的日志级别，请在 config/default.py 对应位置修改日志级别：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">LOG_LEVEL = <span class="string">"DEBUG"</span></span><br><span class="line"><span class="comment"># load logging settings</span></span><br><span class="line">LOGGING = get_logging_config_dict(locals())</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果只希望针对特定环境进行日志级别设置，则在对应环境配置文件（ config/prod.py（只影响生产环境）、config/stag.py（只影响预发布环境）、config/dev.py（只影响预本地开发环境））中取消对应代码注释并修改日志级别：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 自定义本地环境日志级别</span></span><br><span class="line"><span class="keyword">from</span> blueapps.conf.log <span class="keyword">import</span> set_log_level <span class="comment"># noqa</span></span><br><span class="line">LOG_LEVEL = <span class="string">"DEBUG"</span></span><br><span class="line">LOGGING = set_log_level(locals())</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>: 这种修改方式依赖 blueapps 版本 &gt;= 3.3.1。</p>
+</li>
+</ol>
+<p>其中，不同配置的含义如下：</p>
+<ol>
+<li>DEBUG：用于调试目的的底层系统信息</li>
+<li>INFO：普通的系统信息</li>
+<li>WARNING：表示出现一个较小的问题。</li>
+<li>ERROR：表示出现一个较大的问题。</li>
+<li>CRITICAL：表示出现一个致命的问题。</li>
+</ol>
+<ul>
+<li>静态资源版本号更新</li>
+</ul>
+<p>修改 config/default.py 的 STATIC_VERSION。</p>
+<ul>
+<li>添加 celery 任务</li>
+</ul>
+<p>把 celery 任务模块加入 config/default.py 的 CELERY_IMPORTS。</p>
+<ul>
+<li>初始化管理员列表</li>
+</ul>
+<p>请修改 config/default.py 的 INIT_SUPERUSER，列表中的人员将拥有预发布环境和正式环境的管理员权限。请在首次提测和上线前修改，之后的修改将不会生效。</p>
+<ul>
+<li>自定义其他 Django 支持的配置</li>
+</ul>
+<p>请直接在 config/default.py 添加需要的配置覆盖默认值。</p>
+<h3 id="使用-settings-配置"><a href="#使用-settings-配置" class="headerlink" title="使用 settings 配置"></a>使用 settings 配置</h3><p>在 Django 应用中，可以通过导入 django.conf.settings 对象来使用设置。例如：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf <span class="keyword">import</span> settings</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> settings.DEBUG:</span><br><span class="line">    <span class="comment"># Do something</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>：django.conf.settings 不是一个模块 —— 它是一个对象。所以不可以导入每个单独的设置</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf.settings <span class="keyword">import</span> DEBUG  <span class="comment"># This won't work.</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>：你的代码不应该从 config.default.py 或其他设置文件中导入。django.conf.settings 抽象出默认设置和站点特定设置的概念；它表示一个单一的接口。它还可以将代码从你的设置所在的位置解耦出来。</p>
+<h2 id="自定义-middleware-中间件"><a href="#自定义-middleware-中间件" class="headerlink" title="自定义 middleware(中间件)"></a>自定义 middleware(中间件)</h2><ul>
+<li>default.py 配置如下</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">MIDDLEWARE += (</span><br><span class="line"><span class="comment"># 你的中间件</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>：django1.10 开始，中间件配置项使用 <strong><code>MIDDLEWARE</code></strong> ，1.10 以下版本使用的 MIDDLEWARE_CLASSES 配置项会在 django2.0 后不再被支持。</p>
+<ul>
+<li>midlleware 开发</li>
+</ul>
+<p>使用 MIDDLEWARE 配置项开发你的 middleware。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> django.utils.deprecation <span class="keyword">import</span> MiddlewareMixin</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyCustomMiddleware</span><span class="params">(MiddlewareMixin)</span>:</span></span><br><span class="line">    <span class="comment"># 中间件支持的方法依然不变</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process_request</span><span class="params">(request)</span>:</span></span><br><span class="line">        ...</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process_view</span><span class="params">(request, callback, callback_args, callback_kwargs)</span>:</span></span><br><span class="line">        ...</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process_template_response</span><span class="params">(request, response)</span>:</span></span><br><span class="line">        ...</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process_response</span><span class="params">(request, response)</span>:</span></span><br><span class="line">        ...</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process_exception</span><span class="params">(request, exception)</span>:</span></span><br><span class="line">        ...</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>： 你的 middleware 类必须继承 django 的 MiddlewareMixin，同时你的 middleware 尽量不要去重写 <code>__call__</code> 和 <code>__init__</code> 方法，参考<a href="https://docs.djangoproject.com/en//topics/http/middleware/" target="_blank" rel="noopener">官方文档</a>。</p>
+<h2 id="公共方法"><a href="#公共方法" class="headerlink" title="公共方法"></a>公共方法</h2><h3 id="blueapps-utils-logger"><a href="#blueapps-utils-logger" class="headerlink" title="blueapps.utils.logger"></a>blueapps.utils.logger</h3><p>提供常用的 logger,logger_celery</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> blueapps.util.logger <span class="keyword">import</span> logger         <span class="comment"># 普通日志</span></span><br><span class="line"><span class="keyword">from</span> blueapps.util.logger <span class="keyword">import</span> logger_celery  <span class="comment"># celery日志</span></span><br><span class="line">logger.error(<span class="string">'log your info here.'</span>)</span><br></pre></td></tr></table></figure>
+
+
+<hr>
+<p>参考链接：<br><a href="https://bk.tencent.com/docs/document/5.1/19/4318" target="_blank" rel="noopener">腾讯蓝鲸开发框架 2.0 使用进阶</a></p>
+]]></content>
+      <categories>
+        <category>蓝鲸</category>
+        <category>开发框架</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>Django</tag>
+        <tag>蓝鲸</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>初识蓝鲸开发框架</title>
+    <url>/2020/11/24/bk-django-framework/</url>
+    <content><![CDATA[<h2 id="蓝鲸-Python-开发框架简介"><a href="#蓝鲸-Python-开发框架简介" class="headerlink" title="蓝鲸 Python 开发框架简介"></a>蓝鲸 Python 开发框架简介</h2><p>Python 开发框架是集成了蓝鲸系统功能，方便开发者可以快速在蓝鲸 PaaS 平台上开发 SaaS 的 Python 框架。</p>
+<p>该开发框架基于 Django 框架架构，并在此基础上进行扩展，增加蓝鲸系统的特有功能，</p>
+<p>例如：身份验证、ESB 调用及模板渲染等功能，以便开发者可以更专注于 SaaS 的逻辑开发。</p>
+<a id="more"></a>
+
+<h2 id="目录结构说明"><a href="#目录结构说明" class="headerlink" title="目录结构说明"></a>目录结构说明</h2><h3 id="项目目录结构"><a href="#项目目录结构" class="headerlink" title="项目目录结构"></a>项目目录结构</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">- blueapps                    <span class="comment"># Python开发框架模块</span></span><br><span class="line">- blueking                    <span class="comment"># ESB调用模块</span></span><br><span class="line">- config                      <span class="comment"># 应用配置目录</span></span><br><span class="line">  - __init__.py               <span class="comment"># 应用 RUN_VER(社区版为open)、APP_CODE 和 SECRET_KEY 等配置</span></span><br><span class="line">  - dev.py                    <span class="comment"># 本地开发配置(开发团队共享)</span></span><br><span class="line">  - default.py                <span class="comment"># 全局配置</span></span><br><span class="line">  - prod.py                   <span class="comment"># 生产环境配置</span></span><br><span class="line">  - stag.py                   <span class="comment"># 预发布环境配置</span></span><br><span class="line">- home_application            <span class="comment"># Django 模板应用样例</span></span><br><span class="line">  - __init__.py</span><br><span class="line">  - admin.py</span><br><span class="line">  - urls.py</span><br><span class="line">  - models.py</span><br><span class="line">  - tests.py</span><br><span class="line">  - views.py</span><br><span class="line">  - templates                 <span class="comment"># Django 模板</span></span><br><span class="line">    - home_application</span><br><span class="line">      - contact.html          <span class="comment"># 联系我们页面</span></span><br><span class="line">      - dev_guide.html        <span class="comment"># 开发指引</span></span><br><span class="line">      - index_home.html       <span class="comment"># 首页</span></span><br><span class="line">- mako_templates              <span class="comment"># mako 公共模板文件</span></span><br><span class="line">  - base.mako                 <span class="comment"># mako 模板基础文件，其他的页面可以从这里继承</span></span><br><span class="line">- mako_application            <span class="comment"># mako 模板应用样例</span></span><br><span class="line">  - __init__.py</span><br><span class="line">  - admin.py</span><br><span class="line">  - urls.py</span><br><span class="line">  - models.py</span><br><span class="line">  - tests.py</span><br><span class="line">  - views.py</span><br><span class="line">  - mako_templates            <span class="comment"># 模板</span></span><br><span class="line">    - mako_application</span><br><span class="line">      - contact.html          <span class="comment"># 联系我们页面</span></span><br><span class="line">      - dev_guide.html        <span class="comment"># 开发指引</span></span><br><span class="line">      - index_home.html       <span class="comment"># 首页</span></span><br><span class="line">- static                      <span class="comment"># 公共静态文件</span></span><br><span class="line">  - js                        <span class="comment"># 公共 js</span></span><br><span class="line">    - csrftoken.js            <span class="comment"># CSRFTOKEN</span></span><br><span class="line">    - settings.js             <span class="comment"># 异常处理</span></span><br><span class="line">- templates                   <span class="comment"># 公共模板文件</span></span><br><span class="line">  - admin                     <span class="comment"># admin 模板文件</span></span><br><span class="line">    - base_site.html</span><br><span class="line">    - login.html</span><br><span class="line">  - base.html                 <span class="comment"># Django 模板基础文件，其他的页面可以从这里继承</span></span><br><span class="line">- manage.py                   <span class="comment"># Django 工程 manage</span></span><br><span class="line">- requirements.txt            <span class="comment"># 依赖的 python 包列表</span></span><br><span class="line">- settings.py                 <span class="comment"># Django 工程 settings</span></span><br><span class="line">- urls.py                     <span class="comment"># Django 工程主路由 URL 配置</span></span><br><span class="line">- wsgi.py                     <span class="comment"># WSGI配置</span></span><br><span class="line">- runtime.txt                 <span class="comment"># Python 版本配置文件，默认指向 Python</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="常用配置说明"><a href="#常用配置说明" class="headerlink" title="常用配置说明"></a>常用配置说明</h3><ul>
+<li>App 基本信息</li>
+</ul>
+<p>在 config/<em>*init</em>*.py 可以查看 App 基本信息，请修改：APP_CODE、SECRET_KEY (用于 App 认证)和 BK_URL(蓝鲸 SaaS 平台的 URL)。RUN_VER 是当前 App 运行的 PaaS 版本，请不要修改。</p>
+<ul>
+<li>App 运行环境</li>
+</ul>
+<p>在 config/dev.py、config/stag.py、config/prod.py 中都有一个 RUN_MODE 的变量，用来标记 App 运营环境(DEVELOP：本地环境，STAGING：预发布环境，PRODUCT：正式环境)，请不要修改。</p>
+<ul>
+<li>日志级别和路径</li>
+</ul>
+<p>开发框架默认配置的日志级别是 INFO，你可以在 config/default.py 修改 LOG_LEVEL 变量，会对所有运行环境生效，你也可以单独修改 config/dev.py、config/stag.py、config/prod.py 文件，详情请参考“<a href="javascript:void(0)">日志使用</a>”。</p>
+<p>你不需要关心线上运行环境的日志路径，这些开发框架已经自动帮你配置了；</p>
+<p>本地的日志放在和项目根目录同一级的 logs 目录下，以 APP_CODE 命名的文件夹中，其中 {APP_CODE}-django.log 是应用日志，{APP_CODE}-celery.log 是 celery 日志，{APP_CODE}-component.log 是组件日志，{APP_CODE}-mysql.log 是数据库日志。</p>
+<ul>
+<li>数据库配置</li>
+</ul>
+<p>本地数据库配置请在 config/dev.py 修改 DATABASES 变量；多人合作开发建议在根目录下新建 local_settings.py 文件，并配置 DATABASES 变量，并且在版本控制中忽略 local_settings.py，这样的好处是防止多人合作开发时本地配置不一致导致代码冲突。</p>
+<h2 id="开发环境搭建-Python"><a href="#开发环境搭建-Python" class="headerlink" title="开发环境搭建(Python)"></a>开发环境搭建(Python)</h2><h3 id="安装-Python-3-6"><a href="#安装-Python-3-6" class="headerlink" title="安装 Python(3.6)"></a>安装 Python(3.6)</h3><p>如果系统中已经安装有 Python2 版本，可以参考 Python 版本切换了解<a href="javascript:void(0)">Python3 与 Python2 并存的处理方案</a></p>
+<h3 id="安装-MySQL-5-5-以上"><a href="#安装-MySQL-5-5-以上" class="headerlink" title="安装 MySQL(5.5 以上)"></a>安装 MySQL(5.5 以上)</h3><h3 id="安装-setuptools、pip-和项目依赖"><a href="#安装-setuptools、pip-和项目依赖" class="headerlink" title="安装 setuptools、pip 和项目依赖"></a>安装 setuptools、pip 和项目依赖</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip3 install -r requirements.txt</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：由于依赖中存在 mysqlclient，该模块存在对 C 环境的依赖，开发者可以参考<a href="https://github.com/PyMySQL/mysqlclient-python#install" target="_blank" rel="noopener">项目主页</a>安装说明</p>
+<p>此处不使用 PyMySQL 原因是该模块与 Django2.2 存在兼容<a href="https://github.com/PyMySQL/PyMySQL/issues/790" target="_blank" rel="noopener">问题</a></p>
+</blockquote>
+<h3 id="安装本地开发工具"><a href="#安装本地开发工具" class="headerlink" title="安装本地开发工具"></a>安装本地开发工具</h3><p>推荐使用 <a href="https://www.jetbrains.com/pycharm/download" target="_blank" rel="noopener">pycharm</a> 进行代码开发，使用 <a href="https://tortoisesvn.net/index.zh.html" target="_blank" rel="noopener">TortoiseSVN</a> 管理 SVN，使用 <a href="https://www.sourcetreeapp.com/" target="_blank" rel="noopener">SourceTree</a> 管理 GIT。</p>
+<h3 id="安装-celery-需要使用后台任务的项目"><a href="#安装-celery-需要使用后台任务的项目" class="headerlink" title="安装 celery(需要使用后台任务的项目)"></a>安装 celery(需要使用后台任务的项目)</h3><p>安装项目依赖时会自动安装 celery==3.1.25 和 django-celery==3.2.1。目前 celery 支持 redis、rabbitmq 作为任务的消息队列，推荐使用 redis。</p>
+<ul>
+<li>mac 系统 redis 使用指南：</li>
+</ul>
+<p>安装指令 <code>brew install redis</code>；</p>
+<p>启动指令 <code>redis-server</code>；</p>
+<p>测试 redis 服务是否正常启动，<code>redis-cli</code> 尝试连接本地的 redis 服务。</p>
+<ul>
+<li>windows 系统 redis 使用指南</li>
+</ul>
+<p>下载安装地址：<a href="https://github.com/MicrosoftArchive/redis/releases" target="_blank" rel="noopener">https://github.com/MicrosoftArchive/redis/releases</a></p>
+<p>点击安装目录下的 redis-server.exe 启动 redis 服务。</p>
+<ul>
+<li>配置项(在 config/dev.py 文件中修改消息队列配置)</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Celery 消息队列设置 RabbitMQ</span></span><br><span class="line"><span class="comment"># BROKER_URL = 'amqp://guest:guest@localhost:5672//'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Celery 消息队列设置 Redis</span></span><br><span class="line">BROKER_URL = <span class="string">'redis://localhost:6379/0'</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：由于 redis-3.0 及以后模块存在兼容问题，所以在安装 redis 模块是，请增加上版本控制要求<code>redis&gt;=2.10.6,&lt;3</code></p>
+</blockquote>
+<h3 id="配置-hosts"><a href="#配置-hosts" class="headerlink" title="配置 hosts"></a>配置 hosts</h3><p>本地需要修改 hosts 文件，添加如下内容：</p>
+<blockquote>
+<p><strong>注意</strong>： domain_name 应该修改为 PaaS 平台的域名</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">127.0.0.1 appdev.`&#123;domain_name&#125;`</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置本地数据库"><a href="#配置本地数据库" class="headerlink" title="配置本地数据库"></a>配置本地数据库</h3><p>首先在 MySQL 命令行下创建数据库：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">CREATE DATABASE  `&#123;APP_CODE&#125;` default charset utf8 COLLATE utf8_general_ci;</span><br></pre></td></tr></table></figure>
+
+<p>然后配置本地数据库账号密码，需要找到 config/dev.py 中的 DATABASES 配置项，修改 USER 和 PASSWORD。</p>
+<h3 id="初始化本地数据库"><a href="#初始化本地数据库" class="headerlink" title="初始化本地数据库"></a>初始化本地数据库</h3><p>在项目根目录下执行如下命令初始化本地数据库：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python manage.py migrate</span><br></pre></td></tr></table></figure>
+
+<p>如果遇到错误，请先注释掉 config/default.py 的 INSTALLED_APPS 中的 APP 列表，执行命令后再去掉注释。</p>
+<h3 id="启动项目"><a href="#启动项目" class="headerlink" title="启动项目"></a>启动项目</h3><p>在项目根目录下执行如下命令启动项目：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python manage.py runserver</span><br></pre></td></tr></table></figure>
+
+<p>接着在浏览器访问 appdev.<code>{domain_name}</code> 就可以访问到项目首页了。</p>
+<p><img data-src="https://bkdocs-1252002024.file.myqcloud.com/ZH/5.1/%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/SaaS%E5%BC%80%E5%8F%91/assets/usage-index.png" alt="image-20190505204958140"></p>
+<h2 id="新建-application"><a href="#新建-application" class="headerlink" title="新建 application"></a>新建 application</h2><p>在根目录下执行 django-admin startapp yourappname</p>
+<p>进入 yourappname 目录，新增 urls.py</p>
+<p>编写逻辑代码和路由配置代码</p>
+<p>把 yourappname 加入 config/default.py 的 INSTALLED_APPS 中</p>
+<h2 id="定义-model"><a href="#定义-model" class="headerlink" title="定义 model"></a>定义 model</h2><h3 id="在新建的-application-中-models-py-定义-model"><a href="#在新建的-application-中-models-py-定义-model" class="headerlink" title="在新建的 application 中 models.py 定义 model"></a>在新建的 application 中 models.py 定义 model</h3><p>官方文档：<a href="https://docs.djangoproject.com/en/2.2/topics/db/models/" target="_blank" rel="noopener">Django Models</a></p>
+<h3 id="生成数据库变更文件"><a href="#生成数据库变更文件" class="headerlink" title="生成数据库变更文件"></a>生成数据库变更文件</h3><p>在项目根目录下执行如下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python manage.py makemigrations yourappname</span><br></pre></td></tr></table></figure>
+
+<p>执行成功后就会生成数据库变更文件，文件位于新建 APP 的 migrations 目录中。</p>
+<h3 id="生效数据库变更"><a href="#生效数据库变更" class="headerlink" title="生效数据库变更"></a>生效数据库变更</h3><p>在项目根目录下执行如下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python manage.py migrate yourappname</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>注意</strong>：在把 yourappname 加入 config/default.py 的 INSTALLED_APPS 中之前，请先执行 python manage.py migrate 初始化数据库。</p>
+</blockquote>
+<h2 id="使用模板"><a href="#使用模板" class="headerlink" title="使用模板"></a>使用模板</h2><p>开发框架支持 Django、 Mako 两种模板渲染引擎，在 Django 工程下每个 App 维护自身的模板文件，以下以 APP_NAME 代表 Django APP 名称。</p>
+<h3 id="Django-模板文件使用方式"><a href="#Django-模板文件使用方式" class="headerlink" title="Django 模板文件使用方式"></a>Django 模板文件使用方式</h3><p>请将你的 Django 模板文件 xxx.html 放在 <code>PROJECT_ROOT/APP_NAME/templates/</code> 目录底下，建议在 templates 底下在加上一层目录，取名为 APP_NAME，即最终模板文件存放路径为 <code>PROJECT_ROOT/APP_NAME/templates/APP_NAME</code>，这是为了避免在寻找模板文件的时候，出现覆盖的情况。</p>
+<p>使用 Django 原生支持的 render 方法进行模板渲染。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> django.shortcuts <span class="keyword">import</span> render</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> render(request, <span class="string">'APP_NAME/index.html'</span>, &#123;&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>render 函数接受三个参数：</p>
+<ul>
+<li>第一个参数 request 对象。</li>
+<li>第二个参数 模板路径，从 APP templates 目录开始写起，此处对应的完整路径为 <code>PROJECT_ROOT/APP_NAME/templates/APP_NAME/index.html</code>，注意不要在前面加 ‘/‘，否则会被识别为绝对路径，找不到对应的模板。</li>
+<li>第三个参数 传入的模板上下文，用于替换模板中的变量。</li>
+</ul>
+<blockquote>
+<p>为什么 templates 目录底下还需要再加一层以 APP_NAME 命名的目录？ 假设 settings INSTALLED_APPS = (‘app1’, ‘app2’)，工程目录如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">PROJCET_ROOT</span><br><span class="line">|__ app1</span><br><span class="line">|__ __ templates</span><br><span class="line">|__ __ __ index.html</span><br><span class="line">...</span><br><span class="line">|__ app2</span><br><span class="line">|__ __ templates</span><br><span class="line">|__ __ __ index.html</span><br></pre></td></tr></table></figure>
+
+<p>当我们在 app2.views 里使用 <code>render(request, &#39;index.html&#39;, {})</code> 语句进行渲染时，Django 框架默认以 INSTALLED_APPS 安装次序进行模板文件查找，这时候会匹配到 <code>app1/templates/index.html</code> 文件进行渲染，导致得到非预期的结果。所以推荐 <code>PROJECT_ROOT/APP_NAME/templates/APP_NAME</code> 这样的目录设计</p>
+</blockquote>
+<h3 id="Mako-模板文件使用方式"><a href="#Mako-模板文件使用方式" class="headerlink" title="Mako 模板文件使用方式"></a>Mako 模板文件使用方式</h3><p>Mako 模板文件使用方式大致与 Django 模板文件相同，唯一的区别就是是 Mako 模板文件放在 <code>PROJECT_ROOT/APP_NAME/mako_templates/</code> 目录底下，同样建议在 mako 底下在加上一层目录，取名为 APP_NAME，最终模板文件存放路径为 <code>PROJECT_ROOT/APP_NAME/mako_templates/APP_NAME</code>。</p>
+<blockquote>
+<p><strong>注意</strong>：出于安全原因，强烈建议用户使用 Django 模板替代 Mako 进行渲染，防止 XSS 攻击。</p>
+</blockquote>
+<h3 id="Template-Context-平台框架提供的模板变量"><a href="#Template-Context-平台框架提供的模板变量" class="headerlink" title="Template-Context 平台框架提供的模板变量"></a>Template-Context 平台框架提供的模板变量</h3><p>这里列举的模板变量，不需要用户在 render 模板时传入，可直接在模板文件中访问到，直接使用。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">context = &#123;</span><br><span class="line">    <span class="string">'STATIC_URL'</span>: settings.STATIC_URL,                    <span class="comment"># 本地静态文件访问</span></span><br><span class="line">    <span class="string">'APP_PATH'</span>: request.get_full_path(),                  <span class="comment"># 当前页面，主要为了 login_required 做跳转用</span></span><br><span class="line">    <span class="string">'RUN_MODE'</span>: settings.RUN_MODE,                        <span class="comment"># 运行模式</span></span><br><span class="line">    <span class="string">'APP_CODE'</span>: settings.APP_CODE,                        <span class="comment"># 在蓝鲸系统中注册的 "应用编码"</span></span><br><span class="line">    <span class="string">'SITE_URL'</span>: settings.SITE_URL,                        <span class="comment"># URL前缀</span></span><br><span class="line">    <span class="string">'REMOTE_STATIC_URL'</span>: settings.REMOTE_STATIC_URL,      <span class="comment"># 远程静态资源 url</span></span><br><span class="line">    <span class="string">'STATIC_VERSION'</span>: settings.STATIC_VERSION,            <span class="comment"># 静态资源版本号,用于指示浏览器更新缓存</span></span><br><span class="line">    <span class="string">'BK_URL'</span>: settings.BK_URL,                            <span class="comment"># 蓝鲸平台 URL</span></span><br><span class="line">    <span class="string">'USERNAME'</span>: username,                                 <span class="comment"># 用户名</span></span><br><span class="line">    <span class="string">'NICKNAME'</span>: nickname,                                 <span class="comment"># 用户昵称</span></span><br><span class="line">    <span class="string">'AVATAR_URL'</span>: avatar_url,                             <span class="comment"># 用户头像</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="静态资源使用规范"><a href="#静态资源使用规范" class="headerlink" title="静态资源使用规范"></a>静态资源使用规范</h2><ul>
+<li>静态文件按模块划分，分别放在 Django 工程中每个对应 APP 的 static 目录下</li>
+</ul>
+<p>请将你的 Django 静态文件 xxx.js 和 xxx.css 放在 PROJECT_ROOT/APP_NAME/static/ 目录底下，建议在 static 底下在加上一层目录，取名为 APP_NAME，即最终模板文件存放路径为 PROJECT_ROOT/APP_NAME/static/APP_NAME[/js 或者/css]，这是为了避免在寻找静态文件的时候，出现覆盖的情况。</p>
+<ul>
+<li>修改静态文件后要手动运行 python manage.py collectstatic 命令来收集静态文件到根目录的 static 文件夹中。</li>
+<li>settings 需要包含 STATIC_ROOT 配置。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">STATIC_ROOT = os.path.join(BASE_DIR, <span class="string">'staticfiles'</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>框架已配置全局有效的静态目录，可以将所有公共使用的静态资源放置于此。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">STATICFILES_DIRS = (</span><br><span class="line">    os.path.join(BASE_DIR, <span class="string">'static'</span>),</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>其中 BASE_DIR 是工程根目录路径。</p>
+<h2 id="celery-使用"><a href="#celery-使用" class="headerlink" title="celery 使用"></a>celery 使用</h2><p>celery 是一个简单、灵活且可靠的，处理大量消息的分布式系统，并且提供维护这样一个系统的必需工具。 它是一个专注于实时处理的任务队列，同时也支持任务调度。</p>
+<h3 id="打开-Celery-配置"><a href="#打开-Celery-配置" class="headerlink" title="打开 Celery 配置"></a>打开 Celery 配置</h3><p>在 config/default.py 中修改配置：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">IS_USE_CELERY = <span class="literal">True</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="添加-Celery-任务"><a href="#添加-Celery-任务" class="headerlink" title="添加 Celery 任务"></a>添加 Celery 任务</h3><p>在 app 底下创建 tasks.py 文件，添加 @task 任务：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> task</span><br><span class="line"></span><br><span class="line"><span class="meta">@task</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mul</span><span class="params">(x, y)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> x * y</span><br></pre></td></tr></table></figure>
+
+<p>如果 @task 任务函数不在 app/tasks.py 文件中，需要在 config/default.py 中添加配置：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">CELERY_IMPORTS = (</span><br><span class="line">    <span class="string">'testapp.tasks'</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="启动异步任务服务-celery-worker"><a href="#启动异步任务服务-celery-worker" class="headerlink" title="启动异步任务服务 celery worker"></a>启动异步任务服务 celery worker</h3><p>在根目录执行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python manage.py celery worker -l info</span><br></pre></td></tr></table></figure>
+
+<h3 id="启动周期性任务服务-celery-beat"><a href="#启动周期性任务服务-celery-beat" class="headerlink" title="启动周期性任务服务 celery beat"></a>启动周期性任务服务 celery beat</h3><p>在根目录执行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python manage.py celery beat -l info</span><br></pre></td></tr></table></figure>
+
+<h3 id="添加周期任务"><a href="#添加周期任务" class="headerlink" title="添加周期任务"></a>添加周期任务</h3><p>进入 admin，在 DJCELERY-&gt;Periodic_tasks 表中添加一条记录。</p>
+<h3 id="如何在平台部署时，自动启动-celery-进程"><a href="#如何在平台部署时，自动启动-celery-进程" class="headerlink" title="如何在平台部署时，自动启动 celery 进程"></a>如何在平台部署时，自动启动 celery 进程</h3><p>修改 IS_USE_CELERY = True，并在提测发布 SaaS 的时候，勾选使用 Celery 任务</p>
+<h3 id="调整-celery-worker-并发数"><a href="#调整-celery-worker-并发数" class="headerlink" title="调整 celery worker 并发数"></a>调整 celery worker 并发数</h3><ul>
+<li>CELERYD_CONCURRENCY 参数官方说明：<a href="http://docs.celeryproject.org/en/v2.2.4/configuration.html#celeryd-prefetch-multiplier" target="_blank" rel="noopener">官方文档</a></li>
+<li>目前开发框架设置的 celery 并发数是 2，如需调整，有 2 种方法：</li>
+</ul>
+<p>1)在蓝鲸平台的 APP 环境变量新增 KEY 为 CELERYD_CONCURRENCY 的变量，并设置对应的值(调大前建议咨询平台维护同事)。</p>
+<p>2)直接修改 APP 中的配置，即修改 config/default.py 文件中如下配置的默认值 2 为你想要设置的值。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">CELERYD_CONCURRENCY = os.getenv(<span class="string">'BK_CELERYD_CONCURRENCY'</span>, <span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="调整-celery-与-RabbitMQ-心跳包发送时间"><a href="#调整-celery-与-RabbitMQ-心跳包发送时间" class="headerlink" title="调整 celery 与 RabbitMQ 心跳包发送时间"></a>调整 celery 与 RabbitMQ 心跳包发送时间</h3><ul>
+<li>BROKER_HEARTBEAT 参数官方说明：<a href="https://docs.celeryproject.org/en/3.1/configuration.html?#std:setting-BROKER_HEARTBEAT" target="_blank" rel="noopener">官方文档</a></li>
+<li>目前开发框架设置的 BROKER_HEARTBEAT 发送时间是 60，即每 60 秒发送一个心跳包，如需调整，有以下方法：</li>
+</ul>
+<p>直接修改 APP 中的配置，即在 config/default.py 文件中添加相应配置，框架默认的配置会被覆盖。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># CELERY与RabbitMQ增加60秒心跳设置项</span></span><br><span class="line">BROKER_HEARTBEAT = <span class="number">60</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="日志使用"><a href="#日志使用" class="headerlink" title="日志使用"></a>日志使用</h2><ul>
+<li>日志相关配置方式复用 Django 的配置方式：<a href="https://docs.djangoproject.com/en/2.2/topics/logging/#using-logging" target="_blank" rel="noopener">官方文档</a></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> logging</span><br><span class="line">logger = logging.getLogger(<span class="string">'app'</span>)       <span class="comment"># 普通日志</span></span><br><span class="line">logger_celery = logging.getLogger(<span class="string">'celery'</span>)   <span class="comment"># celery日志</span></span><br><span class="line">logger.error(<span class="string">'log your info here.'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 第二种方式</span></span><br><span class="line"><span class="keyword">from</span> blueapps.util.logger <span class="keyword">import</span> logger         <span class="comment"># 普通日志</span></span><br><span class="line"><span class="keyword">from</span> blueapps.util.logger <span class="keyword">import</span> logger_celery  <span class="comment"># celery日志</span></span><br><span class="line">logger.error(<span class="string">'log your info here.'</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>日志输出路径：</li>
+</ul>
+<p>本地输出路径在和项目根目录平级的 logs 目录下。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">- PROJCET_ROOT</span><br><span class="line">- logs</span><br><span class="line">    - APP_CODE</span><br><span class="line">        - APP_CODE-celery.log</span><br><span class="line">        - APP_CODE-component.log</span><br><span class="line">        - APP_CODE-django.log</span><br><span class="line">        - APP_CODE-mysql.log</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>日志级别配置：</li>
+</ul>
+<p>日志级别默认是 INFO，如需修改：</p>
+<ol>
+<li><p>所有环境下的日志级别，请在 config/default.py 对应位置修改日志级别：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">LOG_LEVEL = <span class="string">"DEBUG"</span></span><br><span class="line"><span class="comment"># load logging settings</span></span><br><span class="line">LOGGING = get_logging_config_dict(locals())</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果只希望针对特定环境进行日志级别设置，则在对应环境配置文件（ config/prod.py（只影响生产环境）、config/stag.py（只影响预发布环境）、config/dev.py（只影响预本地开发环境））中取消对应代码注释并修改日志级别：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 自定义本地环境日志级别</span></span><br><span class="line"><span class="keyword">from</span> blueapps.conf.log <span class="keyword">import</span> set_log_level <span class="comment"># noqa</span></span><br><span class="line">LOG_LEVEL = <span class="string">"DEBUG"</span></span><br><span class="line">LOGGING = set_log_level(locals())</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>: 这种修改方式依赖 blueapps 版本 &gt;= 3.3.1。</p>
+</li>
+</ol>
+<p>其中，不同配置的含义如下：</p>
+<ol>
+<li>DEBUG：用于调试目的的底层系统信息</li>
+<li>INFO：普通的系统信息</li>
+<li>WARNING：表示出现一个较小的问题。</li>
+<li>ERROR：表示出现一个较大的问题。</li>
+<li>CRITICAL：表示出现一个致命的问题。</li>
+</ol>
+<h2 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h2><p>为了减少代码中判断函数调用的判断逻辑，蓝鲸开发框架提出，开发者应该在异常处直接抛出异常，通过 Django 中间件特性来处理该异常。</p>
+<h3 id="使用样例"><a href="#使用样例" class="headerlink" title="使用样例"></a>使用样例</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> blueapps.core.exceptions <span class="keyword">import</span> ParamValidationError</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">your_view_func</span><span class="params">(request)</span>:</span></span><br><span class="line">  form = your_form(request.POST)</span><br><span class="line">  <span class="keyword">if</span> <span class="keyword">not</span> form.is_valid():</span><br><span class="line">    <span class="keyword">raise</span> ParamValidationError(<span class="string">u'参数验证失败,请确认后重试'</span>)</span><br><span class="line">  <span class="comment"># do something you want</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>注意</strong>：此处只是一个简单的示例。我们强烈的建议开发者应该在任何有错误的地方直接抛出异常，而非返回错误，由上层逻辑处理。</p>
+</blockquote>
+<h3 id="异常类型介绍"><a href="#异常类型介绍" class="headerlink" title="异常类型介绍"></a>异常类型介绍</h3><p>蓝鲸开发框架异常类主要分为两类：客户端异常及服务端异常，分别对应由于客户端请求引起的错误和后台服务引起的错误。开发者可以根据引起错误的场景来选择需要抛出的异常。</p>
+<ul>
+<li>异常类所在命名空间<ul>
+<li>blueapps.core.exceptionsplainplainplainplainplainplainplainplainplainplainplainplainplainplainplainplainplainplain</li>
+</ul>
+</li>
+<li>服务端异常</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>错误类</th>
+<th>说明</th>
+<th>http 状态码</th>
+<th>返回错误码</th>
+<th>场景举例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DatabaseError</td>
+<td>数据库异常</td>
+<td>501</td>
+<td>50110</td>
+<td>更新数据库记录失败</td>
+</tr>
+<tr>
+<td>ApiNetworkError</td>
+<td>网络异常导致远程服务失效</td>
+<td>503</td>
+<td>50301</td>
+<td>请求第三方接口由于网络连接问题导致失败</td>
+</tr>
+<tr>
+<td>ApiResultError</td>
+<td>远程服务请求结果异常</td>
+<td>503</td>
+<td>50302</td>
+<td>请求第三方结果返回 result 结果是 false</td>
+</tr>
+<tr>
+<td>ApiNotAcceptable</td>
+<td>远程服务返回结果格式异常</td>
+<td>503</td>
+<td>50303</td>
+<td>第三方接口返回 xml 格式结果，但预期返回 json 格式</td>
+</tr>
+</tbody></table>
+<ul>
+<li>客户端异常</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>错误类</th>
+<th>说明</th>
+<th>http 状态码</th>
+<th>返回错误码</th>
+<th>场景举例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ParamValidationError</td>
+<td>参数验证失败</td>
+<td>400</td>
+<td>40000</td>
+<td>期待为整形的参数，用户提供了一个字符参数</td>
+</tr>
+<tr>
+<td>ParamRequired</td>
+<td>请求参数缺失</td>
+<td>400</td>
+<td>40001</td>
+<td>期待的参数找不到</td>
+</tr>
+<tr>
+<td>RioVerifyError</td>
+<td>登陆请求经智能网关检测失败</td>
+<td>401</td>
+<td>40101</td>
+<td>用户登录验证</td>
+</tr>
+<tr>
+<td>BkJwtVerifyError</td>
+<td>登陆请求经 JWT 检测失败</td>
+<td>401</td>
+<td>40102</td>
+<td>用户登录验证</td>
+</tr>
+<tr>
+<td>AccessForbidden</td>
+<td>登陆失败</td>
+<td>403</td>
+<td>40301</td>
+<td>用户身份验证失败</td>
+</tr>
+<tr>
+<td>RequestForbidden</td>
+<td>请求拒绝</td>
+<td>403</td>
+<td>40320</td>
+<td>用户企图操作没有权限的任务</td>
+</tr>
+<tr>
+<td>ResourceLock</td>
+<td>请求资源被锁定</td>
+<td>403</td>
+<td>40330</td>
+<td>用户企图操作一个已经锁定的任务</td>
+</tr>
+<tr>
+<td>ResourceNotFound</td>
+<td>找不到请求的资源</td>
+<td>404</td>
+<td>40400</td>
+<td>找不到用户请求的某个指定 ID 的 model</td>
+</tr>
+<tr>
+<td>MethodError</td>
+<td>请求方法不支持</td>
+<td>405</td>
+<td>40501</td>
+<td>用户发送的请求不在预期范围内</td>
+</tr>
+</tbody></table>
+<hr>
+<p>参考链接：<br><a href="https://bk.tencent.com/docs/document/5.1/19/576" target="_blank" rel="noopener">腾讯蓝鲸开发框架 2.0 使用说明</a></p>
+]]></content>
+      <categories>
+        <category>蓝鲸</category>
+        <category>开发框架</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>Django</tag>
+        <tag>蓝鲸</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python之全局解释器锁GIL</title>
     <url>/2020/11/23/python-GIL/</url>
     <content><![CDATA[<blockquote>
@@ -86,7 +571,32 @@
   <entry>
     <title>Django之ORM操作</title>
     <url>/2020/11/21/django-orm/</url>
-    <content><![CDATA[<h1 id="查询类操作"><a href="#查询类操作" class="headerlink" title="查询类操作"></a>查询类操作</h1><h2 id="查询所有的结果"><a href="#查询所有的结果" class="headerlink" title="查询所有的结果"></a>查询所有的结果</h2><p>相当sql中的select * from</p>
+    <content><![CDATA[<blockquote>
+<h1 id="Django-ORM"><a href="#Django-ORM" class="headerlink" title="Django ORM"></a>Django ORM</h1></blockquote>
+<p>Django 模型使用自带的 ORM。</p>
+<p><kbd>对象关系映射</kbd>（Object Relational Mapping，简称 ORM ）用于实现面向对象编程语言里不同类型系统的数据之间的转换。</p>
+<p>ORM 在业务逻辑层和数据库层之间充当了桥梁的作用。</p>
+<p>ORM 是通过使用描述对象和数据库之间的映射的元数据，将程序中的对象自动持久化到数据库中。</p>
+<img data-src="/2020/11/21/django-orm/django-orm1.png" class>
+
+<a id="more"></a>
+
+<h2 id="使用-ORM-的好处："><a href="#使用-ORM-的好处：" class="headerlink" title="使用 ORM 的好处："></a>使用 ORM 的好处：</h2><ul>
+<li>提高开发效率。</li>
+<li>不同数据库可以平滑切换。</li>
+</ul>
+<h2 id="使用-ORM-的缺点："><a href="#使用-ORM-的缺点：" class="headerlink" title="使用 ORM 的缺点："></a>使用 ORM 的缺点：</h2><ul>
+<li>ORM 代码转换为 SQL 语句时，需要花费一定的时间，执行效率会有所降低。</li>
+<li>长期写 ORM 代码，会降低编写 SQL 语句的能力。</li>
+</ul>
+<h2 id="ORM-解析过程"><a href="#ORM-解析过程" class="headerlink" title="ORM 解析过程:"></a>ORM 解析过程:</h2><ul>
+<li>1、ORM 会将 Python 代码转成为 SQL 语句。</li>
+<li>2、SQL 语句通过 pymysql 传送到数据库服务端。</li>
+<li>3、在数据库中执行 SQL 语句并将结果返回。</li>
+</ul>
+<h2 id="ORM-对应关系表："><a href="#ORM-对应关系表：" class="headerlink" title="ORM 对应关系表："></a>ORM 对应关系表：</h2><img data-src="/2020/11/21/django-orm/orm-object.png" class>
+
+<h1 id="查询类操作"><a href="#查询类操作" class="headerlink" title="查询类操作"></a>查询类操作</h1><h2 id="查询所有的结果"><a href="#查询所有的结果" class="headerlink" title="查询所有的结果"></a>查询所有的结果</h2><p>相当sql中的select * from</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">list = Test.objects.all()</span><br></pre></td></tr></table></figure>
 
 <h2 id="条件查询filter相关sql中的where"><a href="#条件查询filter相关sql中的where" class="headerlink" title="条件查询filter相关sql中的where"></a>条件查询filter相关sql中的where</h2><p>用于过滤查询结果</p>
@@ -304,8 +814,8 @@
       <tags>
         <tag>Python</tag>
         <tag>Redis</tag>
-        <tag>Celery</tag>
         <tag>Django</tag>
+        <tag>Celery</tag>
         <tag>RabbitMQ</tag>
       </tags>
   </entry>
@@ -710,8 +1220,8 @@
         <category>Redis修炼</category>
       </categories>
       <tags>
-        <tag>数据库</tag>
         <tag>Redis</tag>
+        <tag>数据库</tag>
         <tag>数据类型</tag>
       </tags>
   </entry>
