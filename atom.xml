@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://api.ddoudou.xyz/"/>
-  <updated>2020-11-23T18:18:17.213Z</updated>
+  <updated>2020-11-24T16:58:55.383Z</updated>
   <id>http://api.ddoudou.xyz/</id>
   
   <author>
@@ -15,6 +15,48 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>GO语言之Prometheus Exporter开发</title>
+    <link href="http://api.ddoudou.xyz/2020/11/25/go-prometheus-export/"/>
+    <id>http://api.ddoudou.xyz/2020/11/25/go-prometheus-export/</id>
+    <published>2020-11-24T16:52:59.000Z</published>
+    <updated>2020-11-24T16:58:55.383Z</updated>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;h2 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h2&gt;&lt;/blockquote&gt;
+&lt;p&gt;蓝鲸监控通过 job 部署 prometheus 社区的 Exporter，对目标组件进行性能数据采集。接着 bkmetricbeat 从 Exporter 上周期拉取性能数据并通过数据通道上报。&lt;/p&gt;
+&lt;h3 id=&quot;自定义组件采集导入流程&quot;&gt;&lt;a href=&quot;#自定义组件采集导入流程&quot; class=&quot;headerlink&quot; title=&quot;自定义组件采集导入流程&quot;&gt;&lt;/a&gt;自定义组件采集导入流程&lt;/h3&gt;&lt;p&gt;蓝鲸监控当前支持使用 go 编写 Exporter&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;在社区找到适合自己的 Exporter 或者编写新的 Exporter&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;将源码编译成二进制文件&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;将编译的 Exporter 打成 zip 包&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;上传配置文件&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+    
+    </summary>
+    
+    
+      <category term="GO语言" scheme="http://api.ddoudou.xyz/categories/GO%E8%AF%AD%E8%A8%80/"/>
+    
+      <category term="Prometheus" scheme="http://api.ddoudou.xyz/categories/GO%E8%AF%AD%E8%A8%80/Prometheus/"/>
+    
+    
+      <category term="GO语言" scheme="http://api.ddoudou.xyz/tags/GO%E8%AF%AD%E8%A8%80/"/>
+    
+      <category term="Prometheus" scheme="http://api.ddoudou.xyz/tags/Prometheus/"/>
+    
+      <category term="Exporter" scheme="http://api.ddoudou.xyz/tags/Exporter/"/>
+    
+      <category term="监控" scheme="http://api.ddoudou.xyz/tags/%E7%9B%91%E6%8E%A7/"/>
+    
+  </entry>
   
   <entry>
     <title>蓝鲸开发框架进阶</title>
@@ -177,9 +219,9 @@
     
       <category term="Redis" scheme="http://api.ddoudou.xyz/tags/Redis/"/>
     
-      <category term="Django" scheme="http://api.ddoudou.xyz/tags/Django/"/>
-    
       <category term="Celery" scheme="http://api.ddoudou.xyz/tags/Celery/"/>
+    
+      <category term="Django" scheme="http://api.ddoudou.xyz/tags/Django/"/>
     
       <category term="RabbitMQ" scheme="http://api.ddoudou.xyz/tags/RabbitMQ/"/>
     
@@ -311,9 +353,9 @@
       <category term="Redis修炼" scheme="http://api.ddoudou.xyz/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/Redis%E4%BF%AE%E7%82%BC/"/>
     
     
-      <category term="Redis" scheme="http://api.ddoudou.xyz/tags/Redis/"/>
-    
       <category term="数据库" scheme="http://api.ddoudou.xyz/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+      <category term="Redis" scheme="http://api.ddoudou.xyz/tags/Redis/"/>
     
       <category term="数据类型" scheme="http://api.ddoudou.xyz/tags/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/"/>
     

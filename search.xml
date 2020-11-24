@@ -1,6 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>GO语言之Prometheus Exporter开发</title>
+    <url>/2020/11/25/go-prometheus-export/</url>
+    <content><![CDATA[<blockquote>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote>
+<p>蓝鲸监控通过 job 部署 prometheus 社区的 Exporter，对目标组件进行性能数据采集。接着 bkmetricbeat 从 Exporter 上周期拉取性能数据并通过数据通道上报。</p>
+<h3 id="自定义组件采集导入流程"><a href="#自定义组件采集导入流程" class="headerlink" title="自定义组件采集导入流程"></a>自定义组件采集导入流程</h3><p>蓝鲸监控当前支持使用 go 编写 Exporter</p>
+<ul>
+<li><p>在社区找到适合自己的 Exporter 或者编写新的 Exporter</p>
+</li>
+<li><p>将源码编译成二进制文件</p>
+</li>
+<li><p>将编译的 Exporter 打成 zip 包</p>
+</li>
+<li><p>上传配置文件</p>
+</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="Exporter-开发"><a href="#Exporter-开发" class="headerlink" title="Exporter 开发"></a>Exporter 开发</h2><h3 id="Exporter-简介"><a href="#Exporter-简介" class="headerlink" title="Exporter 简介"></a>Exporter 简介</h3><ul>
+<li>Exporter 本质上就是将收集的数据，转化为对应的⽂本格式，并提供 http 接口，供蓝鲸监控采集器 定期采集数据。</li>
+</ul>
+<h3 id="Exporter-基础"><a href="#Exporter-基础" class="headerlink" title="Exporter 基础"></a>Exporter 基础</h3><ul>
+<li><p>指标介绍 Prometheus 中主要使⽤的四类指标类型，如下所示：</p>
+<ul>
+<li>Counter (累加指标)</li>
+<li>Gauge (测量指标)</li>
+<li>Summary (概略图)</li>
+<li>Histogram (直方图)</li>
+</ul>
+<p>最常使用的是 Gauge，Gauge 代表了采集的一个单个数据，这个数据可以增加也可以减少，比如 CPU 使用情况，内存使用量，硬盘当前的空间容量等。 Counter 一个累加指标数据，这个值随着时间只会逐渐的增加，比如程序完成的总任务数量，运行错误发生的总次数等，代表了持续增加的数据包或者传输字节累加值。</p>
+<blockquote>
+<p>【注】：所有指标的值仅支持 float64 类型。</p>
+</blockquote>
+</li>
+<li><p>文本格式以下面输出为例：</p>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># metric:</span></span><br><span class="line">sample_metric1 12.47</span><br><span class="line">sample_metric2 &#123;partition=<span class="string">"c:"</span>&#125; 0.44</span><br></pre></td></tr></table></figure>
+
+<p>其中：</p>
+<p>#: 表示注释 sample_metric1 和 sample_metric2 表示指标名称</p>
+<p>partition: 表示指标的作⽤维度，例如磁盘分区使⽤率，维度就是磁盘分区，即每个磁盘分区都有⼀个磁盘分区使⽤率的值</p>
+<p>c: 表示维度的值，例如磁盘分区的 C 盘 / D 盘等 12.47 和 0.44 表示对应指标的值</p>
+<h3 id="Exporter-开发-1"><a href="#Exporter-开发-1" class="headerlink" title="Exporter 开发"></a>Exporter 开发</h3><ul>
+<li><p>环境搭建：</p>
+<ul>
+<li>Golang 安装</li>
+<li>apt-get install git</li>
+<li>wget <a href="https://dl.google.com/go/go1.10.7.linux-amd64.tar.gz" target="_blank" rel="noopener">https://dl.google.com/go/go1.10.7.linux-amd64.tar.gz</a></li>
+<li>tar -C /usr/local -xzf go1.10.7.linux-amd64.tar.gz</li>
+<li>export PATH=$PATH:/usr/local/go/bin</li>
+<li>export GOPATH=<code>你的代码目录</code></li>
+</ul>
+<blockquote>
+<p>不同系统安装介绍：<a href="https://github.com/astaxie/build-web-application-with-golang/blob/master/zh/01.1.md" target="_blank" rel="noopener">https://github.com/astaxie/build-web-application-with-golang/blob/master/zh/01.1.md</a></p>
+</blockquote>
+</li>
+<li><p>Prometheus Exporter 开发依赖库</p>
+<p>⾸先引⼊ Prometheus 的依赖库</p>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go get -v github.com/prometheus/client_golang/prometheus</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>开发示例</li>
+</ul>
+<ol>
+<li>导⼊依赖模块: 本例计划采集主机的内存和磁盘信息，因此引⼊以下依赖库</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go get -v github.com/shirou/gopsutil</span><br><span class="line">go get -v github.com/go-ole/go-ole</span><br><span class="line">go get -v github.com/StackExchange/wmi</span><br><span class="line">go get -v github.com/golang/protobuf/proto</span><br><span class="line">go get -v golang.org/x/sys/unix</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>新建⼀个 Exporter 项⽬： ⼀个 Exporter 只需要⼀个⽂件即可；在 GOPATH 下 src ⽬录下新建⼀个 test_exporter ⽬录和⼀个 test_exporter.go ⽂件: test_exporter.go ⽂件第⼀⾏必须写上 package main 可执⾏的命令必须始终使⽤ package main。</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"flag"</span></span><br><span class="line">	<span class="string">"log"</span></span><br><span class="line">	<span class="string">"net/http"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"github.com/prometheus/client_golang/prometheus"</span></span><br><span class="line">	<span class="string">"github.com/prometheus/client_golang/prometheus/promhttp"</span></span><br><span class="line">	<span class="string">"github.com/shirou/gopsutil/disk"</span></span><br><span class="line">	<span class="string">"github.com/shirou/gopsutil/mem"</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>定义 Exporter 的版本（Version）、监听地址（listenAddress）、采集 url（metricPath）以及⾸⻚（landingPage）</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> (</span><br><span class="line">	Version       = <span class="string">"1.0.0.dev"</span></span><br><span class="line">	listenAddress = flag.String(<span class="string">"web.listen-address"</span>, <span class="string">":9601"</span>, <span class="string">"Address to listen on for web interface and telemetry."</span>)</span><br><span class="line">	metricPath    = flag.String(<span class="string">"web.telemetry-path"</span>, <span class="string">"/metrics"</span>, <span class="string">"Path under which to expose metrics."</span>)</span><br><span class="line">	landingPage   = []<span class="keyword">byte</span>(<span class="string">"&lt;html&gt;&lt;head&gt;&lt;title&gt;Example Exporter"</span> + Version + <span class="string">"&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;h1&gt;Example Exporter"</span> + Version + <span class="string">"&lt;/h1&gt;&lt;p&gt;&lt;ahref='"</span> + *metricPath + <span class="string">"'&gt;Metrics&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"</span>)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>定义 Exporter 结构体</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Exporter <span class="keyword">struct</span> &#123;</span><br><span class="line">	error        prometheus.Gauge</span><br><span class="line">	scrapeErrors *prometheus.CounterVec</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>定义结构体实例化的函数 NewExporter</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewExporter</span><span class="params">()</span> *<span class="title">Exporter</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;Exporter&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>Describe 函数，传递指标描述符到 channel，这个函数不⽤动，直接使⽤即可，⽤来⽣成采集指标的描述信息。</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e *Exporter)</span> <span class="title">Describe</span><span class="params">(ch <span class="keyword">chan</span>&lt;- *prometheus.Desc)</span></span> &#123;</span><br><span class="line">	metricCh := <span class="built_in">make</span>(<span class="keyword">chan</span> prometheus.Metric)</span><br><span class="line">	doneCh := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="keyword">for</span> m := <span class="keyword">range</span> metricCh &#123;</span><br><span class="line">			ch &lt;- m.Desc()</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">close</span>(doneCh)</span><br><span class="line">	&#125;()</span><br><span class="line">	e.Collect(metricCh)</span><br><span class="line">	<span class="built_in">close</span>(metricCh)</span><br><span class="line">	&lt;-doneCh</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>Collect 函数将执⾏抓取函数并返回数据，返回的数据传递到 channel 中，并且传递的同时绑定原先的指标描述符，以及指标的类型（Guage）；需要将所有的指标获取函数在这⾥写⼊。</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">//collect 函数，采集数据的⼊⼝</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e *Exporter)</span> <span class="title">Collect</span><span class="params">(ch <span class="keyword">chan</span>&lt;- prometheus.Metric)</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> err error</span><br><span class="line">	<span class="comment">// 每个指标值的采集逻辑，在对应的采集函数中</span></span><br><span class="line">	<span class="keyword">if</span> err = ScrapeMem(ch); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		e.scrapeErrors.WithLabelValues(<span class="string">"mem"</span>).Inc()</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> err = ScrapeDisk(ch); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		e.scrapeErrors.WithLabelValues(<span class="string">"disk"</span>).Inc()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>指标仅有单条数据，不带维度信息示例如下：</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ScrapeMem</span><span class="params">(ch <span class="keyword">chan</span>&lt;- prometheus.Metric)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	<span class="comment">// 指标获取逻辑，此处不做具体操作，仅仅赋值进⾏示例</span></span><br><span class="line">	mem_info, _ := mem.VirtualMemory()</span><br><span class="line">	<span class="comment">// ⽣成采集的指标名</span></span><br><span class="line">	metric_name := prometheus.BuildFQName(<span class="string">"sys"</span>, <span class="string">""</span>, <span class="string">"mem_usage"</span>)</span><br><span class="line">	<span class="comment">// ⽣成 NewDesc 类型的数据格式，该指标⽆维度，[] string &#123;&#125; 为空</span></span><br><span class="line">	new_desc := prometheus.NewDesc(metric_name, <span class="string">"Gauge metric with mem_usage"</span>, []<span class="keyword">string</span>&#123;&#125;, <span class="literal">nil</span>)</span><br><span class="line">	<span class="comment">// ⽣成具体的采集信息并写⼊ ch 通道</span></span><br><span class="line">	metric_mes := prometheus.MustNewConstMetric(new_desc,</span><br><span class="line">		prometheus.GaugeValue, mem_info.UsedPercent)</span><br><span class="line">	ch &lt;- metric_mes</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>指标有多条数据，带维度信息示例如下：</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ScrapeDisk</span><span class="params">(ch <span class="keyword">chan</span>&lt;- prometheus.Metric)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	fs, _ := disk.Partitions(<span class="literal">false</span>)</span><br><span class="line">	<span class="keyword">for</span> _, val := <span class="keyword">range</span> fs &#123;</span><br><span class="line">		d, _ := disk.Usage(val.Mountpoint)</span><br><span class="line">		metric_name := prometheus.BuildFQName(<span class="string">"sys"</span>, <span class="string">""</span>, <span class="string">"disk_size"</span>)</span><br><span class="line">		new_desc := prometheus.NewDesc(metric_name, <span class="string">"Gauge metric with disk_usage"</span>, []<span class="keyword">string</span>&#123;<span class="string">"mountpoint"</span>&#125;, <span class="literal">nil</span>)</span><br><span class="line">		metric_mes := prometheus.MustNewConstMetric(new_desc,</span><br><span class="line">			prometheus.GaugeValue, <span class="keyword">float64</span>(d.UsedPercent), val.Mountpoint)</span><br><span class="line">		ch &lt;- metric_mes</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>主函数</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 解析定义的监听端⼝等信息</span></span><br><span class="line">	flag.Parse()</span><br><span class="line">	<span class="comment">// ⽣成⼀个 Exporter 类型的对象，该 exporter 需具有 collect 和 Describe ⽅法</span></span><br><span class="line">	exporter := NewExporter()</span><br><span class="line">	<span class="comment">// 将 exporter 注册⼊ prometheus，prometheus 将定期从 exporter 拉取数据</span></span><br><span class="line">	prometheus.MustRegister(exporter)</span><br><span class="line">	<span class="comment">// 接收 http 请求时，触发 collect 函数，采集数据</span></span><br><span class="line">	http.Handle(*metricPath, promhttp.Handler())</span><br><span class="line">	http.HandleFunc(<span class="string">"/"</span>, <span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">		w.Write(landingPage)</span><br><span class="line">	&#125;)</span><br><span class="line">	log.Fatal(http.ListenAndServe(*listenAddress, <span class="literal">nil</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>编译 Exporter</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go build test_exporter.go</span><br><span class="line">./test_exporter</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>运⾏起来后，访问 <a href="http://127.0.0.1:9601/metrics" target="_blank" rel="noopener">http://127.0.0.1:9601/metrics</a> 即可验证</li>
+</ol>
+<p>⾄此 Exporter 开发完成，其中 8，9 两步中的函数是重点，⽬前仅仅写了⼀些数据进⾏示例，其中的监控指标获取数据就是该部分的主要功能，需要编写对应逻辑获取指标的值。</p>
+<h2 id="制作⼀键导⼊包"><a href="#制作⼀键导⼊包" class="headerlink" title="制作⼀键导⼊包"></a>制作⼀键导⼊包</h2><h3 id="Exporter-编译"><a href="#Exporter-编译" class="headerlink" title="Exporter 编译"></a>Exporter 编译</h3><p>蓝鲸监控 Exporter 默认只⽀持 64 位机器运⾏ Exporter。</p>
+<h4 id="linux-系统"><a href="#linux-系统" class="headerlink" title="linux 系统"></a>linux 系统</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 编译 windows exporter</span></span><br><span class="line">env CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o ./exporterwindows.exe test_exporter</span><br><span class="line"><span class="comment"># test_exporter 为 GOPATH 下我们创建的⽬录名</span></span><br><span class="line"><span class="comment"># 编译 linux exporter</span></span><br><span class="line">env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ./exporter-linux</span><br><span class="line">test_exporter</span><br></pre></td></tr></table></figure>
+
+<h4 id="windows-系统"><a href="#windows-系统" class="headerlink" title="windows 系统"></a>windows 系统</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 编译 windows exporter</span></span><br><span class="line">SET CGO_ENABLED=0</span><br><span class="line">SET GOOS=windows</span><br><span class="line">SET GOARCH=amd64</span><br><span class="line">go build -o ./exporter-windows.exe test_exporter</span><br><span class="line"><span class="comment"># 编译 linux exporter</span></span><br><span class="line">SET CGO_ENABLED=0</span><br><span class="line">SET GOOS=linux</span><br><span class="line">SET GOARCH=amd64</span><br><span class="line">go build -o ./exporter-linux test_exporter</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<p>参考链接：<br><a href="https://bk.tencent.com/docs/document/5.1/19/600" target="_blank" rel="noopener">蓝鲸监控 - Exporter 开发</a></p>
+]]></content>
+      <categories>
+        <category>GO语言</category>
+        <category>Prometheus</category>
+      </categories>
+      <tags>
+        <tag>GO语言</tag>
+        <tag>Prometheus</tag>
+        <tag>Exporter</tag>
+        <tag>监控</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>蓝鲸开发框架进阶</title>
     <url>/2020/11/24/bk-django-framework-advanced/</url>
     <content><![CDATA[<blockquote>
@@ -814,8 +961,8 @@
       <tags>
         <tag>Python</tag>
         <tag>Redis</tag>
-        <tag>Django</tag>
         <tag>Celery</tag>
+        <tag>Django</tag>
         <tag>RabbitMQ</tag>
       </tags>
   </entry>
@@ -1220,8 +1367,8 @@
         <category>Redis修炼</category>
       </categories>
       <tags>
-        <tag>Redis</tag>
         <tag>数据库</tag>
+        <tag>Redis</tag>
         <tag>数据类型</tag>
       </tags>
   </entry>
