@@ -11,6 +11,40 @@ categories:
 - ORM
 ---
 
+> # Django ORM
+
+Django 模型使用自带的 ORM。
+
+<kbd>对象关系映射</kbd>（Object Relational Mapping，简称 ORM ）用于实现面向对象编程语言里不同类型系统的数据之间的转换。
+
+ORM 在业务逻辑层和数据库层之间充当了桥梁的作用。
+
+ORM 是通过使用描述对象和数据库之间的映射的元数据，将程序中的对象自动持久化到数据库中。
+
+{% asset_img django-orm1.png %}
+
+<!-- more -->
+
+## 使用 ORM 的好处：
+
+- 提高开发效率。
+- 不同数据库可以平滑切换。
+
+## 使用 ORM 的缺点：
+
+- ORM 代码转换为 SQL 语句时，需要花费一定的时间，执行效率会有所降低。
+- 长期写 ORM 代码，会降低编写 SQL 语句的能力。
+
+## ORM 解析过程:
+
+- 1、ORM 会将 Python 代码转成为 SQL 语句。
+- 2、SQL 语句通过 pymysql 传送到数据库服务端。
+- 3、在数据库中执行 SQL 语句并将结果返回。
+
+## ORM 对应关系表：
+
+{% asset_img orm-object.png %}
+
 # 查询类操作
 
 ## 查询所有的结果
