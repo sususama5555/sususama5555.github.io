@@ -32,12 +32,12 @@
     var CONFIG = {"hostname":"api.ddoudou.xyz","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#ff7600","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="全栈 | 硬件 |篮球 | 游戏">
+  <meta name="description" content="全栈 | 硬件 | 篮球 | 游戏">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Sapphire">
 <meta property="og:url" content="http://api.ddoudou.xyz/index.html">
 <meta property="og:site_name" content="Sapphire">
-<meta property="og:description" content="全栈 | 硬件 |篮球 | 游戏">
+<meta property="og:description" content="全栈 | 硬件 | 篮球 | 游戏">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:author" content="Ryan Shu">
 <meta property="article:tag" content="博客">
@@ -149,17 +149,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">40</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">46</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">21</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">24</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">20</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">23</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -216,12 +216,112 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://api.ddoudou.xyz/2020/11/25/es6-async-await/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/picture/avatar.jpg">
+      <meta itemprop="name" content="Ryan Shu">
+      <meta itemprop="description" content="全栈 | 硬件 | 篮球 | 游戏">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sapphire">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/11/25/es6-async-await/" class="post-title-link" itemprop="url">ES6之 async 与 await</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-25 23:53:32" itemprop="dateCreated datePublished" datetime="2020-11-25T23:53:32+08:00">2020-11-25</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index"><span itemprop="name">JavaScript</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/%E5%BC%82%E6%AD%A5/" itemprop="url" rel="index"><span itemprop="name">异步</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="async"><a href="#async" class="headerlink" title="async"></a>async</h2><p>async 是 ES6 才有的与异步操作有关的关键字，和 Promise ， Generator 有很大关联的。</p>
+<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">name</span>(<span class="params">[param[, param[, ... param]]]</span>) </span>&#123; statements &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>name: 函数名称。</li>
+<li>param: 要传递给函数的参数的名称。</li>
+<li>statements: 函数体语句。</li>
+</ul>
+<h3 id="返回值"><a href="#返回值" class="headerlink" title="返回值"></a>返回值</h3><p>一个<a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise" target="_blank" rel="noopener"><code>Promise</code></a>，这个promise要么会通过一个由async函数返回的值被解决，要么会通过一个从async函数中抛出的（或其中没有被捕获到的）异常被拒绝。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/11/25/es6-async-await/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://api.ddoudou.xyz/2020/11/25/go-prometheus-export/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/picture/avatar.jpg">
       <meta itemprop="name" content="Ryan Shu">
-      <meta itemprop="description" content="全栈 | 硬件 |篮球 | 游戏">
+      <meta itemprop="description" content="全栈 | 硬件 | 篮球 | 游戏">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -239,9 +339,8 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-11-25 00:52:59 / 修改时间：00:58:55" itemprop="dateCreated datePublished" datetime="2020-11-25T00:52:59+08:00">2020-11-25</time>
+              <time title="创建时间：2020-11-25 00:52:59" itemprop="dateCreated datePublished" datetime="2020-11-25T00:52:59+08:00">2020-11-25</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -327,7 +426,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/picture/avatar.jpg">
       <meta itemprop="name" content="Ryan Shu">
-      <meta itemprop="description" content="全栈 | 硬件 |篮球 | 游戏">
+      <meta itemprop="description" content="全栈 | 硬件 | 篮球 | 游戏">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -345,9 +444,8 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-11-24 01:57:51 / 修改时间：02:18:17" itemprop="dateCreated datePublished" datetime="2020-11-24T01:57:51+08:00">2020-11-24</time>
+              <time title="创建时间：2020-11-24 01:57:51" itemprop="dateCreated datePublished" datetime="2020-11-24T01:57:51+08:00">2020-11-24</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -422,7 +520,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/picture/avatar.jpg">
       <meta itemprop="name" content="Ryan Shu">
-      <meta itemprop="description" content="全栈 | 硬件 |篮球 | 游戏">
+      <meta itemprop="description" content="全栈 | 硬件 | 篮球 | 游戏">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -440,9 +538,8 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-11-24 01:34:52 / 修改时间：02:18:11" itemprop="dateCreated datePublished" datetime="2020-11-24T01:34:52+08:00">2020-11-24</time>
+              <time title="创建时间：2020-11-24 01:34:52" itemprop="dateCreated datePublished" datetime="2020-11-24T01:34:52+08:00">2020-11-24</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -517,7 +614,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/picture/avatar.jpg">
       <meta itemprop="name" content="Ryan Shu">
-      <meta itemprop="description" content="全栈 | 硬件 |篮球 | 游戏">
+      <meta itemprop="description" content="全栈 | 硬件 | 篮球 | 游戏">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -535,9 +632,8 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-11-23 00:54:11 / 修改时间：01:29:38" itemprop="dateCreated datePublished" datetime="2020-11-23T00:54:11+08:00">2020-11-23</time>
+              <time title="创建时间：2020-11-23 00:54:11" itemprop="dateCreated datePublished" datetime="2020-11-23T00:54:11+08:00">2020-11-23</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -619,7 +715,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/picture/avatar.jpg">
       <meta itemprop="name" content="Ryan Shu">
-      <meta itemprop="description" content="全栈 | 硬件 |篮球 | 游戏">
+      <meta itemprop="description" content="全栈 | 硬件 | 篮球 | 游戏">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -640,13 +736,6 @@
 
               <time title="创建时间：2020-11-21 03:07:42" itemprop="dateCreated datePublished" datetime="2020-11-21T03:07:42+08:00">2020-11-21</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-24 01:31:46" itemprop="dateModified" datetime="2020-11-24T01:31:46+08:00">2020-11-24</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -724,7 +813,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/picture/avatar.jpg">
       <meta itemprop="name" content="Ryan Shu">
-      <meta itemprop="description" content="全栈 | 硬件 |篮球 | 游戏">
+      <meta itemprop="description" content="全栈 | 硬件 | 篮球 | 游戏">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -742,9 +831,8 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-11-20 01:11:44 / 修改时间：03:13:36" itemprop="dateCreated datePublished" datetime="2020-11-20T01:11:44+08:00">2020-11-20</time>
+              <time title="创建时间：2020-11-20 01:11:44" itemprop="dateCreated datePublished" datetime="2020-11-20T01:11:44+08:00">2020-11-20</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -824,7 +912,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/picture/avatar.jpg">
       <meta itemprop="name" content="Ryan Shu">
-      <meta itemprop="description" content="全栈 | 硬件 |篮球 | 游戏">
+      <meta itemprop="description" content="全栈 | 硬件 | 篮球 | 游戏">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -845,13 +933,6 @@
 
               <time title="创建时间：2020-11-18 23:31:07" itemprop="dateCreated datePublished" datetime="2020-11-18T23:31:07+08:00">2020-11-18</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-19 01:02:33" itemprop="dateModified" datetime="2020-11-19T01:02:33+08:00">2020-11-19</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -935,7 +1016,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/picture/avatar.jpg">
       <meta itemprop="name" content="Ryan Shu">
-      <meta itemprop="description" content="全栈 | 硬件 |篮球 | 游戏">
+      <meta itemprop="description" content="全栈 | 硬件 | 篮球 | 游戏">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -956,13 +1037,6 @@
 
               <time title="创建时间：2020-11-17 23:40:48" itemprop="dateCreated datePublished" datetime="2020-11-17T23:40:48+08:00">2020-11-17</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-18 01:15:18" itemprop="dateModified" datetime="2020-11-18T01:15:18+08:00">2020-11-18</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -1039,7 +1113,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/picture/avatar.jpg">
       <meta itemprop="name" content="Ryan Shu">
-      <meta itemprop="description" content="全栈 | 硬件 |篮球 | 游戏">
+      <meta itemprop="description" content="全栈 | 硬件 | 篮球 | 游戏">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -1057,9 +1131,8 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-11-16 00:33:06 / 修改时间：23:57:06" itemprop="dateCreated datePublished" datetime="2020-11-16T00:33:06+08:00">2020-11-16</time>
+              <time title="创建时间：2020-11-16 00:33:06" itemprop="dateCreated datePublished" datetime="2020-11-16T00:33:06+08:00">2020-11-16</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1126,113 +1199,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://api.ddoudou.xyz/2020/11/12/redis-data-types/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/picture/avatar.jpg">
-      <meta itemprop="name" content="Ryan Shu">
-      <meta itemprop="description" content="全栈 | 硬件 |篮球 | 游戏">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Sapphire">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/11/12/redis-data-types/" class="post-title-link" itemprop="url">Redis修炼之数据类型</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-11-12 00:34:08" itemprop="dateCreated datePublished" datetime="2020-11-12T00:34:08+08:00">2020-11-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-16 23:50:11" itemprop="dateModified" datetime="2020-11-16T23:50:11+08:00">2020-11-16</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/Redis%E4%BF%AE%E7%82%BC/" itemprop="url" rel="index"><span itemprop="name">Redis修炼</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.7k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>一、Redis 数据类型:</p>
-</blockquote>
-<p><strong>1、String（字符串）</strong><br>string 是 Redis 最基本的类型，理解成与 Memcached 一模一样的类型，一个 key 对应一个 value。</p>
-<p><strong>2、Hash（哈希）</strong><br>Redis hash 是一个键值(key=&gt;value)对集合。<br>Redis hash 是一个 string 类型的 field 和 value 的映射表，hash 特别适合用于存储对象。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/11/12/redis-data-types/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1293,27 +1263,27 @@
     <img class="site-author-image" itemprop="image" alt="Ryan Shu"
       src="/picture/avatar.jpg">
   <p class="site-author-name" itemprop="name">Ryan Shu</p>
-  <div class="site-description" itemprop="description">全栈 | 硬件 |篮球 | 游戏</div>
+  <div class="site-description" itemprop="description">全栈 | 硬件 | 篮球 | 游戏</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-count">23</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-count">46</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1395,13 +1365,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">71k</span>
+    <span title="站点总字数">80k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">1:05</span>
+    <span title="站点阅读时长">1:13</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

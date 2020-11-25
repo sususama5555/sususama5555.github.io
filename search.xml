@@ -1,6 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>ES6之 async 与 await</title>
+    <url>/2020/11/25/es6-async-await/</url>
+    <content><![CDATA[<h2 id="async"><a href="#async" class="headerlink" title="async"></a>async</h2><p>async 是 ES6 才有的与异步操作有关的关键字，和 Promise ， Generator 有很大关联的。</p>
+<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">name</span>(<span class="params">[param[, param[, ... param]]]</span>) </span>&#123; statements &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>name: 函数名称。</li>
+<li>param: 要传递给函数的参数的名称。</li>
+<li>statements: 函数体语句。</li>
+</ul>
+<h3 id="返回值"><a href="#返回值" class="headerlink" title="返回值"></a>返回值</h3><p>一个<a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise" target="_blank" rel="noopener"><code>Promise</code></a>，这个promise要么会通过一个由async函数返回的值被解决，要么会通过一个从async函数中抛出的（或其中没有被捕获到的）异常被拒绝。</p>
+<a id="more"></a>
+
+<h3 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h3><p>async函数可能包含0个或者多个<a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/await" target="_blank" rel="noopener"><code>await</code></a>表达式。await表达式会暂停整个async函数的执行进程并出让其控制权，只有当其等待的基于promise的异步操作被兑现或被拒绝之后才会恢复进程。promise的解决值会被当作该await表达式的返回值。使用<code>async</code> / <code>await</code>关键字就可以在异步代码中使用普通的<code>try</code> / <code>catch</code>代码块。</p>
+<p><code>await</code>关键字只在async函数内有效。如果你在async函数体之外使用它，就会抛出语法错误 <a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError" target="_blank" rel="noopener"><code>SyntaxError</code></a> 。</p>
+<p><code>async</code>/<code>await</code>的目的为了简化使用基于promise的API时所需的语法。<code>async</code>/<code>await</code>的行为就好像搭配使用了生成器和promise。</p>
+<p>async函数一定会返回一个promise对象。如果一个async函数的返回值看起来不是promise，那么它将会被隐式地包装在一个promise中。</p>
+<p>例如，如下代码:</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">   <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>等价于:</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">   <span class="keyword">return</span> <span class="built_in">Promise</span>.resolve(<span class="number">1</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>async函数的函数体可以被看作是由0个或者多个await表达式分割开来的。从第一行代码直到（并包括）第一个await表达式（如果有的话）都是同步运行的。这样的话，一个不含await表达式的async函数是会同步运行的。然而，如果函数体内有一个await表达式，async函数就一定会异步执行。</p>
+<p>例如：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">   <span class="keyword">await</span> <span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>等价于</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">   <span class="keyword">return</span> <span class="built_in">Promise</span>.resolve(<span class="number">1</span>).then(<span class="function"><span class="params">()</span> =&gt;</span> <span class="literal">undefined</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在await表达式之后的代码可以被认为是存在在链式调用的then回调中。</p>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><p>async 函数返回一个 Promise 对象，可以使用 then 方法添加回调函数。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">helloAsync</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"helloAsync"</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line"><span class="built_in">console</span>.log(helloAsync())  <span class="comment">// Promise &#123;&lt;resolved&gt;: "helloAsync"&#125;</span></span><br><span class="line"> </span><br><span class="line">helloAsync().then(<span class="function"><span class="params">v</span>=&gt;</span>&#123;</span><br><span class="line">   <span class="built_in">console</span>.log(v);         <span class="comment">// helloAsync</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>async 函数中可能会有 await 表达式，async 函数执行时，如果遇到 await 就会先暂停执行 ，等到触发的异步操作完成后，恢复 async 函数的执行并返回解析值。</p>
+<p>await 关键字仅在 async function 中有效。如果在 async function 函数体外使用 await ，你只会得到一个语法错误。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> task = <span class="function"><span class="params">()</span> =&gt;</span> &#123;<span class="built_in">console</span>.log(<span class="string">"run task"</span>)&#125;</span><br><span class="line"><span class="keyword">const</span> debounceTask  = debounce(task, <span class="number">1000</span>)</span><br><span class="line"><span class="built_in">window</span>.addEventListener(<span class="string">'scroll'</span>, debounceTask)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">testAwait</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">   <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> &#123;</span><br><span class="line">       setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">          <span class="built_in">console</span>.log(<span class="string">"testAwait"</span>);</span><br><span class="line">          resolve();</span><br><span class="line">       &#125;, <span class="number">1000</span>);</span><br><span class="line">   &#125;);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">helloAsync</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">   <span class="keyword">await</span> testAwait();</span><br><span class="line">   <span class="built_in">console</span>.log(<span class="string">"helloAsync"</span>);</span><br><span class="line"> &#125;</span><br><span class="line">helloAsync();</span><br><span class="line"><span class="comment">// testAwait</span></span><br><span class="line"><span class="comment">// helloAsync</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><p>这个函数和generator函数有些类似，从例子中可以看得出来，async函数在function前面有个async作为标识，意思就是异步函数，里面有个await搭配使用，每到await的地方就是程序需要等待执行后面的程序，语义化很强，下面总结一下<strong>async函数的特点</strong>：</p>
+<ul>
+<li>语义化强</li>
+<li>里面的await只能在async函数中使用</li>
+<li>await后面的语句可以是promise对象、数字、字符串等</li>
+<li>async函数返回的是一个Promsie对象</li>
+<li>await语句后的Promise对象变成reject状态时，那么整个async函数会中断，后面的程序不会继续执行</li>
+</ul>
+<h2 id="await"><a href="#await" class="headerlink" title="await"></a>await</h2><p>await 操作符用于等待一个 Promise 对象, 它只能在异步函数 async function 内部使用。</p>
+<h3 id="语法-1"><a href="#语法-1" class="headerlink" title="语法"></a>语法</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">[return_value] = <span class="keyword">await</span> expression;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>expression: 一个 Promise 对象或者任何要等待的值。</li>
+</ul>
+<h3 id="描述-1"><a href="#描述-1" class="headerlink" title="描述"></a>描述</h3><p>await 表达式会暂停当前 <a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/async_function" target="_blank" rel="noopener"><code>async function</code></a> 的执行，等待 Promise 处理完成。若 Promise 正常处理(fulfilled)，其回调的resolve函数参数作为 await 表达式的值，继续执行 <a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/async_function" target="_blank" rel="noopener"><code>async function</code></a>。</p>
+<p>若 Promise 处理异常(rejected)，await 表达式会把 Promise 的异常原因抛出。</p>
+<p>另外，如果 await 操作符后的表达式的值不是一个 Promise，则返回该值本身。</p>
+<h3 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h3><p>返回 Promise 对象的处理结果。如果等待的不是 Promise 对象，则返回该值本身。</p>
+<p>如果一个 Promise 被传递给一个 await 操作符，await 将等待 Promise 正常处理完成并返回其处理结果。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">testAwait</span> (<span class="params">x</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123;</span><br><span class="line">    setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">      resolve(x);</span><br><span class="line">    &#125;, <span class="number">2000</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">helloAsync</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> x = <span class="keyword">await</span> testAwait (<span class="string">"hello world"</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(x); </span><br><span class="line">&#125;</span><br><span class="line">helloAsync ();</span><br><span class="line"><span class="comment">// hello world</span></span><br></pre></td></tr></table></figure>
+
+<p>正常情况下，await 命令后面是一个 Promise 对象，它也可以跟其他值，如字符串，布尔值，数值以及普通函数。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">testAwait</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">   <span class="built_in">console</span>.log(<span class="string">"testAwait"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">helloAsync</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">   <span class="keyword">await</span> testAwait();</span><br><span class="line">   <span class="built_in">console</span>.log(<span class="string">"helloAsync"</span>);</span><br><span class="line">&#125;</span><br><span class="line">helloAsync();</span><br><span class="line"><span class="comment">// testAwait</span></span><br><span class="line"><span class="comment">// helloAsync</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>await针对所跟不同表达式的处理方式：</p>
+<ul>
+<li>Promise 对象：await 会暂停执行，等待 Promise 对象 resolve，然后恢复 async 函数的执行并返回解析值。</li>
+<li>非 Promise 对象：直接返回对应的值。</li>
+</ul>
+<h2 id="TODO"><a href="#TODO" class="headerlink" title="TODO"></a>TODO</h2><p><code>AsyncFunction</code> 构造函数</p>
+<hr>
+<p><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/async_function" target="_blank" rel="noopener">developer.mozilla.org(MDN) - async函数</a></p>
+<p><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/await" target="_blank" rel="noopener">developer.mozilla.org(MDN) - await</a></p>
+<p><a href="https://www.runoob.com/w3cnote/es6-async.html" target="_blank" rel="noopener">菜鸟教程 - ES6 async 函数</a></p>
+]]></content>
+      <categories>
+        <category>JavaScript</category>
+        <category>异步</category>
+      </categories>
+      <tags>
+        <tag>JavaScript</tag>
+        <tag>ES6</tag>
+        <tag>异步函数</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>GO语言之Prometheus Exporter开发</title>
     <url>/2020/11/25/go-prometheus-export/</url>
     <content><![CDATA[<blockquote>
@@ -1612,6 +1700,109 @@
       </tags>
   </entry>
   <entry>
+    <title>Python 垃圾回收机制</title>
+    <url>/2020/06/26/python-garbage-collection/</url>
+    <content><![CDATA[<h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>python采用的是<strong>引用计数</strong>机制为主，<strong>标记-清除</strong>和<strong>分代收集</strong>两种机制为辅的策略。</p>
+<h3 id="引用计数"><a href="#引用计数" class="headerlink" title="引用计数"></a>引用计数</h3><ul>
+<li>Python语言默认采用的垃圾收集机制是『引用计数法 <code>Reference Counting</code>』，该算法最早George E. Collins在1960的时候首次提出，50年后的今天，该算法依然被很多编程语言使用。</li>
+<li>『引用计数法』的原理是：每个对象维护一个<code>ob_ref</code>字段，用来记录该对象当前被引用的次数，每当新的引用指向该对象时，它的引用计数<code>ob_ref</code>加<code>1</code>，每当该对象的引用失效时计数<code>ob_ref</code>减<code>1</code>，一旦对象的引用计数为<code>0</code>，该对象立即被回收，对象占用的内存空间将被释放。</li>
+<li>它的缺点是需要额外的空间维护引用计数，这个问题是其次的，不过最主要的问题是它不能解决对象的“循环引用”，因此，也有很多语言比如Java并没有采用该算法做来垃圾的收集机制。</li>
+</ul>
+<a id="more"></a>
+
+<h3 id="引用计数案例"><a href="#引用计数案例" class="headerlink" title="引用计数案例"></a>引用计数案例</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="string">'''初始化对象'''</span></span><br><span class="line">        print(<span class="string">'object born id:%s'</span> %str(hex(id(self))))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f1</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="string">'''循环引用变量与删除变量'''</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        c1=A()</span><br><span class="line">        <span class="keyword">del</span> c1</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">func</span><span class="params">(c)</span>:</span></span><br><span class="line">    print(<span class="string">'obejct refcount is: '</span>,sys.getrefcount(c)) <span class="comment">#getrefcount()方法用于返回对象的引用计数</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">   <span class="comment">#生成对象</span></span><br><span class="line">    a=A()</span><br><span class="line">    func(a)</span><br><span class="line"></span><br><span class="line">    <span class="comment">#增加引用</span></span><br><span class="line">    b=a</span><br><span class="line">    func(a)</span><br><span class="line"></span><br><span class="line">    <span class="comment">#销毁引用对象b</span></span><br><span class="line">    <span class="keyword">del</span> b</span><br><span class="line">    func(a)</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">object born id:0x265c56a56d8</span><br><span class="line">obejct refcount is:  4</span><br><span class="line">obejct refcount is:  5</span><br><span class="line">obejct refcount is:  4</span><br></pre></td></tr></table></figure>
+
+<h4 id="导致引用计数-1的情况"><a href="#导致引用计数-1的情况" class="headerlink" title="导致引用计数+1的情况"></a>导致引用计数+1的情况</h4><ul>
+<li>对象被创建，例如a=23</li>
+<li>对象被引用，例如b=a</li>
+<li>对象被作为参数，传入到一个函数中，例如<code>func(a)</code></li>
+<li>对象作为一个元素，存储在容器中，例如<code>list1=[a,a]</code></li>
+</ul>
+<h4 id="导致引用计数-1的情况-1"><a href="#导致引用计数-1的情况-1" class="headerlink" title="导致引用计数-1的情况"></a>导致引用计数-1的情况</h4><ul>
+<li>对象的别名被显式销毁，例如<code>del a</code></li>
+<li>对象的别名被赋予新的对象，例如<code>a=24</code></li>
+<li>一个对象离开它的作用域，例如f函数执行完毕时，<code>func</code>函数中的局部变量（全局变量不会）</li>
+<li>对象所在的容器被销毁，或从容器中删除对象</li>
+</ul>
+<h3 id="循环引用导致内存泄露"><a href="#循环引用导致内存泄露" class="headerlink" title="循环引用导致内存泄露"></a>循环引用导致内存泄露</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f2</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="string">'''循环引用'''</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        c1=A()</span><br><span class="line">        c2=A()</span><br><span class="line">        c1.t=c2</span><br><span class="line">        c2.t=c1</span><br><span class="line">        <span class="keyword">del</span> c1</span><br><span class="line">        <span class="keyword">del</span> c2</span><br></pre></td></tr></table></figure>
+
+<p>执行结果</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">id:0x1feb9f691d0</span><br><span class="line">object born id:0x1feb9f69438</span><br><span class="line">object born id:0x1feb9f690b8</span><br><span class="line">object born id:0x1feb9f69d68</span><br><span class="line">object born id:0x1feb9f690f0</span><br><span class="line">object born id:0x1feb9f694e0</span><br><span class="line">object born id:0x1feb9f69f60</span><br><span class="line">object born id:0x1feb9f69eb8</span><br><span class="line">object born id:0x1feb9f69128</span><br><span class="line">object born id:0x1feb9f69c88</span><br><span class="line">object born id:0x1feb9f69470</span><br><span class="line">object born id:0x1feb9f69e48</span><br><span class="line">object born id:0x1feb9f69ef0</span><br><span class="line">object born id:0x1feb9f69dd8</span><br><span class="line">object born id:0x1feb9f69e10</span><br><span class="line">object born id:0x1feb9f69ac8</span><br><span class="line">object born id:0x1feb9f69198</span><br><span class="line">object born id:0x1feb9f69cf8</span><br><span class="line">object born id:0x1feb9f69da0</span><br><span class="line">object born id:0x1feb9f69c18</span><br><span class="line">object born id:0x1feb9f69d30</span><br><span class="line">object born id:0x1feb9f69ba8</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>创建了<code>c1</code>，<code>c2</code>后，这两个对象的引用计数都是<code>1</code>，执行<code>c1.t=c2</code>和<code>c2.t=c1</code>后，引用计数变成<code>2</code>.</li>
+<li>在<code>del c1</code>后，内存<code>c1</code>的对象的引用计数变为<code>1</code>，由于不是为<code>0</code>，所以<code>c1</code>的对象不会被销毁,同理，在<code>del c2</code>后也是一样的。</li>
+<li>虽然它们两个的对象都是可以被销毁的，但是由于循环引用，导致垃圾回收器都不会回收它们，所以就会导致内存泄露。</li>
+</ul>
+<h3 id="分代回收"><a href="#分代回收" class="headerlink" title="分代回收"></a>分代回收</h3><ul>
+<li>分代回收是一种以空间换时间的操作方式，Python将内存根据对象的存活时间划分为不同的集合，每个集合称为一个代，Python将内存分为了3“代”，分别为年轻代（第0代）、中年代（第1代）、老年代（第2代），他们对应的是3个链表，它们的垃圾收集频率与对象的存活时间的增大而减小。</li>
+<li>新创建的对象都会分配在<strong>年轻代</strong>，年轻代链表的总数达到上限时，Python垃圾收集机制就会被触发，把那些可以被回收的对象回收掉，而那些不会回收的对象就会被移到<strong>中年代</strong>去，依此类推，<strong>老年代</strong>中的对象是存活时间最久的对象，甚至是存活于整个系统的生命周期内。</li>
+<li>同时，分代回收是建立在标记清除技术基础之上。分代回收同样作为Python的辅助垃圾收集技术处理那些容器对象</li>
+</ul>
+<h3 id="垃圾回收"><a href="#垃圾回收" class="headerlink" title="垃圾回收"></a>垃圾回收</h3><p>有三种情况会触发垃圾回收：</p>
+<ol>
+<li>调用<code>gc.collect()</code>,需要先导入<code>gc</code>模块。</li>
+<li>当<code>gc</code>模块的计数器达到阀值的时候。</li>
+<li>程序退出的时候。</li>
+</ol>
+<h4 id="gc模块"><a href="#gc模块" class="headerlink" title="gc模块"></a>gc模块</h4><p>gc模块提供一个接口给开发者设置垃圾回收的选项。上面说到，采用引用计数的方法管理内存的一个缺陷是循环引用，而gc模块的一个主要功能就是解决循环引用的问题。</p>
+<p><strong>常用函数</strong>：</p>
+<ol>
+<li><code>gc.set_debug(flags)</code> 设置gc的debug日志，一般设置为<code>gc.DEBUG_LEAK</code></li>
+<li><code>gc.collect([generation])</code><br>显式进行垃圾回收，可以输入参数，<code>0</code>代表只检查第一代的对象，<code>1</code>代表检查一，二代的对象，<code>2</code>代表检查一，二，三代的对象，如果不传参数，执行一个<code>full collection</code>，也就是等于传2。返回不可达（unreachable objects）对象的数目。</li>
+<li><code>gc.set_threshold(threshold0[, threshold1[, threshold2])</code><br>设置自动执行垃圾回收的频率。</li>
+<li><code>gc.get_count()</code> 获取当前自动执行垃圾回收的计数器，返回一个长度为3的列表</li>
+</ol>
+<p>扩展资料：<a href="https://docs.python.org/3.5/library/gc.html" target="_blank" rel="noopener">Garbage Collector interface</a></p>
+<h4 id="gc实践案例"><a href="#gc实践案例" class="headerlink" title="gc实践案例"></a>gc实践案例</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f3</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="string">'''循环引用'''</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        c1=A()</span><br><span class="line">        c2=A()</span><br><span class="line">        c1.t=c2</span><br><span class="line">        c2.t=c1</span><br><span class="line">        <span class="keyword">del</span> c1</span><br><span class="line">        <span class="keyword">del</span> c2</span><br><span class="line">        <span class="comment">#增加垃圾回收机制</span></span><br><span class="line">        print(gc.garbage)</span><br><span class="line">        print(gc.collect())</span><br><span class="line">        print(gc.garbage)</span><br><span class="line">        time.sleep(<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+
+<p>执行结果</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">object born id:0x21d1a5dc470</span><br><span class="line">object born id:0x21d1a5dc9e8</span><br><span class="line">[]</span><br><span class="line">4</span><br><span class="line">gc: collectable &lt;A 0x0000021D1A5DC470&gt;</span><br><span class="line">[&lt;__main__.A object at 0x0000021D1A5DC470&gt;, &lt;__main__.A object at 0x0000021D1A5DC9E8&gt;, &#123;'t': &lt;__main__.A object at 0x0000021D1A5DC9E8&gt;&#125;, &#123;'t': &lt;__main__.A object at 0x0000021D1A5DC470&gt;&#125;]</span><br><span class="line">gc: collectable &lt;A 0x0000021D1A5DC9E8&gt;</span><br><span class="line">gc: collectable &lt;dict 0x0000021D1A156C88&gt;</span><br><span class="line">gc: collectable &lt;dict 0x0000021D1A5CABC8&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="gc模块的自动垃圾回收机制"><a href="#gc模块的自动垃圾回收机制" class="headerlink" title="gc模块的自动垃圾回收机制"></a>gc模块的自动垃圾回收机制</h3><p>必须要import gc模块，并且is_enable()=True才会启动自动垃圾回收。<br>这个机制的主要作用就是发现并处理不可达的垃圾对象。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">垃圾回收 = 垃圾检查 + 垃圾回收</span><br></pre></td></tr></table></figure>
+
+<p>在Python中，采用分代收集的方法。把对象分为三代，一开始，对象在创建的时候，放在一代中，如果在一次一代的垃圾检查中，改对象存活下来，就会被放到二代中，同理在一次二代的垃圾检查中，该对象存活下来，就会被放到三代中。</p>
+<p>gc模块里面会有一个长度为3的列表的计数器，可以通过<code>gc.get_count()</code>获取。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f4</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="string">'''垃圾自动回收'''</span></span><br><span class="line">    print(gc.get_count())</span><br><span class="line">    a=A()</span><br><span class="line">    print(gc.get_count())</span><br><span class="line">    <span class="keyword">del</span> a</span><br><span class="line">    print(gc.get_count())</span><br></pre></td></tr></table></figure>
+
+<p>执行结果</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">(621, 10, 0)</span><br><span class="line">object born id:0x2ca32a8c588</span><br><span class="line">(624, 10, 0)</span><br><span class="line">(623, 10, 0)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>621</code>指距离上一次<code>一代</code>垃圾检查，Python分配内存的数目减去释放内存的数目，注意:是内存分配，而不是引用计数的增加。</li>
+<li><code>10</code>指距离上一次<code>二代</code>垃圾检查，<code>一代</code>垃圾检查的次数。</li>
+<li><code>0</code>是指距离上一次<code>三代</code>垃圾检查，<code>二代</code>垃圾检查的次数。</li>
+</ul>
+<h3 id="自动回收阈值"><a href="#自动回收阈值" class="headerlink" title="自动回收阈值"></a>自动回收阈值</h3><p>gc模快有一个自动垃圾回收的阀值，即通过<code>gc.get_threshold</code>函数获取到的长度为3的元组，例如<code>(700,10,10)</code><br>每一次计数器的增加，gc模块就会检查增加后的计数是否达到阀值的数目，如果是，就会执行对应的代数的垃圾检查，然后重置计数器</p>
+<p>注意：<br>如果循环引用中，两个对象都定义了<code>__del__</code>方法，gc模块不会销毁这些不可达对象，因为gc模块不知道应该先调用哪个对象的<code>__del__</code>方法，所以为了安全起见，gc模块会把对象放到<code>gc.garbage</code>中，但是不会销毁对象。</p>
+<h3 id="标记清除"><a href="#标记清除" class="headerlink" title="标记清除"></a>标记清除</h3><p>标记清除（Mark—Sweep）』算法是一种基于追踪回收（tracing GC）技术实现的垃圾回收算法。它分为两个阶段：第一阶段是标记阶段，GC会把所有的『活动对象』打上标记，第二阶段是把那些没有标记的对象『非活动对象』进行回收。那么GC又是如何判断哪些是活动对象哪些是非活动对象的呢？</p>
+<img data-src="/2020/06/26/python-garbage-collection/mark-sweep.svg" class>
+
+<p>对象之间通过引用（指针）连在一起，构成一个有向图，对象构成这个有向图的节点，而引用关系构成这个有向图的边。从根对象（root object）出发，沿着有向边遍历对象，可达的（reachable）对象标记为活动对象，不可达的对象就是要被清除的非活动对象。根对象就是全局变量、调用栈、寄存器。 mark-sweepg 在上图中，我们把小黑圈视为全局变量，也就是把它作为root object，从小黑圈出发，对象1可直达，那么它将被标记，对象2、3可间接到达也会被标记，而4和5不可达，那么1、2、3就是活动对象，4和5是非活动对象会被GC回收。</p>
+<p>标记清除算法作为Python的辅助垃圾收集技术主要处理的是一些容器对象，比如list、dict、tuple，instance等，因为对于字符串、数值对象是不可能造成循环引用问题。Python使用一个双向链表将这些容器对象组织起来。不过，这种简单粗暴的标记清除算法也有明显的缺点：清除非活动的对象前它必须顺序扫描整个堆内存，哪怕只剩下小部分活动对象也要扫描所有对象。</p>
+<hr>
+<p>参考链接：</p>
+<p><a href="https://www.memorymanagement.org/mmref/recycle.html#tracing-collectors" target="_blank" rel="noopener">https://www.memorymanagement.org/mmref/recycle.html#tracing-collectors</a></p>
+<p><a href="https://foofish.net/python-gc.html" target="_blank" rel="noopener">FOOFISH-PYTHON之禅- Python中的垃圾回收机制</a></p>
+<p><a href="https://sutune.me/2018/10/14/python-GC/#comments" target="_blank" rel="noopener">Python 垃圾回收机制</a></p>
+]]></content>
+      <categories>
+        <category>Python</category>
+        <category>基础原理</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>垃圾回收</tag>
+        <tag>GC</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>使用 uWSGI + Nginx 部署 Django 项目</title>
     <url>/2020/05/20/uWSGI-Nginx-Django/</url>
     <content><![CDATA[<blockquote>
@@ -1680,6 +1871,49 @@
         <tag>Python</tag>
         <tag>大数据分析</tag>
         <tag>算法</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python函数中参数 * 和 ** 的区别</title>
+    <url>/2019/11/26/python-single-double-asterisk/</url>
+    <content><![CDATA[<p>在 Python 的函数中经常能看到输入的参数前面有一个或者两个星号，例如：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span><span class="params">(param1, *param2)</span>:</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bar</span><span class="params">(param1, **param2)</span>:</span></span><br></pre></td></tr></table></figure>
+
+<p>这两种用法其实都是用来将任意个数的参数导入到 Python 函数中。</p>
+<a id="more"></a>
+
+<h3 id="单星号（-）：-agrs"><a href="#单星号（-）：-agrs" class="headerlink" title="单星号（*）：*agrs"></a><strong>单星号（*）：*agrs</strong></h3><p>将所有参数以<code>元组(tuple)</code>的形式导入：</p>
+<h4 id="实例"><a href="#实例" class="headerlink" title="实例"></a><strong>实例</strong></h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span><span class="params">(param1, *param2)</span>:</span></span><br><span class="line">    <span class="keyword">print</span> (param1)</span><br><span class="line">    <span class="keyword">print</span> (param2)</span><br><span class="line">foo(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>)</span><br></pre></td></tr></table></figure>
+
+<p>以上代码输出结果为：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="number">1</span></span><br><span class="line">(<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="双星号（-）：-kwargs"><a href="#双星号（-）：-kwargs" class="headerlink" title="双星号（*）：*kwargs"></a><strong>双星号（*）：*kwargs</strong></h3><p>双星号（**）将参数以<code>字典(dict)</code>的形式导入:</p>
+<h4 id="实例-1"><a href="#实例-1" class="headerlink" title="实例"></a><strong>实例</strong></h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bar</span><span class="params">(param1, **param2)</span>:</span></span><br><span class="line">    <span class="keyword">print</span> (param1)</span><br><span class="line">    <span class="keyword">print</span> (param2)</span><br><span class="line">bar(<span class="number">1</span>,a=<span class="number">2</span>,b=<span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+
+<p>以上代码输出结果为：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1</span><br><span class="line">&#123;&#39;a&#39;: 2, &#39;b&#39;: 3&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此外，单星号的另一个用法是解压参数列表：</p>
+<h4 id="实例-2"><a href="#实例-2" class="headerlink" title="实例"></a><strong>实例</strong></h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span><span class="params">(runoob_1, runoob_2)</span>:</span></span><br><span class="line">    print(runoob_1, runoob_2)</span><br><span class="line">l = [<span class="number">1</span>, <span class="number">2</span>]</span><br><span class="line">foo(*l)</span><br></pre></td></tr></table></figure>
+
+<p>以上代码输出结果为：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="number">1</span> <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<p>当然这两个用法可以同时出现在一个函数中：</p>
+<h4 id="实例-3"><a href="#实例-3" class="headerlink" title="实例"></a><strong>实例</strong></h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span><span class="params">(a, b=<span class="number">10</span>, *args, **kwargs)</span>:</span></span><br><span class="line">    <span class="keyword">print</span> (a)</span><br><span class="line">    <span class="keyword">print</span> (b)</span><br><span class="line">    <span class="keyword">print</span> (args)</span><br><span class="line">    <span class="keyword">print</span> (kwargs)</span><br><span class="line">foo(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, e=<span class="number">5</span>, f=<span class="number">6</span>, g=<span class="number">7</span>)</span><br></pre></td></tr></table></figure>
+
+<p>以上代码输出结果为：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">2</span></span><br><span class="line">(<span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line">&#123;<span class="string">'e'</span>: <span class="number">5</span>, <span class="string">'f'</span>: <span class="number">6</span>, <span class="string">'g'</span>: <span class="number">7</span>&#125;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>Python</category>
+        <category>基础原理</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>参数</tag>
       </tags>
   </entry>
   <entry>
