@@ -84,6 +84,7 @@
       </categories>
       <tags>
         <tag>JavaScript</tag>
+        <tag>前端</tag>
         <tag>ES6</tag>
         <tag>异步函数</tag>
       </tags>
@@ -225,11 +226,11 @@
 <p>参考链接：<br><a href="https://bk.tencent.com/docs/document/5.1/19/600" target="_blank" rel="noopener">蓝鲸监控 - Exporter 开发</a></p>
 ]]></content>
       <categories>
-        <category>GO语言</category>
+        <category>Go语言</category>
         <category>Prometheus</category>
       </categories>
       <tags>
-        <tag>GO语言</tag>
+        <tag>Go语言</tag>
         <tag>Prometheus</tag>
         <tag>Exporter</tag>
         <tag>监控</tag>
@@ -798,9 +799,9 @@
       </categories>
       <tags>
         <tag>Python</tag>
-        <tag>多线程</tag>
         <tag>GIL</tag>
         <tag>全局解释器锁</tag>
+        <tag>多线程</tag>
       </tags>
   </entry>
   <entry>
@@ -1843,6 +1844,185 @@
         <tag>Django</tag>
         <tag>uWSGI</tag>
         <tag>Nginx</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Go语言之顺序编程</title>
+    <url>/2020/04/23/go-basis-sequence/</url>
+    <content><![CDATA[<blockquote>
+<h2 id="Go语言之顺序编程"><a href="#Go语言之顺序编程" class="headerlink" title="Go语言之顺序编程"></a>Go语言之顺序编程</h2></blockquote>
+<p>以下是笔者学习Go语言基础的代码随笔，本次练习内容为<kbd>条件语句</kbd>与<kbd>循环语句</kbd>。</p>
+<h3 id="Go-语言条件语句"><a href="#Go-语言条件语句" class="headerlink" title="Go 语言条件语句"></a>Go 语言条件语句</h3><p>Go 语言提供了以下几种条件判断语句：</p>
+<table>
+<thead>
+<tr>
+<th align="left">语句</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a href="https://www.runoob.com/go/go-if-statement.html" target="_blank" rel="noopener">if 语句</a></td>
+<td align="left"><strong>if 语句</strong> 由一个布尔表达式后紧跟一个或多个语句组成。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://www.runoob.com/go/go-if-else-statement.html" target="_blank" rel="noopener">if…else 语句</a></td>
+<td align="left"><strong>if 语句</strong> 后可以使用可选的 <strong>else 语句</strong>, else 语句中的表达式在布尔表达式为 false 时执行。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://www.runoob.com/go/go-nested-if-statements.html" target="_blank" rel="noopener">if 嵌套语句</a></td>
+<td align="left">你可以在 <strong>if</strong> 或 <strong>else if</strong> 语句中嵌入一个或多个 <strong>if</strong> 或 <strong>else if</strong> 语句。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://www.runoob.com/go/go-switch-statement.html" target="_blank" rel="noopener">switch 语句</a></td>
+<td align="left"><strong>switch</strong> 语句用于基于不同条件执行不同动作。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://www.runoob.com/go/go-select-statement.html" target="_blank" rel="noopener">select 语句</a></td>
+<td align="left"><strong>select</strong> 语句类似于 <strong>switch</strong> 语句，但是select会随机执行一个可运行的case。如果没有case可运行，它将阻塞，直到有case可运行。</td>
+</tr>
+</tbody></table>
+<p><em>注意：Go 没有三目运算符，所以不支持</em> <strong>?:</strong> <em>形式的条件判断。</em></p>
+<a id="more"></a>
+
+<h3 id="Go-语言循环语句"><a href="#Go-语言循环语句" class="headerlink" title="Go 语言循环语句"></a>Go 语言循环语句</h3><p>Go 语言提供了以下几种类型循环处理语句：</p>
+<table>
+<thead>
+<tr>
+<th align="left">循环类型</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a href="https://www.runoob.com/go/go-for-loop.html" target="_blank" rel="noopener">for 循环</a></td>
+<td align="left">重复执行语句块</td>
+</tr>
+<tr>
+<td align="left"><a href="https://www.runoob.com/go/go-nested-loops.html" target="_blank" rel="noopener">循环嵌套</a></td>
+<td align="left">在 for 循环中嵌套一个或多个 for 循环</td>
+</tr>
+</tbody></table>
+<h4 id="循环控制语句"><a href="#循环控制语句" class="headerlink" title="循环控制语句"></a>循环控制语句</h4><p>循环控制语句可以控制循环体内语句的执行过程。</p>
+<p>GO 语言支持以下几种循环控制语句：</p>
+<table>
+<thead>
+<tr>
+<th align="left">控制语句</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a href="https://www.runoob.com/go/go-break-statement.html" target="_blank" rel="noopener">break 语句</a></td>
+<td align="left">经常用于中断当前 for 循环或跳出 switch 语句</td>
+</tr>
+<tr>
+<td align="left"><a href="https://www.runoob.com/go/go-continue-statement.html" target="_blank" rel="noopener">continue 语句</a></td>
+<td align="left">跳过当前循环的剩余语句，然后继续进行下一轮循环。</td>
+</tr>
+<tr>
+<td align="left"><a href="https://www.runoob.com/go/go-goto-statement.html" target="_blank" rel="noopener">goto 语句</a></td>
+<td align="left">将控制转移到被标记的语句。</td>
+</tr>
+</tbody></table>
+<h2 id="练习代码"><a href="#练习代码" class="headerlink" title="练习代码"></a>练习代码</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// ifFn()</span></span><br><span class="line">	<span class="comment">// forFn()</span></span><br><span class="line">	<span class="comment">// switchFn()</span></span><br><span class="line">	loopFn()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ifFn</span><span class="params">()</span></span> &#123;</span><br><span class="line">	i := <span class="number">2</span></span><br><span class="line">	<span class="keyword">if</span> i == <span class="number">1</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">"第一种方式"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> a, b := i, <span class="number">7</span>; a == <span class="number">2</span> &#123;</span><br><span class="line">		fmt.Println(b)</span><br><span class="line">		fmt.Println(<span class="string">"第二种方式"</span>)</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> i == <span class="number">3</span> &#123;</span><br><span class="line"></span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">forFn</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// s := []int&#123;1, 2, 4, 5, 7&#125;</span></span><br><span class="line">	m := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span>&#123;<span class="string">"a"</span>: <span class="number">1</span>, <span class="string">"b"</span>: <span class="number">2</span>&#125;</span><br><span class="line">	<span class="keyword">for</span> k, v := <span class="keyword">range</span> m &#123;</span><br><span class="line">		fmt.Println(k, v)</span><br><span class="line">	&#125;</span><br><span class="line">	i := <span class="number">4</span></span><br><span class="line">	<span class="keyword">if</span> i == <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">for</span> &#123;</span><br><span class="line">			fmt.Println(<span class="string">"第一种：无限循环，可通过break结束."</span>)</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> i == <span class="number">2</span> &#123;</span><br><span class="line">		a := <span class="number">1</span></span><br><span class="line">		<span class="keyword">for</span> a &lt;= <span class="number">2</span> &#123;</span><br><span class="line">			fmt.Printf(<span class="string">"第二种：条件循环，类似while. (a=%v) \n"</span>, a)</span><br><span class="line">			a++</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> i == <span class="number">3</span> &#123;</span><br><span class="line">		<span class="keyword">for</span> a := <span class="number">1</span>; a &lt;= <span class="number">2</span>; a++ &#123;</span><br><span class="line">			fmt.Printf(<span class="string">"第三种：与第二种相同，带初始化和自增. (a=%v) \n"</span>, a)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">switchFn</span><span class="params">()</span></span> &#123;</span><br><span class="line">	i := <span class="number">3</span></span><br><span class="line">	<span class="keyword">switch</span> i &#123;</span><br><span class="line">	<span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">		a := <span class="number">3</span></span><br><span class="line">		<span class="keyword">switch</span> a &#123;</span><br><span class="line">		<span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">			fmt.Println(<span class="string">"第一种方式, a==1"</span>)</span><br><span class="line">		<span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">			fmt.Println(<span class="string">"第一种方式，a==2"</span>)</span><br><span class="line">		<span class="keyword">default</span>:</span><br><span class="line">			fmt.Println(<span class="string">"第一种方式，default"</span>)</span><br><span class="line">		&#125;</span><br><span class="line">	<span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">		a := <span class="number">2</span></span><br><span class="line">		<span class="keyword">switch</span> &#123;</span><br><span class="line">		<span class="keyword">case</span> a == <span class="number">1</span>:</span><br><span class="line">			fmt.Println(<span class="string">"第二种方式, a==1"</span>)</span><br><span class="line">		<span class="keyword">case</span> a == <span class="number">2</span>:</span><br><span class="line">			fmt.Println(<span class="string">"第二种方式, a==2"</span>)</span><br><span class="line">		<span class="keyword">default</span>:</span><br><span class="line">			fmt.Println(<span class="string">"第二种方式，default"</span>)</span><br><span class="line">		&#125;</span><br><span class="line">	<span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">		<span class="keyword">switch</span> a := <span class="number">3</span>; &#123;</span><br><span class="line">		<span class="keyword">case</span> a &gt;= <span class="number">1</span>:</span><br><span class="line">			fmt.Println(<span class="string">"第三种方式, a&gt;=1"</span>)</span><br><span class="line">			<span class="keyword">fallthrough</span></span><br><span class="line">		<span class="keyword">case</span> a &gt;= <span class="number">2</span>:</span><br><span class="line">			fmt.Println(<span class="string">"第三种方式, a&gt;=2"</span>)</span><br><span class="line">			<span class="keyword">fallthrough</span></span><br><span class="line">		<span class="keyword">case</span> a &gt;= <span class="number">2</span>:</span><br><span class="line">			fmt.Println(<span class="string">"第三种方式, a&gt;=2"</span>)</span><br><span class="line">			<span class="keyword">fallthrough</span></span><br><span class="line">		<span class="keyword">case</span> a &gt;= <span class="number">2</span>:</span><br><span class="line">			fmt.Println(<span class="string">"第三种方式, a&gt;=2"</span>)</span><br><span class="line">			<span class="keyword">fallthrough</span></span><br><span class="line">		<span class="keyword">case</span> a &gt;= <span class="number">2</span>:</span><br><span class="line">			fmt.Println(<span class="string">"第三种方式, a&gt;=2"</span>)</span><br><span class="line">			<span class="keyword">fallthrough</span></span><br><span class="line">		<span class="keyword">default</span>:</span><br><span class="line">			fmt.Println(<span class="string">"第三种方式，default"</span>)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">loopFn</span><span class="params">()</span></span> &#123;</span><br><span class="line">	i := <span class="number">0</span></span><br><span class="line">LABEL2:</span><br><span class="line">	<span class="keyword">goto</span> LABEL</span><br><span class="line">LABEL:</span><br><span class="line">	<span class="keyword">for</span> i &lt; <span class="number">10</span> &#123;</span><br><span class="line">		<span class="keyword">for</span> &#123;</span><br><span class="line">			<span class="keyword">for</span> &#123;</span><br><span class="line">				i++</span><br><span class="line">				<span class="keyword">if</span> i == <span class="number">3</span> &#123;</span><br><span class="line">					fmt.Println(<span class="string">"跳过打印i=3"</span>)</span><br><span class="line">					<span class="keyword">continue</span> LABEL</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">if</span> i == <span class="number">5</span> &#123;</span><br><span class="line">					fmt.Println(<span class="string">"goto一下"</span>)</span><br><span class="line">					<span class="keyword">goto</span> LABEL2</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">if</span> i == <span class="number">7</span> &#123;</span><br><span class="line">					fmt.Println(<span class="string">"不打印剩下的"</span>)</span><br><span class="line">					<span class="keyword">break</span> LABEL</span><br><span class="line">				&#125;</span><br><span class="line">				fmt.Printf(<span class="string">"i=%d\n"</span>, i)</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>Go语言</category>
+        <category>顺序编程</category>
+      </categories>
+      <tags>
+        <tag>Go语言</tag>
+        <tag>基础练习</tag>
+        <tag>顺序编程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Go语言基础练习二</title>
+    <url>/2020/04/09/go-basis-exercise-2/</url>
+    <content><![CDATA[<blockquote>
+<h2 id="Go语言基础练习二"><a href="#Go语言基础练习二" class="headerlink" title="Go语言基础练习二"></a>Go语言基础练习二</h2></blockquote>
+<p>以下是笔者学习Go语言基础的代码随笔，延续了练习一中的数据类型、变量常量申明，以及Go 语言的几种运算符。</p>
+<h3 id="变量申明"><a href="#变量申明" class="headerlink" title="变量申明"></a>变量申明</h3><p><strong>第一种，指定变量类型，如果没有初始化，则变量默认为零值</strong>。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> v_name v_type</span><br><span class="line">v_name = value</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+
+<p><strong>第二种，根据值自行判定变量类型。</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> v_name = value</span><br></pre></td></tr></table></figure>
+
+<p><strong>第三种，省略 var, 注意 \</strong>:=** 左侧如果没有声明新的变量，就产生编译错误，格式：**</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">v_name := value</span><br></pre></td></tr></table></figure>
+
+<h3 id="多变量声明"><a href="#多变量声明" class="headerlink" title="多变量声明"></a>多变量声明</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">//类型相同多个变量, 非全局变量</span></span><br><span class="line"><span class="keyword">var</span> vname1, vname2, vname3 <span class="keyword">type</span></span><br><span class="line">vname1, vname2, vname3 = v1, v2, v3</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> vname1, vname2, vname3 = v1, v2, v3 <span class="comment">// 和 python 很像,不需要显示声明类型，自动推断</span></span><br><span class="line"></span><br><span class="line">vname1, vname2, vname3 := v1, v2, v3 <span class="comment">// 出现在 := 左侧的变量不应该是已经被声明过的，否则会导致编译错误</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 这种因式分解关键字的写法一般用于声明全局变量</span></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">    vname1 v_type1</span><br><span class="line">    vname2 v_type2</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Go-语言运算符"><a href="#Go-语言运算符" class="headerlink" title="Go 语言运算符"></a>Go 语言运算符</h3><p>运算符用于在程序运行时执行数学或逻辑运算。</p>
+<p>Go 语言内置的运算符有：</p>
+<ul>
+<li>算术运算符</li>
+<li>关系运算符</li>
+<li>逻辑运算符</li>
+<li>位运算符</li>
+<li>赋值运算符</li>
+<li>其他运算符</li>
+</ul>
+<h2 id="练习代码"><a href="#练习代码" class="headerlink" title="练习代码"></a>练习代码</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// TODO -&gt; 并发、map、切片、类型转换、循环、条件语句</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Go数据类型、变量常量申明 */</span></span><br><span class="line">	<span class="comment">//var a string = "Runoob"</span></span><br><span class="line">	<span class="comment">//var bool bool = true</span></span><br><span class="line">	<span class="comment">//var b string</span></span><br><span class="line">	<span class="comment">//b = "sapphire"</span></span><br><span class="line">	<span class="comment">//var c = "spr"</span></span><br><span class="line">	fmt.Println(<span class="string">"first Go: "</span> + <span class="string">"hello world!"</span>)</span><br><span class="line">	<span class="comment">//fmt.Print(c)</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//const申明常量</span></span><br><span class="line">	<span class="keyword">const</span> a, b = <span class="number">100</span>, <span class="string">"gogogo"</span></span><br><span class="line">	fmt.Println(b)</span><br><span class="line"></span><br><span class="line">	<span class="comment">//声明一个变量并初始化方式</span></span><br><span class="line">	<span class="comment">//方式1</span></span><br><span class="line">	<span class="keyword">var</span> test_1 = <span class="string">"RUNOOB"</span></span><br><span class="line">	fmt.Println(test_1)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 没有初始化就为零值</span></span><br><span class="line">	<span class="keyword">var</span> test_2 <span class="keyword">int</span></span><br><span class="line">	fmt.Println(test_2)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// bool 零值为 false</span></span><br><span class="line">	<span class="keyword">var</span> test_3 <span class="keyword">bool</span></span><br><span class="line">	fmt.Println(test_3)</span><br><span class="line"></span><br><span class="line">	<span class="comment">//方式2 = (自动判断类型)</span></span><br><span class="line">	<span class="keyword">var</span> test_4 = <span class="literal">true</span></span><br><span class="line">	fmt.Println(test_4)</span><br><span class="line"></span><br><span class="line">	<span class="comment">//方式3 := (必须申明新变量)</span></span><br><span class="line">	test_5 := <span class="string">"申明变量"</span></span><br><span class="line">	fmt.Println(test_5)</span><br><span class="line"></span><br><span class="line">	<span class="comment">//iota，特殊常量，const每申明一次iota+=1</span></span><br><span class="line">	<span class="keyword">const</span> (</span><br><span class="line">		aa = <span class="literal">iota</span>   <span class="comment">//0</span></span><br><span class="line">		bb          <span class="comment">//1</span></span><br><span class="line">		cc          <span class="comment">//2</span></span><br><span class="line">		dd = <span class="string">"ha"</span>   <span class="comment">//独立值，iota += 1</span></span><br><span class="line">		ee          <span class="comment">//"ha"   iota += 1</span></span><br><span class="line">		ff = <span class="number">100</span>    <span class="comment">//iota +=1</span></span><br><span class="line">		gg          <span class="comment">//100  iota +=1</span></span><br><span class="line">		hh = <span class="literal">iota</span>   <span class="comment">//7,恢复计数</span></span><br><span class="line">		ii          <span class="comment">//8</span></span><br><span class="line">	)</span><br><span class="line">	fmt.Println(aa,bb,cc,dd,ee,ff,gg,hh,ii)</span><br><span class="line">	<span class="comment">// 输出：0 1 2 ha ha 100 100 7 8</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* 运算符 */</span></span><br><span class="line">	<span class="comment">// 加+ 减- 乘* 除/ 余% 自增++ 自减--</span></span><br><span class="line">	<span class="keyword">var</span> operator <span class="keyword">int</span> = <span class="number">20</span></span><br><span class="line">	operator++</span><br><span class="line">	fmt.Printf(<span class="string">"operator 的值为 %d\n"</span>, operator )</span><br><span class="line">	operator--</span><br><span class="line">	fmt.Printf(<span class="string">"operator 的值为 %d\n"</span>, operator )</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* 关系运算符 判断 */</span></span><br><span class="line">	<span class="comment">// 相等== 不等!= 大于&gt; 小于&lt; 大于等于&gt;= 小于等于&lt;=</span></span><br><span class="line">	fmt.Println(<span class="number">21</span> == <span class="number">22</span>)</span><br><span class="line">	fmt.Println(<span class="number">21</span> != <span class="number">22</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* 逻辑运算符 */</span></span><br><span class="line">	<span class="comment">// 与(逻辑and)&amp;&amp; 或(逻辑or)|| 非(逻辑not)!</span></span><br><span class="line">	and1, and2 := <span class="literal">true</span>, <span class="literal">false</span></span><br><span class="line">	<span class="keyword">if</span> (and1 &amp;&amp; and2) &#123;</span><br><span class="line">		fmt.Println(<span class="string">"条件为true"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (and1 || and2) &#123;</span><br><span class="line">		fmt.Println(<span class="string">"条件为true"</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* 位运算符 */</span></span><br><span class="line">	<span class="comment">// 按位与&amp; 按位或| 按位异或^ 左移&lt;&lt; 右移&gt;&gt;</span></span><br><span class="line">	<span class="keyword">var</span> example <span class="keyword">uint</span> = <span class="number">13</span> <span class="comment">// 13二进制 1101</span></span><br><span class="line">	fmt.Println(example &gt;&gt; <span class="number">1</span>) <span class="comment">// 右移1位 -&gt; 0110</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* 赋值运算符</span></span><br><span class="line"><span class="comment">	运算符	描述	          实例</span></span><br><span class="line"><span class="comment">	=		简单的赋值运算符 C = A + B 将 A + B 表达式结果赋值给 C</span></span><br><span class="line"><span class="comment">	+=		相加后再赋值	  C += A 等于 C = C + A</span></span><br><span class="line"><span class="comment">	-=		相减后再赋值	  C -= A 等于 C = C - A</span></span><br><span class="line"><span class="comment">	*=		相乘后再赋值	  C *= A 等于 C = C * A</span></span><br><span class="line"><span class="comment">	/=		相除后再赋值	  C /= A 等于 C = C / A</span></span><br><span class="line"><span class="comment">	%=		求余后再赋值	  C %= A 等于 C = C % A</span></span><br><span class="line"><span class="comment">	&lt;&lt;=		左移后赋值	  C &lt;&lt;= 2 等于 C = C &lt;&lt; 2</span></span><br><span class="line"><span class="comment">	&gt;&gt;=		右移后赋值	  C &gt;&gt;= 2 等于 C = C &gt;&gt; 2</span></span><br><span class="line"><span class="comment">	&amp;=		按位与后赋值	  C &amp;= 2 等于 C = C &amp; 2</span></span><br><span class="line"><span class="comment">	^=		按位异或后赋值	  C ^= 2 等于 C = C ^ 2</span></span><br><span class="line"><span class="comment">	|=		按位或后赋值	  C |= 2 等于 C = C | 2</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// 其他运算符</span></span><br><span class="line">	<span class="comment">// &amp;返回变量储存地址 *指针变量</span></span><br><span class="line">	var_tmp := <span class="number">99</span></span><br><span class="line">	fmt.Println(&amp;var_tmp) <span class="comment">// 指针地址</span></span><br><span class="line">	fmt.Println(*(&amp;var_tmp)) <span class="comment">// 指针的值</span></span><br><span class="line"></span><br><span class="line">	fmt.Println(<span class="string">"谁大一点:"</span>, max(<span class="number">100</span>,<span class="number">99</span>))</span><br><span class="line"></span><br><span class="line">	swap_a ,swap_b := swap(<span class="string">"lang"</span>, <span class="string">"go"</span>)</span><br><span class="line">	fmt.Println(<span class="string">"交换顺序"</span>, swap_a ,swap_b)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 数组</span></span><br><span class="line">	<span class="keyword">var</span> balance1 [<span class="number">10</span>] <span class="keyword">float32</span></span><br><span class="line">	<span class="comment">// 赋值</span></span><br><span class="line">	<span class="keyword">var</span> balance2 = [...]<span class="keyword">float32</span>&#123;<span class="number">1000.0</span>, <span class="number">2.0</span>, <span class="number">3.4</span>, <span class="number">7.0</span>, <span class="number">50.0</span>&#125;</span><br><span class="line">	fmt.Println(balance1, balance2)</span><br><span class="line">	<span class="keyword">var</span> salary <span class="keyword">float32</span> = balance2[<span class="number">3</span>]</span><br><span class="line">	fmt.Println(salary)</span><br><span class="line"></span><br><span class="line">	array()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> book1 Books</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 结构体</span></span><br><span class="line">	book1.title = <span class="string">"三国演义"</span></span><br><span class="line">	book1.bookId = <span class="number">1</span></span><br><span class="line">	book1.author = <span class="string">"罗贯中"</span></span><br><span class="line">	book1.subject = <span class="string">"历史"</span></span><br><span class="line">	fmt.Println(book1)</span><br><span class="line">	<span class="comment">// 结构体指针</span></span><br><span class="line">	<span class="keyword">var</span> book_pointer *Books</span><br><span class="line">	book_pointer = &amp;book1</span><br><span class="line">	fmt.Println(book_pointer)</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 函数返回两个数的最大值 */</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">max</span><span class="params">(num1, num2 <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="comment">/* 声明局部变量 */</span></span><br><span class="line">	<span class="keyword">var</span> result <span class="keyword">int</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (num1 &gt; num2) &#123;</span><br><span class="line">		result = num1</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		result = num2</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> result</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 返回值有多个</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swap</span><span class="params">(x, y <span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">string</span>, <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> y, x</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">array</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> n [<span class="number">10</span>]<span class="keyword">int</span> <span class="comment">/* n 是一个长度为 10 的数组 */</span></span><br><span class="line">	<span class="keyword">var</span> i,j <span class="keyword">int</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* 为数组 n 初始化元素 */</span></span><br><span class="line">	<span class="keyword">for</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">		n[i] = i + <span class="number">100</span> <span class="comment">/* 设置元素为 i + 100 */</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* 输出每个数组元素的值 */</span></span><br><span class="line">	<span class="keyword">for</span> j = <span class="number">0</span>; j &lt; <span class="number">10</span>; j++ &#123;</span><br><span class="line">		fmt.Printf(<span class="string">"Element[%d] = %d\n"</span>, j, n[j] )</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 结构体 */</span></span><br><span class="line"><span class="keyword">type</span> Books <span class="keyword">struct</span> &#123;</span><br><span class="line">	title   <span class="keyword">string</span></span><br><span class="line">	author  <span class="keyword">string</span></span><br><span class="line">	subject <span class="keyword">string</span></span><br><span class="line">	bookId  <span class="keyword">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>Go语言</category>
+        <category>基础练习</category>
+      </categories>
+      <tags>
+        <tag>Go语言</tag>
+        <tag>基础练习</tag>
+        <tag>运算符</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Go语言基础练习一</title>
+    <url>/2020/04/03/go-basis-exercise-1/</url>
+    <content><![CDATA[<blockquote>
+<h2 id="Go语言基础练习一"><a href="#Go语言基础练习一" class="headerlink" title="Go语言基础练习一"></a>Go语言基础练习一</h2></blockquote>
+<p>以下是笔者学习Go语言基础的代码随笔，主要为数据类型与变量申明。</p>
+<h3 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h3><p>在 Go 编程语言中，数据类型用于声明函数和变量。</p>
+<p>Go 语言按类别有以下几种数据类型：</p>
+<table>
+<thead>
+<tr>
+<th align="left">序号</th>
+<th align="left">类型和描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left"><strong>布尔型</strong> 布尔型的值只可以是常量 true 或者 false。一个简单的例子：var b bool = true。</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left"><strong>数字类型</strong> 整型 int 和浮点型 float32、float64，Go 语言支持整型和浮点型数字，并且支持复数，其中位的运算采用补码。</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left"><strong>字符串类型:</strong> 字符串就是一串固定长度的字符连接起来的字符序列。Go 的字符串是由单个字节连接起来的。Go 语言的字符串的字节使用 UTF-8 编码标识 Unicode 文本。</td>
+</tr>
+<tr>
+<td align="left">4</td>
+<td align="left"><strong>派生类型:</strong> 包括：(a) 指针类型（Pointer）(b) 数组类型(c) 结构化类型(struct)(d) Channel 类型(e) 函数类型(f) 切片类型(g) 接口类型（interface）(h) Map 类型</td>
+</tr>
+</tbody></table>
+<a id="more"></a>
+
+<h2 id="练习代码"><a href="#练习代码" class="headerlink" title="练习代码"></a>练习代码</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"unsafe"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">	aa = <span class="literal">iota</span></span><br><span class="line">	bb = <span class="literal">iota</span></span><br><span class="line">	cc = <span class="literal">iota</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span>  <span class="title">test</span><span class="params">()</span></span>  &#123;</span><br><span class="line">	<span class="keyword">var</span> test1 <span class="keyword">int16</span> = <span class="number">99</span></span><br><span class="line">	<span class="keyword">var</span> str1, str2 = <span class="string">"hhh"</span>, <span class="string">"eee"</span></span><br><span class="line">	<span class="keyword">var</span> a = <span class="literal">true</span></span><br><span class="line">	b := <span class="string">"sapphire"</span></span><br><span class="line">	c, d, e := <span class="string">"office"</span>, <span class="string">"word"</span>, <span class="string">"ppt"</span></span><br><span class="line">	fmt.Println(test1)</span><br><span class="line">	fmt.Println(str1)</span><br><span class="line">	fmt.Println(str2)</span><br><span class="line">	fmt.Println(a)</span><br><span class="line">	pointer := &amp;b</span><br><span class="line">	fmt.Println(&amp;b)</span><br><span class="line">	fmt.Println(c + d + e)</span><br><span class="line">	fmt.Println(pointer, <span class="string">"gogogo"</span>)</span><br><span class="line">	<span class="keyword">const</span> spr = <span class="string">"sapphire"</span></span><br><span class="line">	fmt.Println(<span class="string">"my name is:"</span>, spr)</span><br><span class="line">	fmt.Println(unsafe.Sizeof(spr))</span><br><span class="line">	fmt.Println(unsafe.Sizeof(test1))</span><br><span class="line">	fmt.Println(bb)</span><br><span class="line">	<span class="keyword">if</span> bb != <span class="number">0</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">"bb is not 0"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	test2()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test2</span><span class="params">()</span></span>  &#123;</span><br><span class="line">	<span class="keyword">var</span> a <span class="keyword">uint</span> = <span class="number">60</span>      <span class="comment">/* 60 = 0011 1100 */</span></span><br><span class="line">	<span class="keyword">var</span> b <span class="keyword">uint</span> = <span class="number">13</span>      <span class="comment">/* 13 = 0000 1101 */</span></span><br><span class="line">	<span class="keyword">var</span> c <span class="keyword">uint</span> = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">	c = a &amp; b       <span class="comment">/* 12 = 0000 1100 */</span></span><br><span class="line">	fmt.Printf(<span class="string">"第一行 - c 的值为 %d\n"</span>, c )</span><br><span class="line"></span><br><span class="line">	c = a | b       <span class="comment">/* 61 = 0011 1101 */</span></span><br><span class="line">	fmt.Printf(<span class="string">"第二行 - c 的值为 %d\n"</span>, c )</span><br><span class="line"></span><br><span class="line">	c = a ^ b       <span class="comment">/* 49 = 0011 0001 */</span></span><br><span class="line">	fmt.Printf(<span class="string">"第三行 - c 的值为 %d\n"</span>, c )</span><br><span class="line"></span><br><span class="line">	c = a &lt;&lt; <span class="number">2</span>     <span class="comment">/* 240 = 1111 0000 */</span></span><br><span class="line">	fmt.Printf(<span class="string">"第四行 - c 的值为 %d\n"</span>, c )</span><br><span class="line"></span><br><span class="line">	c = a &gt;&gt; <span class="number">2</span>     <span class="comment">/* 15 = 0000 1111 */</span></span><br><span class="line">	fmt.Printf(<span class="string">"第五行 - c 的值为 %d\n"</span>, c )</span><br><span class="line">	test3()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test3</span><span class="params">()</span></span>  &#123;</span><br><span class="line">	<span class="keyword">var</span> a <span class="keyword">int</span> = <span class="number">4</span></span><br><span class="line">	str1 := <span class="string">"sapphire"</span></span><br><span class="line">	<span class="keyword">var</span> b <span class="keyword">int32</span></span><br><span class="line">	<span class="keyword">var</span> c <span class="keyword">float32</span></span><br><span class="line">	<span class="keyword">var</span> ptr *<span class="keyword">int</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* 运算符实例 */</span></span><br><span class="line">	fmt.Printf(<span class="string">"第 1 行 - a 变量类型为 = %T\n"</span>, a )</span><br><span class="line">	fmt.Printf(<span class="string">"第 2 行 - b 变量类型为 = %T\n"</span>, b )</span><br><span class="line">	fmt.Printf(<span class="string">"第 3 行 - c 变量类型为 = %T\n"</span>, c )</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*  &amp; 和 * 运算符实例 */</span></span><br><span class="line">	ptr = &amp;a     <span class="comment">/* 'ptr' 包含了 'a' 变量的地址 */</span></span><br><span class="line">	fmt.Printf(<span class="string">"a 的值为  %d\n"</span>, a)</span><br><span class="line">	fmt.Printf(<span class="string">"*ptr 为 %d\n"</span>, *ptr)</span><br><span class="line">	fmt.Printf(<span class="string">"name 为 %s\n"</span>, str1)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>Go语言</category>
+        <category>基础练习</category>
+      </categories>
+      <tags>
+        <tag>Go语言</tag>
+        <tag>数据类型</tag>
+        <tag>基础练习</tag>
       </tags>
   </entry>
   <entry>
