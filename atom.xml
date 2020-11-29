@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://api.ddoudou.xyz/"/>
-  <updated>2020-11-29T18:06:51.089Z</updated>
+  <updated>2020-11-29T18:19:12.111Z</updated>
   <id>http://api.ddoudou.xyz/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="http://api.ddoudou.xyz/2020/11/30/go-xorm-sample/"/>
     <id>http://api.ddoudou.xyz/2020/11/30/go-xorm-sample/</id>
     <published>2020-11-29T16:52:27.000Z</published>
-    <updated>2020-11-29T18:06:51.089Z</updated>
+    <updated>2020-11-29T18:19:12.111Z</updated>
     
     <summary type="html">
     
@@ -30,6 +30,7 @@
 &lt;p&gt;本文为 &lt;strong&gt;&lt;em&gt;xorm - Go 语言 ORM&lt;/em&gt;&lt;/strong&gt; 之后，对 &lt;strong&gt;&lt;em&gt;xorm&lt;/em&gt;&lt;/strong&gt; 的练习代码。&lt;/p&gt;
 &lt;p&gt;学习Go语言之初，在 &lt;strong&gt;&lt;em&gt;Go语言之顺序编程&lt;/em&gt;&lt;/strong&gt; 这篇文章中，记录了条件、循环、选择、跳转等语句的练习情况。而最近又学到了 &lt;strong&gt;&lt;em&gt;xorm - Go 语言 ORM&lt;/em&gt;&lt;/strong&gt; 的内容，我就想把这两部分内容结合起来，实现一个简单的需求场景。&lt;/p&gt;
 &lt;p&gt;需求具体为：使用shell作为交互界面，sqlite作为数据库，使用xorm实现类似于人员信息或者银行账户的增删改查，里面也会涉及到顺序编程的内容。&lt;/p&gt;
+&lt;p&gt;你可以在&lt;code&gt;GitHub&lt;/code&gt;上找到本次代码：&lt;a href=&quot;https://github.com/sususama5555/go-xorm&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;https://github.com/sususama5555/go-xorm&lt;/a&gt;&lt;/p&gt;
     
     </summary>
     
@@ -40,6 +41,8 @@
     
     
       <category term="数据库" scheme="http://api.ddoudou.xyz/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+      <category term="ORM" scheme="http://api.ddoudou.xyz/tags/ORM/"/>
     
       <category term="Go语言" scheme="http://api.ddoudou.xyz/tags/Go%E8%AF%AD%E8%A8%80/"/>
     
@@ -54,7 +57,7 @@
     <link href="http://api.ddoudou.xyz/2020/11/29/go-xorm/"/>
     <id>http://api.ddoudou.xyz/2020/11/29/go-xorm/</id>
     <published>2020-11-29T15:58:27.000Z</published>
-    <updated>2020-11-29T16:53:25.628Z</updated>
+    <updated>2020-11-29T18:19:12.107Z</updated>
     
     <summary type="html">
     
@@ -75,6 +78,8 @@
     
     
       <category term="数据库" scheme="http://api.ddoudou.xyz/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+      <category term="ORM" scheme="http://api.ddoudou.xyz/tags/ORM/"/>
     
       <category term="Go语言" scheme="http://api.ddoudou.xyz/tags/Go%E8%AF%AD%E8%A8%80/"/>
     

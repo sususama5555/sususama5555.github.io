@@ -8,6 +8,7 @@
 <p>本文为 <strong><em>xorm - Go 语言 ORM</em></strong> 之后，对 <strong><em>xorm</em></strong> 的练习代码。</p>
 <p>学习Go语言之初，在 <strong><em>Go语言之顺序编程</em></strong> 这篇文章中，记录了条件、循环、选择、跳转等语句的练习情况。而最近又学到了 <strong><em>xorm - Go 语言 ORM</em></strong> 的内容，我就想把这两部分内容结合起来，实现一个简单的需求场景。</p>
 <p>需求具体为：使用shell作为交互界面，sqlite作为数据库，使用xorm实现类似于人员信息或者银行账户的增删改查，里面也会涉及到顺序编程的内容。</p>
+<p>你可以在<code>GitHub</code>上找到本次代码：<a href="https://github.com/sususama5555/go-xorm" target="_blank" rel="noopener">https://github.com/sususama5555/go-xorm</a></p>
 <a id="more"></a>
 
 <h1 id="实现详情"><a href="#实现详情" class="headerlink" title="实现详情"></a>实现详情</h1><p>以下就是一个简单的人员信息录入的系统：</p>
@@ -87,6 +88,7 @@
       </categories>
       <tags>
         <tag>数据库</tag>
+        <tag>ORM</tag>
         <tag>Go语言</tag>
         <tag>xorm</tag>
         <tag>实战练习</tag>
@@ -683,6 +685,7 @@
       </categories>
       <tags>
         <tag>数据库</tag>
+        <tag>ORM</tag>
         <tag>Go语言</tag>
         <tag>xorm</tag>
         <tag>操作手册</tag>
@@ -2663,8 +2666,8 @@
       </categories>
       <tags>
         <tag>Go语言</tag>
-        <tag>基础练习</tag>
         <tag>运算符</tag>
+        <tag>基础练习</tag>
       </tags>
   </entry>
   <entry>
@@ -2710,8 +2713,8 @@
       </categories>
       <tags>
         <tag>Go语言</tag>
-        <tag>数据类型</tag>
         <tag>基础练习</tag>
+        <tag>数据类型</tag>
       </tags>
   </entry>
   <entry>
