@@ -3,6 +3,7 @@ title: ES6之 async 与 await
 date: 2020-11-25 23:53:32
 tags: 
 - JavaScript
+- 前端
 - ES6
 - 异步函数
 categories: 
