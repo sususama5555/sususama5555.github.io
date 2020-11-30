@@ -1,6 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Zabbix安装与部署</title>
+    <url>/2020/12/01/zabbix-install-deploy/</url>
+    <content><![CDATA[<blockquote>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1></blockquote>
+<p>最近工作中和<code>Zabbix</code>打了不少交道，大概分为两个用途。</p>
+<p>一种是对接它的API接口，例如创建账号、媒介、触发器、动作等，这种比较简单，照着API文档来就行了，这里不多赘述。</p>
+<p>另一种就是，使用python脚本创建一套Zabbix告警推送的流程，将超过阈值的Zabbix告警按照指定的流程和动作推送到告警中心，而告警中心使用Zabbix作为其中一个告警源，不断拉取并且分发告警。这应该属于监控、告警等最常见的自动化运维的场景了，我对此也比较感兴趣，所有想从Zabbix较为基础的单机版安装及部署学习，也就有了这篇文章。</p>
+<p>事先已在本地开发环境的虚拟机中安装与部署成功，现在期望将Zabbix部署到阿里云的机器上。</p>
+<a id="more"></a>
+
+<blockquote>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1></blockquote>
+<p>这里我们按照官方文档的指引进行安装</p>
+<p>官方地址：<a href="https://www.zabbix.com/download" target="_blank" rel="noopener">https://www.zabbix.com/download</a></p>
+<p>由于本人的阿里云服务器的预先环境为CentOS 7 + Mysql + Nginx，所以这里不再折腾，直接使用这一套最常用的配置。</p>
+<p>由于Zabbix 5.2是最新版本，安装指引和资料也比较少，处于稳定考虑，最终选择Zaabix 5.0 LTS版本。</p>
+<p>PS:工作接触的5.0和5.2都有。</p>
+<h2 id="Install-and-configure-Zabbix-server-for-your-platform"><a href="#Install-and-configure-Zabbix-server-for-your-platform" class="headerlink" title="Install and configure Zabbix server for your platform"></a>Install and configure Zabbix server for your platform</h2><h3 id="a-Install-Zabbix-repository（安装Zabbix-yum-源）"><a href="#a-Install-Zabbix-repository（安装Zabbix-yum-源）" class="headerlink" title="a. Install Zabbix repository（安装Zabbix yum 源）"></a>a. Install Zabbix repository（安装Zabbix yum 源）</h3><p>官方文档：<a href="https://www.zabbix.com/documentation/5.0/manual/installation/install_from_packages" target="_blank" rel="noopener">Documentation</a></p>
+<h4 id="官方yum源"><a href="#官方yum源" class="headerlink" title="官方yum源"></a>官方yum源</h4><p>以下是官方推荐的zabbix yum源，不过在国内使用比较麻烦，下载速度慢且经常连接超时。所以推荐使用阿里云的zabbix yum 源</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># rpm -Uvh https:&#x2F;&#x2F;repo.zabbix.com&#x2F;zabbix&#x2F;5.0&#x2F;rhel&#x2F;7&#x2F;x86_64&#x2F;zabbix-release-5.0-1.el7.noarch.rpm</span><br><span class="line"># yum clean all</span><br></pre></td></tr></table></figure>
+
+<h4 id="阿里云yum源"><a href="#阿里云yum源" class="headerlink" title="阿里云yum源"></a>阿里云yum源</h4><p>下载地址：<a href="https://mirrors.aliyun.com/zabbix/" target="_blank" rel="noopener">https://mirrors.aliyun.com/zabbix/</a></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># rpm -Uvh https:&#x2F;&#x2F;mirrors.aliyun.com&#x2F;zabbix&#x2F;zabbix&#x2F;5.0&#x2F;rhel&#x2F;7&#x2F;x86_64&#x2F;zabbix-release-5.0-1.el7.noarch.rpm</span><br><span class="line"># yum clean all</span><br></pre></td></tr></table></figure>
+
+<p>打开/etc/yum.repos.d/zabbix.repo，把所有的“<a href="https://repo.zabbix.com/zabbix/”" target="_blank" rel="noopener">https://repo.zabbix.com/zabbix/”</a> 改成 “<a href="https://mirrors.aliyun.com/zabbix/”" target="_blank" rel="noopener">https://mirrors.aliyun.com/zabbix/”</a> （除了zabbix-non-supported，其他的分支的URL都有两个zabbix）</p>
+<h3 id="b-Install-Zabbix-server-and-agent（安装Zabbix-server-和agent）"><a href="#b-Install-Zabbix-server-and-agent（安装Zabbix-server-和agent）" class="headerlink" title="b. Install Zabbix server and agent（安装Zabbix server 和agent）"></a>b. Install Zabbix server and agent（安装Zabbix server 和agent）</h3><p>换了yum源应该安装很快，使用 -y 跳过选择</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># yum install -y zabbix-server-mysql zabbix-agent</span><br></pre></td></tr></table></figure>
+
+<h3 id="c-Install-Zabbix-frontend（安装Zabbix-前端）"><a href="#c-Install-Zabbix-frontend（安装Zabbix-前端）" class="headerlink" title="c. Install Zabbix frontend（安装Zabbix 前端）"></a>c. Install Zabbix frontend（安装Zabbix 前端）</h3><p><a href="https://www.zabbix.com/documentation/5.0/manual/installation/frontend/frontend_on_rhel7" target="_blank" rel="noopener">Documentation</a></p>
+<p>Zabbix 使用php写的，所以有单独的安装过程：</p>
+<p>Enable Red Hat Software Collections.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># yum install centos-release-scl</span><br></pre></td></tr></table></figure>
+
+<p>Edit file /etc/yum.repos.d/zabbix.repo and enable zabbix-frontend repository.</p>
+<p>编辑该配置文件 /etc/yum.repos.d/zabbix.repo，使得enabled=1。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[zabbix-frontend]...enabled&#x3D;1...</span><br></pre></td></tr></table></figure>
+
+<p>Install Zabbix frontend packages.</p>
+<p>下载安装Zabbix 前端依赖。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># yum install zabbix-web-mysql-scl zabbix-nginx-conf-scl</span><br></pre></td></tr></table></figure>
+
+<h3 id="d-Create-initial-database（创建初始数据库）"><a href="#d-Create-initial-database（创建初始数据库）" class="headerlink" title="d. Create initial database（创建初始数据库）"></a>d. Create initial database（创建初始数据库）</h3><p><a href="https://www.zabbix.com/documentation/5.0/manual/appendix/install/db_scripts" target="_blank" rel="noopener">Documentation</a></p>
+<p>Run the following on your database host.</p>
+<p>在数据库主机上运行以下代码，目的是在本地mysql数据库中创建zabbix账号和同名数据库，并且赋予相应权限。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># mysql -uroot -p</span><br><span class="line">password</span><br><span class="line">mysql&gt; create database zabbix character set utf8 collate utf8_bin;</span><br><span class="line">mysql&gt; create user zabbix@localhost identified by &#39;password&#39;;</span><br><span class="line">mysql&gt; grant all privileges on zabbix.* to zabbix@localhost;</span><br><span class="line">mysql&gt; quit;</span><br></pre></td></tr></table></figure>
+
+<p>On Zabbix server host import initial schema and data. You will be prompted to enter your newly created password.</p>
+<p>导入初始架构和数据，系统将提示您输入新创建的密码。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -uzabbix -p zabbix</span><br></pre></td></tr></table></figure>
+
+<p>TODO 其中遇到了问题，愿意是以上语句执行时，发生以下报错：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ERROR 1071 (42000) at line 90: Specified key was too long; max key length is 767 bytes</span><br></pre></td></tr></table></figure>
+
+<img data-src="/2020/12/01/zabbix-install-deploy/character-error.png" class>
+
+<p>应该是mysql字符集的报错，所以去查了Stack Overflow后，可以在mysql命令行中，使用<code>show variables like &#39;character%&#39;</code>查询默认字符集，结果发现许多编码为utf-8。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># mysql -uroot -p</span><br><span class="line">password</span><br><span class="line">mysql&gt; show variables like &#39;character%&#39;;</span><br><span class="line">+--------------------------+----------------------------+</span><br><span class="line">| Variable_name            | Value                      |</span><br><span class="line">+--------------------------+----------------------------+</span><br><span class="line">| character_set_client     | utf8                       |</span><br><span class="line">| character_set_connection | utf8                       |</span><br><span class="line">| character_set_database   | latin1                     |</span><br><span class="line">| character_set_filesystem | binary                     |</span><br><span class="line">| character_set_results    | utf8                       |</span><br><span class="line">| character_set_server     | latin1                     |</span><br><span class="line">| character_set_system     | utf8                       |</span><br><span class="line">| character_sets_dir       | &#x2F;usr&#x2F;share&#x2F;mysql&#x2F;charsets&#x2F; |</span><br><span class="line">+--------------------------+----------------------------+</span><br><span class="line">8 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>*<u>原因分析：</u>*</strong></p>
+<p>MySQL的varchar主键只支持不超过767个字节，需要将mysql的字符编码设置为utf8mb4</p>
+<p>使用<code>vim /etc/my.cnf</code>编辑mysql配置文件（不同系统、安装方式和mysql版本会造成差异）</p>
+<p>在[mysqld]下加入以下配置：</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">innodb_file_format</span>=barracuda  </span><br><span class="line"><span class="attr">innodb_file_per_table</span>=<span class="literal">true</span>  </span><br><span class="line"><span class="attr">innodb_large_prefix</span>=<span class="literal">true</span>  </span><br><span class="line"><span class="attr">character-set-server</span>=utf8mb4  </span><br><span class="line"><span class="attr">collation-server</span>=utf8mb4_unicode_ci  </span><br><span class="line"><span class="attr">max_allowed_packet</span>=<span class="number">500</span>M</span><br></pre></td></tr></table></figure>
+
+<p>如图是我的配置：</p>
+<img data-src="/2020/12/01/zabbix-install-deploy/mysql-cfg.png" class>
+
+<p>现在重新执行Zabbix创建初始数据库这一步，但是又有新的问题，还是字符集的报错：</p>
+<img data-src="/2020/12/01/zabbix-install-deploy/utf8mb4.png" class>
+
+<p>现在是说索引列大小超出，这就与第一次的报错相反。这就很恶心了，未完待续。</p>
+<h3 id="e-Configure-the-database-for-Zabbix-server（为Zabbix-server配置数据库）"><a href="#e-Configure-the-database-for-Zabbix-server（为Zabbix-server配置数据库）" class="headerlink" title="e. Configure the database for Zabbix server（为Zabbix server配置数据库）"></a>e. Configure the database for Zabbix server（为Zabbix server配置数据库）</h3><p>Edit file /etc/zabbix/zabbix_server.conf</p>
+<p>编辑配置文件 /etc/zabbix/zabbix_server.conf，将刚才设置的密码填入该配置文件。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">DBPassword&#x3D;password</span><br></pre></td></tr></table></figure>
+
+<h3 id="f-Configure-PHP-for-Zabbix-frontend（为Zabbix前端配置PHP）"><a href="#f-Configure-PHP-for-Zabbix-frontend（为Zabbix前端配置PHP）" class="headerlink" title="f. Configure PHP for Zabbix frontend（为Zabbix前端配置PHP）"></a>f. Configure PHP for Zabbix frontend（为Zabbix前端配置PHP）</h3><p>Edit file /etc/opt/rh/rh-nginx116/nginx/conf.d/zabbix.conf, uncomment and set ‘listen’ and ‘server_name’ directives.</p>
+<p>编辑配置文件 /etc/opt/rh/rh-nginx116/nginx/conf.d/zabbix.conf，取消其中listen和server_name的注释。此处就是我们非常熟悉的Nginx，配置反向代理监听的端口和域名。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># listen 80;</span><br><span class="line"># server_name example.com;</span><br></pre></td></tr></table></figure>
+
+<p>Edit file /etc/opt/rh/rh-php72/php-fpm.d/zabbix.conf, add nginx to listen.acl_users directive.</p>
+<p>编辑配置文件 /etc/opt/rh/rh-php72/php-fpm.d/zabbix.conf, 将nginx添加到listen.acl_users配置项中。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">listen.acl_users &#x3D; apache,nginx</span><br></pre></td></tr></table></figure>
+
+<p>Then uncomment and set the right timezone for you.</p>
+<p>最后取消最后一行的注释（注意注释为分号），我们也可以将市区设置为Asia/Shanghai</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">; php_value[date.timezone] &#x3D; Asia&#x2F;Shanghai</span><br></pre></td></tr></table></figure>
+
+<h3 id="g-Start-Zabbix-server-and-agent-processes（启动Zabbix-server和agent进程）"><a href="#g-Start-Zabbix-server-and-agent-processes（启动Zabbix-server和agent进程）" class="headerlink" title="g. Start Zabbix server and agent processes（启动Zabbix server和agent进程）"></a>g. Start Zabbix server and agent processes（启动Zabbix server和agent进程）</h3><p>Start Zabbix server and agent processes and make it start at system boot.</p>
+<p>启动Zabbix server和agent进程，并为它们设置开机自启：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># systemctl restart zabbix-server zabbix-agent rh-nginx116-nginx rh-php72-php-fpm</span><br><span class="line"># systemctl enable zabbix-server zabbix-agent rh-nginx116-nginx rh-php72-php-fpm</span><br></pre></td></tr></table></figure>
+
+<h5 id="h-Configure-Zabbix-frontend"><a href="#h-Configure-Zabbix-frontend" class="headerlink" title="h. Configure Zabbix frontend"></a>h. Configure Zabbix frontend</h5><p>Connect to your newly installed Zabbix frontend: <a href="http://server_ip_or_name" target="_blank" rel="noopener">http://server_ip_or_name</a><br>Follow steps described in Zabbix documentation: <a href="https://www.zabbix.com/documentation/5.0/manual/installation/install#installing_frontend" target="_blank" rel="noopener">Installing frontend</a></p>
+]]></content>
+      <categories>
+        <category>监控</category>
+        <category>Zabbix</category>
+      </categories>
+      <tags>
+        <tag>监控</tag>
+        <tag>Zabbix</tag>
+        <tag>告警</tag>
+        <tag>阿里云</tag>
+        <tag>安装部署</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Go语言之xorm使用实例</title>
     <url>/2020/11/30/go-xorm-sample/</url>
     <content><![CDATA[<blockquote>
@@ -2666,8 +2772,8 @@
       </categories>
       <tags>
         <tag>Go语言</tag>
-        <tag>运算符</tag>
         <tag>基础练习</tag>
+        <tag>运算符</tag>
       </tags>
   </entry>
   <entry>
@@ -2713,8 +2819,8 @@
       </categories>
       <tags>
         <tag>Go语言</tag>
-        <tag>基础练习</tag>
         <tag>数据类型</tag>
+        <tag>基础练习</tag>
       </tags>
   </entry>
   <entry>

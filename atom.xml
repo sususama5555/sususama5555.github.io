@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://api.ddoudou.xyz/"/>
-  <updated>2020-11-29T18:19:12.111Z</updated>
+  <updated>2020-11-30T17:47:32.315Z</updated>
   <id>http://api.ddoudou.xyz/</id>
   
   <author>
@@ -15,6 +15,42 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Zabbix安装与部署</title>
+    <link href="http://api.ddoudou.xyz/2020/12/01/zabbix-install-deploy/"/>
+    <id>http://api.ddoudou.xyz/2020/12/01/zabbix-install-deploy/</id>
+    <published>2020-11-30T16:05:19.000Z</published>
+    <updated>2020-11-30T17:47:32.315Z</updated>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;h1 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h1&gt;&lt;/blockquote&gt;
+&lt;p&gt;最近工作中和&lt;code&gt;Zabbix&lt;/code&gt;打了不少交道，大概分为两个用途。&lt;/p&gt;
+&lt;p&gt;一种是对接它的API接口，例如创建账号、媒介、触发器、动作等，这种比较简单，照着API文档来就行了，这里不多赘述。&lt;/p&gt;
+&lt;p&gt;另一种就是，使用python脚本创建一套Zabbix告警推送的流程，将超过阈值的Zabbix告警按照指定的流程和动作推送到告警中心，而告警中心使用Zabbix作为其中一个告警源，不断拉取并且分发告警。这应该属于监控、告警等最常见的自动化运维的场景了，我对此也比较感兴趣，所有想从Zabbix较为基础的单机版安装及部署学习，也就有了这篇文章。&lt;/p&gt;
+&lt;p&gt;事先已在本地开发环境的虚拟机中安装与部署成功，现在期望将Zabbix部署到阿里云的机器上。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="监控" scheme="http://api.ddoudou.xyz/categories/%E7%9B%91%E6%8E%A7/"/>
+    
+      <category term="Zabbix" scheme="http://api.ddoudou.xyz/categories/%E7%9B%91%E6%8E%A7/Zabbix/"/>
+    
+    
+      <category term="监控" scheme="http://api.ddoudou.xyz/tags/%E7%9B%91%E6%8E%A7/"/>
+    
+      <category term="Zabbix" scheme="http://api.ddoudou.xyz/tags/Zabbix/"/>
+    
+      <category term="告警" scheme="http://api.ddoudou.xyz/tags/%E5%91%8A%E8%AD%A6/"/>
+    
+      <category term="阿里云" scheme="http://api.ddoudou.xyz/tags/%E9%98%BF%E9%87%8C%E4%BA%91/"/>
+    
+      <category term="安装部署" scheme="http://api.ddoudou.xyz/tags/%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/"/>
+    
+  </entry>
   
   <entry>
     <title>Go语言之xorm使用实例</title>
@@ -634,38 +670,6 @@
       <category term="前端" scheme="http://api.ddoudou.xyz/tags/%E5%89%8D%E7%AB%AF/"/>
     
       <category term="微信轻应用" scheme="http://api.ddoudou.xyz/tags/%E5%BE%AE%E4%BF%A1%E8%BD%BB%E5%BA%94%E7%94%A8/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Python 垃圾回收机制</title>
-    <link href="http://api.ddoudou.xyz/2020/06/26/python-garbage-collection/"/>
-    <id>http://api.ddoudou.xyz/2020/06/26/python-garbage-collection/</id>
-    <published>2020-06-25T16:43:00.000Z</published>
-    <updated>2020-11-25T16:54:06.249Z</updated>
-    
-    <summary type="html">
-    
-      &lt;h3 id=&quot;概述&quot;&gt;&lt;a href=&quot;#概述&quot; class=&quot;headerlink&quot; title=&quot;概述&quot;&gt;&lt;/a&gt;概述&lt;/h3&gt;&lt;p&gt;python采用的是&lt;strong&gt;引用计数&lt;/strong&gt;机制为主，&lt;strong&gt;标记-清除&lt;/strong&gt;和&lt;strong&gt;分代收集&lt;/strong&gt;两种机制为辅的策略。&lt;/p&gt;
-&lt;h3 id=&quot;引用计数&quot;&gt;&lt;a href=&quot;#引用计数&quot; class=&quot;headerlink&quot; title=&quot;引用计数&quot;&gt;&lt;/a&gt;引用计数&lt;/h3&gt;&lt;ul&gt;
-&lt;li&gt;Python语言默认采用的垃圾收集机制是『引用计数法 &lt;code&gt;Reference Counting&lt;/code&gt;』，该算法最早George E. Collins在1960的时候首次提出，50年后的今天，该算法依然被很多编程语言使用。&lt;/li&gt;
-&lt;li&gt;『引用计数法』的原理是：每个对象维护一个&lt;code&gt;ob_ref&lt;/code&gt;字段，用来记录该对象当前被引用的次数，每当新的引用指向该对象时，它的引用计数&lt;code&gt;ob_ref&lt;/code&gt;加&lt;code&gt;1&lt;/code&gt;，每当该对象的引用失效时计数&lt;code&gt;ob_ref&lt;/code&gt;减&lt;code&gt;1&lt;/code&gt;，一旦对象的引用计数为&lt;code&gt;0&lt;/code&gt;，该对象立即被回收，对象占用的内存空间将被释放。&lt;/li&gt;
-&lt;li&gt;它的缺点是需要额外的空间维护引用计数，这个问题是其次的，不过最主要的问题是它不能解决对象的“循环引用”，因此，也有很多语言比如Java并没有采用该算法做来垃圾的收集机制。&lt;/li&gt;
-&lt;/ul&gt;
-    
-    </summary>
-    
-    
-      <category term="Python" scheme="http://api.ddoudou.xyz/categories/Python/"/>
-    
-      <category term="基础原理" scheme="http://api.ddoudou.xyz/categories/Python/%E5%9F%BA%E7%A1%80%E5%8E%9F%E7%90%86/"/>
-    
-    
-      <category term="Python" scheme="http://api.ddoudou.xyz/tags/Python/"/>
-    
-      <category term="垃圾回收" scheme="http://api.ddoudou.xyz/tags/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/"/>
-    
-      <category term="GC" scheme="http://api.ddoudou.xyz/tags/GC/"/>
     
   </entry>
   

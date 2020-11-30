@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+<script src="https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/autoload.js"></script>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/picture/pika.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/picture/pika.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+  <script>
+  (function(i,s,o,g,r,a,m){i["DaoVoiceObject"]=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;a.charset="utf-8";m.parentNode.insertBefore(a,m)})(window,document,"script",('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/2efd5eff.js","daovoice")
+  daovoice('init', {
+    app_id: "2efd5eff"
+  });
+  daovoice('update');
+  </script>
+
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"api.ddoudou.xyz","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#ff7600","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言 最近工作中和Zabbix打了不少交道，大概分为两个用途。 一种是对接它的API接口，例如创建账号、媒介、触发器、动作等，这种比较简单，照着API文档来就行了，这里不多赘述。 另一种就是，使用python脚本创建一套Zabbix告警推送的流程，将超过阈值的Zabbix告警按照指定的流程和动作推送到告警中心，而告警中心使用Zabbix作为其中一个告警源，不断拉取并且分发告警。这应该属于监控、告">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Zabbix安装与部署">
+<meta property="og:url" content="http://api.ddoudou.xyz/2020/12/01/zabbix-install-deploy/index.html">
+<meta property="og:site_name" content="Sapphire">
+<meta property="og:description" content="前言 最近工作中和Zabbix打了不少交道，大概分为两个用途。 一种是对接它的API接口，例如创建账号、媒介、触发器、动作等，这种比较简单，照着API文档来就行了，这里不多赘述。 另一种就是，使用python脚本创建一套Zabbix告警推送的流程，将超过阈值的Zabbix告警按照指定的流程和动作推送到告警中心，而告警中心使用Zabbix作为其中一个告警源，不断拉取并且分发告警。这应该属于监控、告">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://api.ddoudou.xyz/2020/12/01/zabbix-install-deploy/character-error.png">
+<meta property="og:image" content="http://api.ddoudou.xyz/2020/12/01/zabbix-install-deploy/mysql-cfg.png">
+<meta property="og:image" content="http://api.ddoudou.xyz/2020/12/01/zabbix-install-deploy/utf8mb4.png">
+<meta property="article:published_time" content="2020-11-30T16:05:19.000Z">
+<meta property="article:modified_time" content="2020-11-30T17:47:32.315Z">
+<meta property="article:author" content="Ryan Shu">
+<meta property="article:tag" content="监控">
+<meta property="article:tag" content="Zabbix">
+<meta property="article:tag" content="告警">
+<meta property="article:tag" content="阿里云">
+<meta property="article:tag" content="安装部署">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://api.ddoudou.xyz/2020/12/01/zabbix-install-deploy/character-error.png">
+
+<link rel="canonical" href="http://api.ddoudou.xyz/2020/12/01/zabbix-install-deploy/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Zabbix安装与部署 | Sapphire</title>
+  
+
+
+  <script data-pjax>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cb91e256c80f8b8d7202046261e973af";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--pjax：防止跳转页面音乐暂停-->
+  <script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script>
+<link rel="alternate" href="/atom.xml" title="Sapphire" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sapphire</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">興趣使然的博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/aboutme/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">57</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">29</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">29</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/sususama5555" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://api.ddoudou.xyz/2020/12/01/zabbix-install-deploy/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/picture/avatar.jpg">
+      <meta itemprop="name" content="Ryan Shu">
+      <meta itemprop="description" content="全栈 | 硬件 | 篮球 | 游戏">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sapphire">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Zabbix安装与部署
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-01 00:05:19" itemprop="dateCreated datePublished" datetime="2020-12-01T00:05:19+08:00">2020-12-01</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%9B%91%E6%8E%A7/" itemprop="url" rel="index"><span itemprop="name">监控</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%9B%91%E6%8E%A7/Zabbix/" itemprop="url" rel="index"><span itemprop="name">Zabbix</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1></blockquote>
+<p>最近工作中和<code>Zabbix</code>打了不少交道，大概分为两个用途。</p>
+<p>一种是对接它的API接口，例如创建账号、媒介、触发器、动作等，这种比较简单，照着API文档来就行了，这里不多赘述。</p>
+<p>另一种就是，使用python脚本创建一套Zabbix告警推送的流程，将超过阈值的Zabbix告警按照指定的流程和动作推送到告警中心，而告警中心使用Zabbix作为其中一个告警源，不断拉取并且分发告警。这应该属于监控、告警等最常见的自动化运维的场景了，我对此也比较感兴趣，所有想从Zabbix较为基础的单机版安装及部署学习，也就有了这篇文章。</p>
+<p>事先已在本地开发环境的虚拟机中安装与部署成功，现在期望将Zabbix部署到阿里云的机器上。</p>
+<a id="more"></a>
+
+<blockquote>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1></blockquote>
+<p>这里我们按照官方文档的指引进行安装</p>
+<p>官方地址：<a href="https://www.zabbix.com/download" target="_blank" rel="noopener">https://www.zabbix.com/download</a></p>
+<p>由于本人的阿里云服务器的预先环境为CentOS 7 + Mysql + Nginx，所以这里不再折腾，直接使用这一套最常用的配置。</p>
+<p>由于Zabbix 5.2是最新版本，安装指引和资料也比较少，处于稳定考虑，最终选择Zaabix 5.0 LTS版本。</p>
+<p>PS:工作接触的5.0和5.2都有。</p>
+<h2 id="Install-and-configure-Zabbix-server-for-your-platform"><a href="#Install-and-configure-Zabbix-server-for-your-platform" class="headerlink" title="Install and configure Zabbix server for your platform"></a>Install and configure Zabbix server for your platform</h2><h3 id="a-Install-Zabbix-repository（安装Zabbix-yum-源）"><a href="#a-Install-Zabbix-repository（安装Zabbix-yum-源）" class="headerlink" title="a. Install Zabbix repository（安装Zabbix yum 源）"></a>a. Install Zabbix repository（安装Zabbix yum 源）</h3><p>官方文档：<a href="https://www.zabbix.com/documentation/5.0/manual/installation/install_from_packages" target="_blank" rel="noopener">Documentation</a></p>
+<h4 id="官方yum源"><a href="#官方yum源" class="headerlink" title="官方yum源"></a>官方yum源</h4><p>以下是官方推荐的zabbix yum源，不过在国内使用比较麻烦，下载速度慢且经常连接超时。所以推荐使用阿里云的zabbix yum 源</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># rpm -Uvh https:&#x2F;&#x2F;repo.zabbix.com&#x2F;zabbix&#x2F;5.0&#x2F;rhel&#x2F;7&#x2F;x86_64&#x2F;zabbix-release-5.0-1.el7.noarch.rpm</span><br><span class="line"># yum clean all</span><br></pre></td></tr></table></figure>
+
+<h4 id="阿里云yum源"><a href="#阿里云yum源" class="headerlink" title="阿里云yum源"></a>阿里云yum源</h4><p>下载地址：<a href="https://mirrors.aliyun.com/zabbix/" target="_blank" rel="noopener">https://mirrors.aliyun.com/zabbix/</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># rpm -Uvh https:&#x2F;&#x2F;mirrors.aliyun.com&#x2F;zabbix&#x2F;zabbix&#x2F;5.0&#x2F;rhel&#x2F;7&#x2F;x86_64&#x2F;zabbix-release-5.0-1.el7.noarch.rpm</span><br><span class="line"># yum clean all</span><br></pre></td></tr></table></figure>
+
+<p>打开/etc/yum.repos.d/zabbix.repo，把所有的“<a href="https://repo.zabbix.com/zabbix/”" target="_blank" rel="noopener">https://repo.zabbix.com/zabbix/”</a> 改成 “<a href="https://mirrors.aliyun.com/zabbix/”" target="_blank" rel="noopener">https://mirrors.aliyun.com/zabbix/”</a> （除了zabbix-non-supported，其他的分支的URL都有两个zabbix）</p>
+<h3 id="b-Install-Zabbix-server-and-agent（安装Zabbix-server-和agent）"><a href="#b-Install-Zabbix-server-and-agent（安装Zabbix-server-和agent）" class="headerlink" title="b. Install Zabbix server and agent（安装Zabbix server 和agent）"></a>b. Install Zabbix server and agent（安装Zabbix server 和agent）</h3><p>换了yum源应该安装很快，使用 -y 跳过选择</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># yum install -y zabbix-server-mysql zabbix-agent</span><br></pre></td></tr></table></figure>
+
+<h3 id="c-Install-Zabbix-frontend（安装Zabbix-前端）"><a href="#c-Install-Zabbix-frontend（安装Zabbix-前端）" class="headerlink" title="c. Install Zabbix frontend（安装Zabbix 前端）"></a>c. Install Zabbix frontend（安装Zabbix 前端）</h3><p><a href="https://www.zabbix.com/documentation/5.0/manual/installation/frontend/frontend_on_rhel7" target="_blank" rel="noopener">Documentation</a></p>
+<p>Zabbix 使用php写的，所以有单独的安装过程：</p>
+<p>Enable Red Hat Software Collections.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># yum install centos-release-scl</span><br></pre></td></tr></table></figure>
+
+<p>Edit file /etc/yum.repos.d/zabbix.repo and enable zabbix-frontend repository.</p>
+<p>编辑该配置文件 /etc/yum.repos.d/zabbix.repo，使得enabled=1。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[zabbix-frontend]...enabled&#x3D;1...</span><br></pre></td></tr></table></figure>
+
+<p>Install Zabbix frontend packages.</p>
+<p>下载安装Zabbix 前端依赖。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># yum install zabbix-web-mysql-scl zabbix-nginx-conf-scl</span><br></pre></td></tr></table></figure>
+
+<h3 id="d-Create-initial-database（创建初始数据库）"><a href="#d-Create-initial-database（创建初始数据库）" class="headerlink" title="d. Create initial database（创建初始数据库）"></a>d. Create initial database（创建初始数据库）</h3><p><a href="https://www.zabbix.com/documentation/5.0/manual/appendix/install/db_scripts" target="_blank" rel="noopener">Documentation</a></p>
+<p>Run the following on your database host.</p>
+<p>在数据库主机上运行以下代码，目的是在本地mysql数据库中创建zabbix账号和同名数据库，并且赋予相应权限。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># mysql -uroot -p</span><br><span class="line">password</span><br><span class="line">mysql&gt; create database zabbix character set utf8 collate utf8_bin;</span><br><span class="line">mysql&gt; create user zabbix@localhost identified by &#39;password&#39;;</span><br><span class="line">mysql&gt; grant all privileges on zabbix.* to zabbix@localhost;</span><br><span class="line">mysql&gt; quit;</span><br></pre></td></tr></table></figure>
+
+<p>On Zabbix server host import initial schema and data. You will be prompted to enter your newly created password.</p>
+<p>导入初始架构和数据，系统将提示您输入新创建的密码。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -uzabbix -p zabbix</span><br></pre></td></tr></table></figure>
+
+<p>TODO 其中遇到了问题，愿意是以上语句执行时，发生以下报错：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ERROR 1071 (42000) at line 90: Specified key was too long; max key length is 767 bytes</span><br></pre></td></tr></table></figure>
+
+<img data-src="/2020/12/01/zabbix-install-deploy/character-error.png" class>
+
+<p>应该是mysql字符集的报错，所以去查了Stack Overflow后，可以在mysql命令行中，使用<code>show variables like &#39;character%&#39;</code>查询默认字符集，结果发现许多编码为utf-8。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># mysql -uroot -p</span><br><span class="line">password</span><br><span class="line">mysql&gt; show variables like &#39;character%&#39;;</span><br><span class="line">+--------------------------+----------------------------+</span><br><span class="line">| Variable_name            | Value                      |</span><br><span class="line">+--------------------------+----------------------------+</span><br><span class="line">| character_set_client     | utf8                       |</span><br><span class="line">| character_set_connection | utf8                       |</span><br><span class="line">| character_set_database   | latin1                     |</span><br><span class="line">| character_set_filesystem | binary                     |</span><br><span class="line">| character_set_results    | utf8                       |</span><br><span class="line">| character_set_server     | latin1                     |</span><br><span class="line">| character_set_system     | utf8                       |</span><br><span class="line">| character_sets_dir       | &#x2F;usr&#x2F;share&#x2F;mysql&#x2F;charsets&#x2F; |</span><br><span class="line">+--------------------------+----------------------------+</span><br><span class="line">8 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>*<u>原因分析：</u>*</strong></p>
+<p>MySQL的varchar主键只支持不超过767个字节，需要将mysql的字符编码设置为utf8mb4</p>
+<p>使用<code>vim /etc/my.cnf</code>编辑mysql配置文件（不同系统、安装方式和mysql版本会造成差异）</p>
+<p>在[mysqld]下加入以下配置：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">innodb_file_format</span>=barracuda  </span><br><span class="line"><span class="attr">innodb_file_per_table</span>=<span class="literal">true</span>  </span><br><span class="line"><span class="attr">innodb_large_prefix</span>=<span class="literal">true</span>  </span><br><span class="line"><span class="attr">character-set-server</span>=utf8mb4  </span><br><span class="line"><span class="attr">collation-server</span>=utf8mb4_unicode_ci  </span><br><span class="line"><span class="attr">max_allowed_packet</span>=<span class="number">500</span>M</span><br></pre></td></tr></table></figure>
+
+<p>如图是我的配置：</p>
+<img data-src="/2020/12/01/zabbix-install-deploy/mysql-cfg.png" class>
+
+<p>现在重新执行Zabbix创建初始数据库这一步，但是又有新的问题，还是字符集的报错：</p>
+<img data-src="/2020/12/01/zabbix-install-deploy/utf8mb4.png" class>
+
+<p>现在是说索引列大小超出，这就与第一次的报错相反。这就很恶心了，未完待续。</p>
+<h3 id="e-Configure-the-database-for-Zabbix-server（为Zabbix-server配置数据库）"><a href="#e-Configure-the-database-for-Zabbix-server（为Zabbix-server配置数据库）" class="headerlink" title="e. Configure the database for Zabbix server（为Zabbix server配置数据库）"></a>e. Configure the database for Zabbix server（为Zabbix server配置数据库）</h3><p>Edit file /etc/zabbix/zabbix_server.conf</p>
+<p>编辑配置文件 /etc/zabbix/zabbix_server.conf，将刚才设置的密码填入该配置文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DBPassword&#x3D;password</span><br></pre></td></tr></table></figure>
+
+<h3 id="f-Configure-PHP-for-Zabbix-frontend（为Zabbix前端配置PHP）"><a href="#f-Configure-PHP-for-Zabbix-frontend（为Zabbix前端配置PHP）" class="headerlink" title="f. Configure PHP for Zabbix frontend（为Zabbix前端配置PHP）"></a>f. Configure PHP for Zabbix frontend（为Zabbix前端配置PHP）</h3><p>Edit file /etc/opt/rh/rh-nginx116/nginx/conf.d/zabbix.conf, uncomment and set ‘listen’ and ‘server_name’ directives.</p>
+<p>编辑配置文件 /etc/opt/rh/rh-nginx116/nginx/conf.d/zabbix.conf，取消其中listen和server_name的注释。此处就是我们非常熟悉的Nginx，配置反向代理监听的端口和域名。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># listen 80;</span><br><span class="line"># server_name example.com;</span><br></pre></td></tr></table></figure>
+
+<p>Edit file /etc/opt/rh/rh-php72/php-fpm.d/zabbix.conf, add nginx to listen.acl_users directive.</p>
+<p>编辑配置文件 /etc/opt/rh/rh-php72/php-fpm.d/zabbix.conf, 将nginx添加到listen.acl_users配置项中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">listen.acl_users &#x3D; apache,nginx</span><br></pre></td></tr></table></figure>
+
+<p>Then uncomment and set the right timezone for you.</p>
+<p>最后取消最后一行的注释（注意注释为分号），我们也可以将市区设置为Asia/Shanghai</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">; php_value[date.timezone] &#x3D; Asia&#x2F;Shanghai</span><br></pre></td></tr></table></figure>
+
+<h3 id="g-Start-Zabbix-server-and-agent-processes（启动Zabbix-server和agent进程）"><a href="#g-Start-Zabbix-server-and-agent-processes（启动Zabbix-server和agent进程）" class="headerlink" title="g. Start Zabbix server and agent processes（启动Zabbix server和agent进程）"></a>g. Start Zabbix server and agent processes（启动Zabbix server和agent进程）</h3><p>Start Zabbix server and agent processes and make it start at system boot.</p>
+<p>启动Zabbix server和agent进程，并为它们设置开机自启：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># systemctl restart zabbix-server zabbix-agent rh-nginx116-nginx rh-php72-php-fpm</span><br><span class="line"># systemctl enable zabbix-server zabbix-agent rh-nginx116-nginx rh-php72-php-fpm</span><br></pre></td></tr></table></figure>
+
+<h5 id="h-Configure-Zabbix-frontend"><a href="#h-Configure-Zabbix-frontend" class="headerlink" title="h. Configure Zabbix frontend"></a>h. Configure Zabbix frontend</h5><p>Connect to your newly installed Zabbix frontend: <a href="http://server_ip_or_name" target="_blank" rel="noopener">http://server_ip_or_name</a><br>Follow steps described in Zabbix documentation: <a href="https://www.zabbix.com/documentation/5.0/manual/installation/install#installing_frontend" target="_blank" rel="noopener">Installing frontend</a></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Ryan Shu
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://api.ddoudou.xyz/2020/12/01/zabbix-install-deploy/" title="Zabbix安装与部署">http://api.ddoudou.xyz/2020/12/01/zabbix-install-deploy/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/picture/weixin.png">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E7%9B%91%E6%8E%A7/" rel="tag"><i class="fa fa-tag"></i> 监控</a>
+              <a href="/tags/Zabbix/" rel="tag"><i class="fa fa-tag"></i> Zabbix</a>
+              <a href="/tags/%E5%91%8A%E8%AD%A6/" rel="tag"><i class="fa fa-tag"></i> 告警</a>
+              <a href="/tags/%E9%98%BF%E9%87%8C%E4%BA%91/" rel="tag"><i class="fa fa-tag"></i> 阿里云</a>
+              <a href="/tags/%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/" rel="tag"><i class="fa fa-tag"></i> 安装部署</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/11/30/go-xorm-sample/" rel="prev" title="Go语言之xorm使用实例">
+      <i class="fa fa-chevron-left"></i> Go语言之xorm使用实例
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#安装"><span class="nav-number">2.</span> <span class="nav-text">安装</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Install-and-configure-Zabbix-server-for-your-platform"><span class="nav-number">2.1.</span> <span class="nav-text">Install and configure Zabbix server for your platform</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#a-Install-Zabbix-repository（安装Zabbix-yum-源）"><span class="nav-number">2.1.1.</span> <span class="nav-text">a. Install Zabbix repository（安装Zabbix yum 源）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#官方yum源"><span class="nav-number">2.1.1.1.</span> <span class="nav-text">官方yum源</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#阿里云yum源"><span class="nav-number">2.1.1.2.</span> <span class="nav-text">阿里云yum源</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#b-Install-Zabbix-server-and-agent（安装Zabbix-server-和agent）"><span class="nav-number">2.1.2.</span> <span class="nav-text">b. Install Zabbix server and agent（安装Zabbix server 和agent）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#c-Install-Zabbix-frontend（安装Zabbix-前端）"><span class="nav-number">2.1.3.</span> <span class="nav-text">c. Install Zabbix frontend（安装Zabbix 前端）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#d-Create-initial-database（创建初始数据库）"><span class="nav-number">2.1.4.</span> <span class="nav-text">d. Create initial database（创建初始数据库）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#e-Configure-the-database-for-Zabbix-server（为Zabbix-server配置数据库）"><span class="nav-number">2.1.5.</span> <span class="nav-text">e. Configure the database for Zabbix server（为Zabbix server配置数据库）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#f-Configure-PHP-for-Zabbix-frontend（为Zabbix前端配置PHP）"><span class="nav-number">2.1.6.</span> <span class="nav-text">f. Configure PHP for Zabbix frontend（为Zabbix前端配置PHP）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#g-Start-Zabbix-server-and-agent-processes（启动Zabbix-server和agent进程）"><span class="nav-number">2.1.7.</span> <span class="nav-text">g. Start Zabbix server and agent processes（启动Zabbix server和agent进程）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#h-Configure-Zabbix-frontend"><span class="nav-number">2.1.7.0.1.</span> <span class="nav-text">h. Configure Zabbix frontend</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ryan Shu"
+      src="/picture/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Ryan Shu</p>
+  <div class="site-description" itemprop="description">全栈 | 硬件 | 篮球 | 游戏</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">57</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/sususama5555" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;sususama5555" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:876324872@qq.com" title="E-Mail → mailto:876324872@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/sapphire5555" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;sapphire5555" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://steamcommunity.com/profiles/76561198294148424/" title="steam → https:&#x2F;&#x2F;steamcommunity.com&#x2F;profiles&#x2F;76561198294148424&#x2F;" rel="noopener" target="_blank"><i class="fab fa-steam fa-fw"></i>steam</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://ddoudou.xyz/" title="http:&#x2F;&#x2F;ddoudou.xyz" rel="noopener" target="_blank">豆豆的博客</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+      <!-- 音乐播放器 -->
+      
+           <div>
+              <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="210" height="110" src="//music.163.com/outchain/player?type=2&id=4226232&auto=1&height=66"></iframe>
+           </div>
+      
+
+      <!-- 滚动条 -->
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备20063016号 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ryan Shu</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">116k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:46</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+    </div>
+</body>
+</html>
