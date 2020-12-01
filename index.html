@@ -29,13 +29,13 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"api.ddoudou.xyz","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#ff7600","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"notspr.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#ff7600","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="全栈 | 硬件 | 篮球 | 游戏">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Sapphire">
-<meta property="og:url" content="http://api.ddoudou.xyz/index.html">
+<meta property="og:url" content="https://notspr.com/index.html">
 <meta property="og:site_name" content="Sapphire">
 <meta property="og:description" content="全栈 | 硬件 | 篮球 | 游戏">
 <meta property="og:locale" content="zh_CN">
@@ -43,7 +43,7 @@
 <meta property="article:tag" content="博客">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://api.ddoudou.xyz/">
+<link rel="canonical" href="https://notspr.com/">
 
 
 <script id="page-configurations">
@@ -149,17 +149,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">57</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">61</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">29</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">30</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">29</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">31</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -216,7 +216,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://api.ddoudou.xyz/2020/12/01/zabbix-install-deploy/">
+    <link itemprop="mainEntityOfPage" href="https://notspr.com/2020/12/01/zabbix-install-deploy/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/picture/avatar.jpg">
@@ -262,14 +262,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>4.7k</span>
+              <span>5.9k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
+              <span>5 分钟</span>
             </span>
 
         </div>
@@ -285,8 +285,9 @@
 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1></blockquote>
 <p>最近工作中和<code>Zabbix</code>打了不少交道，大概分为两个用途。</p>
 <p>一种是对接它的API接口，例如创建账号、媒介、触发器、动作等，这种比较简单，照着API文档来就行了，这里不多赘述。</p>
-<p>另一种就是，使用python脚本创建一套Zabbix告警推送的流程，将超过阈值的Zabbix告警按照指定的流程和动作推送到告警中心，而告警中心使用Zabbix作为其中一个告警源，不断拉取并且分发告警。这应该属于监控、告警等最常见的自动化运维的场景了，我对此也比较感兴趣，所有想从Zabbix较为基础的单机版安装及部署学习，也就有了这篇文章。</p>
+<p>另一种就是，使用Python脚本创建一套Zabbix告警推送的流程，将超过阈值的Zabbix告警按照指定的流程和动作推送到告警中心，而告警中心使用Zabbix作为其中一个告警源，不断拉取并且分发告警。这应该属于监控、告警等最常见的自动化运维的场景了，我对此也比较感兴趣，所有想从Zabbix较为基础的单机版安装及部署学习，也就有了这篇文章。</p>
 <p>事先已在本地开发环境的虚拟机中安装与部署成功，现在期望将Zabbix部署到阿里云的机器上。</p>
+<p><strong><em>注意：安装部署时，由于环境和版本的问题也踩了不少坑，希望能给读者一些启示。</em></strong></p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2020/12/01/zabbix-install-deploy/#more" rel="contents">
@@ -313,7 +314,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://api.ddoudou.xyz/2020/11/30/go-xorm-sample/">
+    <link itemprop="mainEntityOfPage" href="https://notspr.com/2020/11/30/go-xorm-sample/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/picture/avatar.jpg">
@@ -410,7 +411,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://api.ddoudou.xyz/2020/11/29/go-xorm/">
+    <link itemprop="mainEntityOfPage" href="https://notspr.com/2020/11/29/go-xorm/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/picture/avatar.jpg">
@@ -508,7 +509,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://api.ddoudou.xyz/2020/11/25/es6-async-await/">
+    <link itemprop="mainEntityOfPage" href="https://notspr.com/2020/11/25/es6-async-await/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/picture/avatar.jpg">
@@ -608,7 +609,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://api.ddoudou.xyz/2020/11/25/go-prometheus-export/">
+    <link itemprop="mainEntityOfPage" href="https://notspr.com/2020/11/25/go-prometheus-export/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/picture/avatar.jpg">
@@ -713,7 +714,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://api.ddoudou.xyz/2020/11/24/bk-django-framework-advanced/">
+    <link itemprop="mainEntityOfPage" href="https://notspr.com/2020/11/24/bk-django-framework-advanced/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/picture/avatar.jpg">
@@ -807,7 +808,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://api.ddoudou.xyz/2020/11/24/bk-django-framework/">
+    <link itemprop="mainEntityOfPage" href="https://notspr.com/2020/11/24/bk-django-framework/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/picture/avatar.jpg">
@@ -901,7 +902,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://api.ddoudou.xyz/2020/11/23/python-GIL/">
+    <link itemprop="mainEntityOfPage" href="https://notspr.com/2020/11/23/python-GIL/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/picture/avatar.jpg">
@@ -1002,7 +1003,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://api.ddoudou.xyz/2020/11/21/django-orm/">
+    <link itemprop="mainEntityOfPage" href="https://notspr.com/2020/11/21/django-orm/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/picture/avatar.jpg">
@@ -1100,7 +1101,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://api.ddoudou.xyz/2020/11/20/celery/">
+    <link itemprop="mainEntityOfPage" href="https://notspr.com/2020/11/20/celery/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/picture/avatar.jpg">
@@ -1198,7 +1199,7 @@
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1266,20 +1267,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-count">31</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-count">30</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">57</span>
+        <span class="site-state-item-count">61</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1292,7 +1293,7 @@
         <a href="mailto:876324872@qq.com" title="E-Mail → mailto:876324872@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://weibo.com/sapphire5555" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;sapphire5555" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+        <a href="https://weibo.com/u/5330189327" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;5330189327" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
       </span>
       <span class="links-of-author-item">
         <a href="https://steamcommunity.com/profiles/76561198294148424/" title="steam → https:&#x2F;&#x2F;steamcommunity.com&#x2F;profiles&#x2F;76561198294148424&#x2F;" rel="noopener" target="_blank"><i class="fab fa-steam fa-fw"></i>steam</a>
@@ -1345,7 +1346,7 @@
         
 
         
-  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备20063016号 </a>
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备20063016号-2 </a>
   </div>
 
 <div class="copyright">
@@ -1361,13 +1362,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">116k</span>
+    <span title="站点总字数">128k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">1:46</span>
+    <span title="站点阅读时长">1:56</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

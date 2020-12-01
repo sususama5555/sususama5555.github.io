@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+<script src="https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/autoload.js"></script>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/picture/pika.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/picture/pika.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+  <script>
+  (function(i,s,o,g,r,a,m){i["DaoVoiceObject"]=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;a.charset="utf-8";m.parentNode.insertBefore(a,m)})(window,document,"script",('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/2efd5eff.js","daovoice")
+  daovoice('init', {
+    app_id: "2efd5eff"
+  });
+  daovoice('update');
+  </script>
+
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"notspr.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#ff7600","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Zabbix 介绍 Zabbix 由 Alexei Vladishev 创建，目前由其成立的公司—— Zabbix SIA 积极的持续开发更新维护， 并为用户提供技术支持服务。 Zabbix 是一个企业级分布式开源监控解决方案。 Zabbix 软件能够监控众多网络参数和服务器的健康度、完整性。Zabbix 使用灵活的告警机制，允许用户为几乎任何事件配置基于邮件的告警。这样用户可以快速响应服务器问题">
+<meta property="og:type" content="article">
+<meta property="og:title" content="初识 - Zabbix">
+<meta property="og:url" content="https://notspr.com/2020/07/02/zabbix-summary/index.html">
+<meta property="og:site_name" content="Sapphire">
+<meta property="og:description" content="Zabbix 介绍 Zabbix 由 Alexei Vladishev 创建，目前由其成立的公司—— Zabbix SIA 积极的持续开发更新维护， 并为用户提供技术支持服务。 Zabbix 是一个企业级分布式开源监控解决方案。 Zabbix 软件能够监控众多网络参数和服务器的健康度、完整性。Zabbix 使用灵活的告警机制，允许用户为几乎任何事件配置基于邮件的告警。这样用户可以快速响应服务器问题">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-07-01T16:27:07.000Z">
+<meta property="article:modified_time" content="2020-12-01T17:15:05.058Z">
+<meta property="article:author" content="Ryan Shu">
+<meta property="article:tag" content="监控">
+<meta property="article:tag" content="Zabbix">
+<meta property="article:tag" content="告警">
+<meta property="article:tag" content="开源">
+<meta property="article:tag" content="初识">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://notspr.com/2020/07/02/zabbix-summary/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>初识 - Zabbix | Sapphire</title>
+  
+
+
+  <script data-pjax>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cb91e256c80f8b8d7202046261e973af";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--pjax：防止跳转页面音乐暂停-->
+  <script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script>
+<link rel="alternate" href="/atom.xml" title="Sapphire" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sapphire</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">興趣使然的博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/aboutme/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">61</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">30</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">31</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/sususama5555" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://notspr.com/2020/07/02/zabbix-summary/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/picture/avatar.jpg">
+      <meta itemprop="name" content="Ryan Shu">
+      <meta itemprop="description" content="全栈 | 硬件 | 篮球 | 游戏">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sapphire">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          初识 - Zabbix
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-02 00:27:07" itemprop="dateCreated datePublished" datetime="2020-07-02T00:27:07+08:00">2020-07-02</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%9B%91%E6%8E%A7/" itemprop="url" rel="index"><span itemprop="name">监控</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%9B%91%E6%8E%A7/Zabbix/" itemprop="url" rel="index"><span itemprop="name">Zabbix</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Zabbix-介绍"><a href="#Zabbix-介绍" class="headerlink" title="Zabbix 介绍"></a>Zabbix 介绍</h1><ul>
+<li>Zabbix 由 Alexei Vladishev 创建，目前由其成立的公司—— Zabbix SIA 积极的持续开发更新维护， 并为用户提供技术支持服务。</li>
+<li>Zabbix 是一个企业级分布式开源监控解决方案。</li>
+<li>Zabbix 软件能够监控众多网络参数和服务器的健康度、完整性。Zabbix 使用灵活的告警机制，允许用户为几乎任何事件配置基于邮件的告警。这样用户可以快速响应服务器问题。Zabbix 基于存储的数据提供出色的报表和数据可视化功能。这些功能使得 Zabbix 成为容量规划的理想选择。</li>
+<li>Zabbix 支持主动轮询（polling）和被动捕获（trapping）。Zabbix所有的报表、统计数据和配置参数都可以通过基于 Web 的前端页面进行访问。基于 Web 的前端页面确保您可以在任何地方访问您监控的网络状态和服务器健康状况。适当的配置后，Zabbix 可以在监控 IT 基础设施方面发挥重要作用。无论是对于有少量服务器的小型组织，还是拥有大量服务器的大企业而言，同样适用。</li>
+<li>Zabbix 是免费的。Zabbix 是根据 GPL 通用公共许可证的第二版编写和发布的。这意味着产品源代码是免费发布的，可供公共使用。</li>
+</ul>
+<a id="more"></a>
+
+<h1 id="Zabbix-功能"><a href="#Zabbix-功能" class="headerlink" title="Zabbix 功能"></a>Zabbix 功能</h1><p>Zabbix 是一个高度成熟完善的网络监控解决方案，一个的软件包中包含了多种功能。</p>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/config/items" target="_blank" rel="noopener">数据采集</a></strong></p>
+<ul>
+<li>可用性和性能检查；</li>
+<li>支持 SNMP（包括主动轮询和被动捕获）、IPMI、JMX、VMware 监控；</li>
+<li>自定义检查；</li>
+<li>按照自定义的时间间隔采集需要的数据；</li>
+<li>通过 Server/Proxy 和 Agents 来执行数据采集。</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/config/triggers" target="_blank" rel="noopener">灵活的阈值定义</a></strong></p>
+<ul>
+<li>您可以参考后端数据库定义非常灵活的告警阈值，即触发器</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/config/notifications" target="_blank" rel="noopener">高度可配置化的告警</a></strong></p>
+<ul>
+<li>可以根据递增计划、接收者、媒介类型自定义发送告警通知；</li>
+<li>使用宏变量可以使告警通知变得更加高效有用；</li>
+<li>自动操作包含远程执行命令。</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/config/visualisation/graphs/simple" target="_blank" rel="noopener">实时图形</a></strong></p>
+<ul>
+<li>使用内置图形功能可以将监控项实时绘制成图形。</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/web_monitoring" target="_blank" rel="noopener">Web 监控功能</a></strong></p>
+<ul>
+<li>Zabbix可以追踪模拟鼠标在 Web 网站上的点击操作，来检查 Web 网站的功能和响应时间。</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/config/visualisation" target="_blank" rel="noopener">丰富的可视化选项</a></strong></p>
+<ul>
+<li>可以组合多个监控项到单个视图中，创建自定义图表；</li>
+<li>网络拓扑图；</li>
+<li>以仪表盘样式展示自定义聚合图形和幻灯片演示；</li>
+<li>报表；</li>
+<li>监控资源的更高层次展示视图（业务视图）。</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/installation/requirements#database_size" target="_blank" rel="noopener">历史数据存储</a></strong></p>
+<ul>
+<li>存储在数据库中的数据；</li>
+<li>历史配置；</li>
+<li>内置数据管理机制（housekeeping）。</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/config/hosts" target="_blank" rel="noopener">配置简单</a></strong></p>
+<ul>
+<li>将被监控设备添加为主机；</li>
+<li>主机一旦添加到数据库中，就会采集数据用于监控；</li>
+<li>将模板用于监控设备。</li>
+</ul>
+<p><strong>使用<a href="https://www.zabbix.com/documentation/4.0/manual/config/templates" target="_blank" rel="noopener">模板</a></strong></p>
+<ul>
+<li>模板中分组检查；</li>
+<li>模板可以关联模板，继承已关联模板的属性。</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/discovery" target="_blank" rel="noopener">网络发现</a></strong></p>
+<ul>
+<li>自动发现网络设备；</li>
+<li>Zabbix Agent 发现设备后自动注册；</li>
+<li>自动发现文件系统、网络接口和 SNMP OIDs 值。</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/web_interface" target="_blank" rel="noopener">快捷的 Web 界面</a></strong></p>
+<ul>
+<li>基于 PHP 的 Web 前端；</li>
+<li>可以从任何地方访问；</li>
+<li>您可以定制自己的操作方式；</li>
+<li>您可以通过审计日志来查看你的操作。</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/api" target="_blank" rel="noopener">Zabbix API</a></strong></p>
+<ul>
+<li>Zabbix API 为 Zabbix 提供可编程接口，用于批量操作、第三方软件集成和其他用途。</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/config/users_and_usergroups" target="_blank" rel="noopener">权限管理系统</a></strong></p>
+<ul>
+<li>安全的用户身份验证；</li>
+<li>指定的用户只能查看指定的权限范围内的视图。</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/concepts/agent" target="_blank" rel="noopener">功能强大且易于扩展的 Zabbix Agent</a></strong></p>
+<ul>
+<li>部署于被监控对象上；</li>
+<li>支持 Linux 和 Windows ；</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/concepts/server" target="_blank" rel="noopener">二进制守护进程</a></strong></p>
+<ul>
+<li>为了更好的性能和更少的内存占用，采用 C 语言编写；</li>
+<li>便于移植。</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/distributed_monitoring" target="_blank" rel="noopener">适应更复杂的环境</a></strong></p>
+<ul>
+<li>使用 Zabbix Proxy 代理，可以轻松实现分布式远程监控。</li>
+</ul>
+<h1 id="Zabbix-概述"><a href="#Zabbix-概述" class="headerlink" title="Zabbix 概述"></a>Zabbix 概述</h1><h2 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h2><p>Zabbix 由几个主要的功能组件组成，其功能介绍如下所示。</p>
+<h3 id="SERVER"><a href="#SERVER" class="headerlink" title="SERVER"></a>SERVER</h3><p><a href="https://www.zabbix.com/documentation/4.0/manual/concepts/server" target="_blank" rel="noopener">Zabbix server</a> 是 Zabbix软件的核心组件，agent 向其报告可用性、系统完整性信息和统计信息。server也是存储所有配置信息、统计信息和操作信息的核心存储库。</p>
+<h3 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h3><p>所有配置信息以及 Zabbix 采集到的数据都被存储在数据库中。</p>
+<h3 id="WEB-界面"><a href="#WEB-界面" class="headerlink" title="WEB 界面"></a>WEB 界面</h3><p>为了从任何地方和任何平台轻松访问 Zabbix ，我们提供了基于 web 的界面。该界面是 Zabbix server 的一部分，通常（但不一定）和 Zabbix server 运行在同一台物理机器上。</p>
+<h3 id="PROXY"><a href="#PROXY" class="headerlink" title="PROXY"></a>PROXY</h3><p><a href="https://www.zabbix.com/documentation/4.0/manual/concepts/proxy" target="_blank" rel="noopener">Zabbix proxy</a> 可以代替 Zabbix server采集性能和可用性数据。Zabbix proxy在Zabbix的部署是可选部分；但是proxy的部署可以很好的分担单个Zabbix server的负载。</p>
+<h3 id="AGENT"><a href="#AGENT" class="headerlink" title="AGENT"></a>AGENT</h3><p><a href="https://www.zabbix.com/documentation/4.0/manual/concepts/agent" target="_blank" rel="noopener">Zabbix agents</a> 部署在被监控目标上，用于主动监控本地资源和应用程序，并将收集的数据发送给 Zabbix server。</p>
+<h2 id="数据流"><a href="#数据流" class="headerlink" title="数据流"></a>数据流</h2><p>另外，回过头来整体的了解下 Zabbix 内部的数据流对Zabbix的使用也很重要。首先，为了创建一个采集数据的监控项，您就必须先创建主机。其次，在任务的另外一端，必须要有监控项才能创建触发器（trigger），必须要有触发器来创建动作（action）。因此，如果您想要收到类似“X个server上CPU负载过高”这样的告警，您必须首先为 <em>Server X</em> 创建一个主机条目，其次创建一个用于监控其 CPU的监控项，最后创建一个触发器，用来触发 CPU负载过高这个动作，并将其发送到您的邮箱里。虽然这些步骤看起来很繁琐，但是使用模板的话，实际操作非常简单。也正是由于这种设计，使得 Zabbix 的配置变得更加灵活易用。</p>
+<h1 id="软件简介"><a href="#软件简介" class="headerlink" title="软件简介"></a>软件简介</h1><p>以下描述来自<strong>开源中国</strong>：</p>
+<p>Zabbix 是一个基于 WEB 界面的提供分布式系统监视以及网络监视功能的企业级的开源解决方案。</p>
+<p>zabbix能监视各种网络参数，保证服务器系统的安全运营；并提供柔软的通知机制以让系统管理员快速定位/解决存在的各种问题。</p>
+<p><strong>zabbix</strong>由2部分构成，<strong>zabbix server</strong>与可选组件zabbix agent。<br><strong>zabbix server</strong>可以通过SNMP，<strong>zabbix agent</strong>，ping，端口监视等方法提供对远程服务器/网络状态的监视，数据收集等功能，它可以运行在Linux, Solaris, HP-UX, AIX, Free BSD, Open BSD, OS X等平台之上。<br><strong>zabbix agent</strong>需要安装在被监视的目标服务器上，它主要完成对硬件信息或与操作系统有关的内存，CPU等信息的收集。<strong>zabbix agent</strong>可以运行在Linux ,Solaris, HP-UX, AIX, Free BSD, Open BSD, OS X, Tru64/OSF1, Windows NT4.0, Windows 2000/2003/XP/Vista)等系统之上。</p>
+<p><strong>zabbix server</strong>可以单独监视远程服务器的服务状态；同时也可以与<strong>zabbix agent</strong>配合，可以轮询<strong>zabbix agent</strong>主动接收监视数据（trapping方式），同时还可被动接收<strong>zabbix agent</strong>发送的数据（trapping方式）。<br>另外<strong>zabbix server</strong>还支持SNMP (v1,v2)，可以与SNMP软件(例如：net-snmp)等配合使用。</p>
+<h2 id="zabbix的主要特点"><a href="#zabbix的主要特点" class="headerlink" title="zabbix的主要特点"></a>zabbix的主要特点</h2><ul>
+<li>安装与配置简单，学习成本低</li>
+<li>支持多语言（包括中文）</li>
+<li>免费开源</li>
+<li>自动发现服务器与网络设备</li>
+<li>分布式监视以及WEB集中管理功能</li>
+<li>可以无agent监视</li>
+<li>用户安全认证和柔软的授权方式</li>
+<li>通过WEB界面设置或查看监视结果</li>
+<li>email等通知功能</li>
+<li>等等</li>
+</ul>
+<h2 id="Zabbix主要功能"><a href="#Zabbix主要功能" class="headerlink" title="Zabbix主要功能"></a>Zabbix主要功能</h2><ul>
+<li>CPU负荷</li>
+<li>内存使用</li>
+<li>磁盘使用</li>
+<li>网络状况</li>
+<li>端口监视</li>
+<li>日志监视</li>
+</ul>
+<hr>
+<p><a href="https://www.zabbix.com/documentation/5.0/manual/introduction/about" target="_blank" rel="noopener">Zabbix Documentation 5.0 - Introduction</a></p>
+<p><a href="https://www.oschina.net/p/zabbix?hmsr=aladdin1e1" target="_blank" rel="noopener">开源中国- Zabbix软件简介</a></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Ryan Shu
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://notspr.com/2020/07/02/zabbix-summary/" title="初识 - Zabbix">https://notspr.com/2020/07/02/zabbix-summary/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/picture/weixin.png">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E7%9B%91%E6%8E%A7/" rel="tag"><i class="fa fa-tag"></i> 监控</a>
+              <a href="/tags/Zabbix/" rel="tag"><i class="fa fa-tag"></i> Zabbix</a>
+              <a href="/tags/%E5%91%8A%E8%AD%A6/" rel="tag"><i class="fa fa-tag"></i> 告警</a>
+              <a href="/tags/%E5%BC%80%E6%BA%90/" rel="tag"><i class="fa fa-tag"></i> 开源</a>
+              <a href="/tags/%E5%88%9D%E8%AF%86/" rel="tag"><i class="fa fa-tag"></i> 初识</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/06/26/python-garbage-collection/" rel="prev" title="Python 垃圾回收机制">
+      <i class="fa fa-chevron-left"></i> Python 垃圾回收机制
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/08/20/weixin-app/" rel="next" title="企业(政务)微信浏览器的前端开发兼容问题">
+      企业(政务)微信浏览器的前端开发兼容问题 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Zabbix-介绍"><span class="nav-number">1.</span> <span class="nav-text">Zabbix 介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Zabbix-功能"><span class="nav-number">2.</span> <span class="nav-text">Zabbix 功能</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Zabbix-概述"><span class="nav-number">3.</span> <span class="nav-text">Zabbix 概述</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#架构"><span class="nav-number">3.1.</span> <span class="nav-text">架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SERVER"><span class="nav-number">3.1.1.</span> <span class="nav-text">SERVER</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据库"><span class="nav-number">3.1.2.</span> <span class="nav-text">数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WEB-界面"><span class="nav-number">3.1.3.</span> <span class="nav-text">WEB 界面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PROXY"><span class="nav-number">3.1.4.</span> <span class="nav-text">PROXY</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AGENT"><span class="nav-number">3.1.5.</span> <span class="nav-text">AGENT</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据流"><span class="nav-number">3.2.</span> <span class="nav-text">数据流</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#软件简介"><span class="nav-number">4.</span> <span class="nav-text">软件简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#zabbix的主要特点"><span class="nav-number">4.1.</span> <span class="nav-text">zabbix的主要特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Zabbix主要功能"><span class="nav-number">4.2.</span> <span class="nav-text">Zabbix主要功能</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ryan Shu"
+      src="/picture/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Ryan Shu</p>
+  <div class="site-description" itemprop="description">全栈 | 硬件 | 篮球 | 游戏</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/sususama5555" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;sususama5555" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:876324872@qq.com" title="E-Mail → mailto:876324872@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/5330189327" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;5330189327" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://steamcommunity.com/profiles/76561198294148424/" title="steam → https:&#x2F;&#x2F;steamcommunity.com&#x2F;profiles&#x2F;76561198294148424&#x2F;" rel="noopener" target="_blank"><i class="fab fa-steam fa-fw"></i>steam</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://ddoudou.xyz/" title="http:&#x2F;&#x2F;ddoudou.xyz" rel="noopener" target="_blank">豆豆的博客</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+      <!-- 音乐播放器 -->
+      
+           <div>
+              <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="210" height="110" src="//music.163.com/outchain/player?type=2&id=4226232&auto=1&height=66"></iframe>
+           </div>
+      
+
+      <!-- 滚动条 -->
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备20063016号-2 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ryan Shu</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">128k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:56</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+    </div>
+</body>
+</html>

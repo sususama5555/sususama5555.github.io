@@ -5,9 +5,9 @@
   <subtitle>興趣使然的博客</subtitle>
   <link href="/atom.xml" rel="self"/>
   
-  <link href="http://api.ddoudou.xyz/"/>
-  <updated>2020-11-30T17:47:32.315Z</updated>
-  <id>http://api.ddoudou.xyz/</id>
+  <link href="https://notspr.com/"/>
+  <updated>2020-12-01T16:48:58.231Z</updated>
+  <id>https://notspr.com/</id>
   
   <author>
     <name>Ryan Shu</name>
@@ -18,10 +18,10 @@
   
   <entry>
     <title>Zabbix安装与部署</title>
-    <link href="http://api.ddoudou.xyz/2020/12/01/zabbix-install-deploy/"/>
-    <id>http://api.ddoudou.xyz/2020/12/01/zabbix-install-deploy/</id>
+    <link href="https://notspr.com/2020/12/01/zabbix-install-deploy/"/>
+    <id>https://notspr.com/2020/12/01/zabbix-install-deploy/</id>
     <published>2020-11-30T16:05:19.000Z</published>
-    <updated>2020-11-30T17:47:32.315Z</updated>
+    <updated>2020-12-01T16:48:58.231Z</updated>
     
     <summary type="html">
     
@@ -29,33 +29,36 @@
 &lt;h1 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h1&gt;&lt;/blockquote&gt;
 &lt;p&gt;最近工作中和&lt;code&gt;Zabbix&lt;/code&gt;打了不少交道，大概分为两个用途。&lt;/p&gt;
 &lt;p&gt;一种是对接它的API接口，例如创建账号、媒介、触发器、动作等，这种比较简单，照着API文档来就行了，这里不多赘述。&lt;/p&gt;
-&lt;p&gt;另一种就是，使用python脚本创建一套Zabbix告警推送的流程，将超过阈值的Zabbix告警按照指定的流程和动作推送到告警中心，而告警中心使用Zabbix作为其中一个告警源，不断拉取并且分发告警。这应该属于监控、告警等最常见的自动化运维的场景了，我对此也比较感兴趣，所有想从Zabbix较为基础的单机版安装及部署学习，也就有了这篇文章。&lt;/p&gt;
+&lt;p&gt;另一种就是，使用Python脚本创建一套Zabbix告警推送的流程，将超过阈值的Zabbix告警按照指定的流程和动作推送到告警中心，而告警中心使用Zabbix作为其中一个告警源，不断拉取并且分发告警。这应该属于监控、告警等最常见的自动化运维的场景了，我对此也比较感兴趣，所有想从Zabbix较为基础的单机版安装及部署学习，也就有了这篇文章。&lt;/p&gt;
 &lt;p&gt;事先已在本地开发环境的虚拟机中安装与部署成功，现在期望将Zabbix部署到阿里云的机器上。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;注意：安装部署时，由于环境和版本的问题也踩了不少坑，希望能给读者一些启示。&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
     
     </summary>
     
     
-      <category term="监控" scheme="http://api.ddoudou.xyz/categories/%E7%9B%91%E6%8E%A7/"/>
+      <category term="监控" scheme="https://notspr.com/categories/%E7%9B%91%E6%8E%A7/"/>
     
-      <category term="Zabbix" scheme="http://api.ddoudou.xyz/categories/%E7%9B%91%E6%8E%A7/Zabbix/"/>
+      <category term="Zabbix" scheme="https://notspr.com/categories/%E7%9B%91%E6%8E%A7/Zabbix/"/>
     
     
-      <category term="监控" scheme="http://api.ddoudou.xyz/tags/%E7%9B%91%E6%8E%A7/"/>
+      <category term="监控" scheme="https://notspr.com/tags/%E7%9B%91%E6%8E%A7/"/>
     
-      <category term="Zabbix" scheme="http://api.ddoudou.xyz/tags/Zabbix/"/>
+      <category term="Zabbix" scheme="https://notspr.com/tags/Zabbix/"/>
     
-      <category term="告警" scheme="http://api.ddoudou.xyz/tags/%E5%91%8A%E8%AD%A6/"/>
+      <category term="告警" scheme="https://notspr.com/tags/%E5%91%8A%E8%AD%A6/"/>
     
-      <category term="阿里云" scheme="http://api.ddoudou.xyz/tags/%E9%98%BF%E9%87%8C%E4%BA%91/"/>
+      <category term="开源" scheme="https://notspr.com/tags/%E5%BC%80%E6%BA%90/"/>
     
-      <category term="安装部署" scheme="http://api.ddoudou.xyz/tags/%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/"/>
+      <category term="阿里云" scheme="https://notspr.com/tags/%E9%98%BF%E9%87%8C%E4%BA%91/"/>
+    
+      <category term="安装部署" scheme="https://notspr.com/tags/%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/"/>
     
   </entry>
   
   <entry>
     <title>Go语言之xorm使用实例</title>
-    <link href="http://api.ddoudou.xyz/2020/11/30/go-xorm-sample/"/>
-    <id>http://api.ddoudou.xyz/2020/11/30/go-xorm-sample/</id>
+    <link href="https://notspr.com/2020/11/30/go-xorm-sample/"/>
+    <id>https://notspr.com/2020/11/30/go-xorm-sample/</id>
     <published>2020-11-29T16:52:27.000Z</published>
     <updated>2020-11-29T18:19:12.111Z</updated>
     
@@ -71,27 +74,27 @@
     </summary>
     
     
-      <category term="Go语言" scheme="http://api.ddoudou.xyz/categories/Go%E8%AF%AD%E8%A8%80/"/>
+      <category term="Go语言" scheme="https://notspr.com/categories/Go%E8%AF%AD%E8%A8%80/"/>
     
-      <category term="xorm" scheme="http://api.ddoudou.xyz/categories/Go%E8%AF%AD%E8%A8%80/xorm/"/>
+      <category term="xorm" scheme="https://notspr.com/categories/Go%E8%AF%AD%E8%A8%80/xorm/"/>
     
     
-      <category term="数据库" scheme="http://api.ddoudou.xyz/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+      <category term="数据库" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
     
-      <category term="ORM" scheme="http://api.ddoudou.xyz/tags/ORM/"/>
+      <category term="ORM" scheme="https://notspr.com/tags/ORM/"/>
     
-      <category term="Go语言" scheme="http://api.ddoudou.xyz/tags/Go%E8%AF%AD%E8%A8%80/"/>
+      <category term="Go语言" scheme="https://notspr.com/tags/Go%E8%AF%AD%E8%A8%80/"/>
     
-      <category term="xorm" scheme="http://api.ddoudou.xyz/tags/xorm/"/>
+      <category term="xorm" scheme="https://notspr.com/tags/xorm/"/>
     
-      <category term="实战练习" scheme="http://api.ddoudou.xyz/tags/%E5%AE%9E%E6%88%98%E7%BB%83%E4%B9%A0/"/>
+      <category term="实战练习" scheme="https://notspr.com/tags/%E5%AE%9E%E6%88%98%E7%BB%83%E4%B9%A0/"/>
     
   </entry>
   
   <entry>
     <title>xorm - Go 语言 ORM</title>
-    <link href="http://api.ddoudou.xyz/2020/11/29/go-xorm/"/>
-    <id>http://api.ddoudou.xyz/2020/11/29/go-xorm/</id>
+    <link href="https://notspr.com/2020/11/29/go-xorm/"/>
+    <id>https://notspr.com/2020/11/29/go-xorm/</id>
     <published>2020-11-29T15:58:27.000Z</published>
     <updated>2020-11-29T18:19:12.107Z</updated>
     
@@ -108,29 +111,29 @@
     </summary>
     
     
-      <category term="Go语言" scheme="http://api.ddoudou.xyz/categories/Go%E8%AF%AD%E8%A8%80/"/>
+      <category term="Go语言" scheme="https://notspr.com/categories/Go%E8%AF%AD%E8%A8%80/"/>
     
-      <category term="xorm" scheme="http://api.ddoudou.xyz/categories/Go%E8%AF%AD%E8%A8%80/xorm/"/>
+      <category term="xorm" scheme="https://notspr.com/categories/Go%E8%AF%AD%E8%A8%80/xorm/"/>
     
     
-      <category term="数据库" scheme="http://api.ddoudou.xyz/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+      <category term="数据库" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
     
-      <category term="ORM" scheme="http://api.ddoudou.xyz/tags/ORM/"/>
+      <category term="ORM" scheme="https://notspr.com/tags/ORM/"/>
     
-      <category term="Go语言" scheme="http://api.ddoudou.xyz/tags/Go%E8%AF%AD%E8%A8%80/"/>
+      <category term="Go语言" scheme="https://notspr.com/tags/Go%E8%AF%AD%E8%A8%80/"/>
     
-      <category term="xorm" scheme="http://api.ddoudou.xyz/tags/xorm/"/>
+      <category term="xorm" scheme="https://notspr.com/tags/xorm/"/>
     
-      <category term="操作手册" scheme="http://api.ddoudou.xyz/tags/%E6%93%8D%E4%BD%9C%E6%89%8B%E5%86%8C/"/>
+      <category term="操作手册" scheme="https://notspr.com/tags/%E6%93%8D%E4%BD%9C%E6%89%8B%E5%86%8C/"/>
     
-      <category term="搬运" scheme="http://api.ddoudou.xyz/tags/%E6%90%AC%E8%BF%90/"/>
+      <category term="搬运" scheme="https://notspr.com/tags/%E6%90%AC%E8%BF%90/"/>
     
   </entry>
   
   <entry>
     <title>ES6之 async 与 await</title>
-    <link href="http://api.ddoudou.xyz/2020/11/25/es6-async-await/"/>
-    <id>http://api.ddoudou.xyz/2020/11/25/es6-async-await/</id>
+    <link href="https://notspr.com/2020/11/25/es6-async-await/"/>
+    <id>https://notspr.com/2020/11/25/es6-async-await/</id>
     <published>2020-11-25T15:53:32.000Z</published>
     <updated>2020-11-26T16:32:44.714Z</updated>
     
@@ -149,25 +152,25 @@
     </summary>
     
     
-      <category term="JavaScript" scheme="http://api.ddoudou.xyz/categories/JavaScript/"/>
+      <category term="JavaScript" scheme="https://notspr.com/categories/JavaScript/"/>
     
-      <category term="异步" scheme="http://api.ddoudou.xyz/categories/JavaScript/%E5%BC%82%E6%AD%A5/"/>
+      <category term="异步" scheme="https://notspr.com/categories/JavaScript/%E5%BC%82%E6%AD%A5/"/>
     
     
-      <category term="JavaScript" scheme="http://api.ddoudou.xyz/tags/JavaScript/"/>
+      <category term="JavaScript" scheme="https://notspr.com/tags/JavaScript/"/>
     
-      <category term="前端" scheme="http://api.ddoudou.xyz/tags/%E5%89%8D%E7%AB%AF/"/>
+      <category term="前端" scheme="https://notspr.com/tags/%E5%89%8D%E7%AB%AF/"/>
     
-      <category term="ES6" scheme="http://api.ddoudou.xyz/tags/ES6/"/>
+      <category term="ES6" scheme="https://notspr.com/tags/ES6/"/>
     
-      <category term="异步函数" scheme="http://api.ddoudou.xyz/tags/%E5%BC%82%E6%AD%A5%E5%87%BD%E6%95%B0/"/>
+      <category term="异步函数" scheme="https://notspr.com/tags/%E5%BC%82%E6%AD%A5%E5%87%BD%E6%95%B0/"/>
     
   </entry>
   
   <entry>
     <title>GO语言之Prometheus Exporter开发</title>
-    <link href="http://api.ddoudou.xyz/2020/11/25/go-prometheus-export/"/>
-    <id>http://api.ddoudou.xyz/2020/11/25/go-prometheus-export/</id>
+    <link href="https://notspr.com/2020/11/25/go-prometheus-export/"/>
+    <id>https://notspr.com/2020/11/25/go-prometheus-export/</id>
     <published>2020-11-24T16:52:59.000Z</published>
     <updated>2020-11-26T16:36:32.242Z</updated>
     
@@ -191,25 +194,25 @@
     </summary>
     
     
-      <category term="Go语言" scheme="http://api.ddoudou.xyz/categories/Go%E8%AF%AD%E8%A8%80/"/>
+      <category term="Go语言" scheme="https://notspr.com/categories/Go%E8%AF%AD%E8%A8%80/"/>
     
-      <category term="Prometheus" scheme="http://api.ddoudou.xyz/categories/Go%E8%AF%AD%E8%A8%80/Prometheus/"/>
+      <category term="Prometheus" scheme="https://notspr.com/categories/Go%E8%AF%AD%E8%A8%80/Prometheus/"/>
     
     
-      <category term="Go语言" scheme="http://api.ddoudou.xyz/tags/Go%E8%AF%AD%E8%A8%80/"/>
+      <category term="Go语言" scheme="https://notspr.com/tags/Go%E8%AF%AD%E8%A8%80/"/>
     
-      <category term="Prometheus" scheme="http://api.ddoudou.xyz/tags/Prometheus/"/>
+      <category term="Prometheus" scheme="https://notspr.com/tags/Prometheus/"/>
     
-      <category term="Exporter" scheme="http://api.ddoudou.xyz/tags/Exporter/"/>
+      <category term="Exporter" scheme="https://notspr.com/tags/Exporter/"/>
     
-      <category term="监控" scheme="http://api.ddoudou.xyz/tags/%E7%9B%91%E6%8E%A7/"/>
+      <category term="监控" scheme="https://notspr.com/tags/%E7%9B%91%E6%8E%A7/"/>
     
   </entry>
   
   <entry>
     <title>蓝鲸开发框架进阶</title>
-    <link href="http://api.ddoudou.xyz/2020/11/24/bk-django-framework-advanced/"/>
-    <id>http://api.ddoudou.xyz/2020/11/24/bk-django-framework-advanced/</id>
+    <link href="https://notspr.com/2020/11/24/bk-django-framework-advanced/"/>
+    <id>https://notspr.com/2020/11/24/bk-django-framework-advanced/</id>
     <published>2020-11-23T17:57:51.000Z</published>
     <updated>2020-11-23T18:18:17.213Z</updated>
     
@@ -222,23 +225,23 @@
     </summary>
     
     
-      <category term="蓝鲸" scheme="http://api.ddoudou.xyz/categories/%E8%93%9D%E9%B2%B8/"/>
+      <category term="蓝鲸" scheme="https://notspr.com/categories/%E8%93%9D%E9%B2%B8/"/>
     
-      <category term="开发框架" scheme="http://api.ddoudou.xyz/categories/%E8%93%9D%E9%B2%B8/%E5%BC%80%E5%8F%91%E6%A1%86%E6%9E%B6/"/>
+      <category term="开发框架" scheme="https://notspr.com/categories/%E8%93%9D%E9%B2%B8/%E5%BC%80%E5%8F%91%E6%A1%86%E6%9E%B6/"/>
     
     
-      <category term="Python" scheme="http://api.ddoudou.xyz/tags/Python/"/>
+      <category term="Python" scheme="https://notspr.com/tags/Python/"/>
     
-      <category term="Django" scheme="http://api.ddoudou.xyz/tags/Django/"/>
+      <category term="Django" scheme="https://notspr.com/tags/Django/"/>
     
-      <category term="蓝鲸" scheme="http://api.ddoudou.xyz/tags/%E8%93%9D%E9%B2%B8/"/>
+      <category term="蓝鲸" scheme="https://notspr.com/tags/%E8%93%9D%E9%B2%B8/"/>
     
   </entry>
   
   <entry>
     <title>初识蓝鲸开发框架</title>
-    <link href="http://api.ddoudou.xyz/2020/11/24/bk-django-framework/"/>
-    <id>http://api.ddoudou.xyz/2020/11/24/bk-django-framework/</id>
+    <link href="https://notspr.com/2020/11/24/bk-django-framework/"/>
+    <id>https://notspr.com/2020/11/24/bk-django-framework/</id>
     <published>2020-11-23T17:34:52.000Z</published>
     <updated>2020-11-23T18:18:11.309Z</updated>
     
@@ -251,23 +254,23 @@
     </summary>
     
     
-      <category term="蓝鲸" scheme="http://api.ddoudou.xyz/categories/%E8%93%9D%E9%B2%B8/"/>
+      <category term="蓝鲸" scheme="https://notspr.com/categories/%E8%93%9D%E9%B2%B8/"/>
     
-      <category term="开发框架" scheme="http://api.ddoudou.xyz/categories/%E8%93%9D%E9%B2%B8/%E5%BC%80%E5%8F%91%E6%A1%86%E6%9E%B6/"/>
+      <category term="开发框架" scheme="https://notspr.com/categories/%E8%93%9D%E9%B2%B8/%E5%BC%80%E5%8F%91%E6%A1%86%E6%9E%B6/"/>
     
     
-      <category term="Python" scheme="http://api.ddoudou.xyz/tags/Python/"/>
+      <category term="Python" scheme="https://notspr.com/tags/Python/"/>
     
-      <category term="Django" scheme="http://api.ddoudou.xyz/tags/Django/"/>
+      <category term="Django" scheme="https://notspr.com/tags/Django/"/>
     
-      <category term="蓝鲸" scheme="http://api.ddoudou.xyz/tags/%E8%93%9D%E9%B2%B8/"/>
+      <category term="蓝鲸" scheme="https://notspr.com/tags/%E8%93%9D%E9%B2%B8/"/>
     
   </entry>
   
   <entry>
     <title>Python之全局解释器锁GIL</title>
-    <link href="http://api.ddoudou.xyz/2020/11/23/python-GIL/"/>
-    <id>http://api.ddoudou.xyz/2020/11/23/python-GIL/</id>
+    <link href="https://notspr.com/2020/11/23/python-GIL/"/>
+    <id>https://notspr.com/2020/11/23/python-GIL/</id>
     <published>2020-11-22T16:54:11.000Z</published>
     <updated>2020-11-22T17:29:38.088Z</updated>
     
@@ -287,25 +290,25 @@
     </summary>
     
     
-      <category term="Python" scheme="http://api.ddoudou.xyz/categories/Python/"/>
+      <category term="Python" scheme="https://notspr.com/categories/Python/"/>
     
-      <category term="GIL" scheme="http://api.ddoudou.xyz/categories/Python/GIL/"/>
+      <category term="GIL" scheme="https://notspr.com/categories/Python/GIL/"/>
     
     
-      <category term="Python" scheme="http://api.ddoudou.xyz/tags/Python/"/>
+      <category term="Python" scheme="https://notspr.com/tags/Python/"/>
     
-      <category term="多线程" scheme="http://api.ddoudou.xyz/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"/>
+      <category term="多线程" scheme="https://notspr.com/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"/>
     
-      <category term="GIL" scheme="http://api.ddoudou.xyz/tags/GIL/"/>
+      <category term="GIL" scheme="https://notspr.com/tags/GIL/"/>
     
-      <category term="全局解释器锁" scheme="http://api.ddoudou.xyz/tags/%E5%85%A8%E5%B1%80%E8%A7%A3%E9%87%8A%E5%99%A8%E9%94%81/"/>
+      <category term="全局解释器锁" scheme="https://notspr.com/tags/%E5%85%A8%E5%B1%80%E8%A7%A3%E9%87%8A%E5%99%A8%E9%94%81/"/>
     
   </entry>
   
   <entry>
     <title>Django之ORM操作</title>
-    <link href="http://api.ddoudou.xyz/2020/11/21/django-orm/"/>
-    <id>http://api.ddoudou.xyz/2020/11/21/django-orm/</id>
+    <link href="https://notspr.com/2020/11/21/django-orm/"/>
+    <id>https://notspr.com/2020/11/21/django-orm/</id>
     <published>2020-11-20T19:07:42.000Z</published>
     <updated>2020-11-23T17:31:46.865Z</updated>
     
@@ -322,25 +325,25 @@
     </summary>
     
     
-      <category term="Django" scheme="http://api.ddoudou.xyz/categories/Django/"/>
+      <category term="Django" scheme="https://notspr.com/categories/Django/"/>
     
-      <category term="ORM" scheme="http://api.ddoudou.xyz/categories/Django/ORM/"/>
+      <category term="ORM" scheme="https://notspr.com/categories/Django/ORM/"/>
     
     
-      <category term="Python" scheme="http://api.ddoudou.xyz/tags/Python/"/>
+      <category term="Python" scheme="https://notspr.com/tags/Python/"/>
     
-      <category term="数据库" scheme="http://api.ddoudou.xyz/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+      <category term="数据库" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
     
-      <category term="Django" scheme="http://api.ddoudou.xyz/tags/Django/"/>
+      <category term="Django" scheme="https://notspr.com/tags/Django/"/>
     
-      <category term="ORM" scheme="http://api.ddoudou.xyz/tags/ORM/"/>
+      <category term="ORM" scheme="https://notspr.com/tags/ORM/"/>
     
   </entry>
   
   <entry>
     <title>Python之Celery</title>
-    <link href="http://api.ddoudou.xyz/2020/11/20/celery/"/>
-    <id>http://api.ddoudou.xyz/2020/11/20/celery/</id>
+    <link href="https://notspr.com/2020/11/20/celery/"/>
+    <id>https://notspr.com/2020/11/20/celery/</id>
     <published>2020-11-19T17:11:44.000Z</published>
     <updated>2020-11-19T19:13:36.848Z</updated>
     
@@ -358,27 +361,27 @@
     </summary>
     
     
-      <category term="Python" scheme="http://api.ddoudou.xyz/categories/Python/"/>
+      <category term="Python" scheme="https://notspr.com/categories/Python/"/>
     
-      <category term="Celery" scheme="http://api.ddoudou.xyz/categories/Python/Celery/"/>
+      <category term="Celery" scheme="https://notspr.com/categories/Python/Celery/"/>
     
     
-      <category term="Python" scheme="http://api.ddoudou.xyz/tags/Python/"/>
+      <category term="Python" scheme="https://notspr.com/tags/Python/"/>
     
-      <category term="Redis" scheme="http://api.ddoudou.xyz/tags/Redis/"/>
+      <category term="Redis" scheme="https://notspr.com/tags/Redis/"/>
     
-      <category term="Celery" scheme="http://api.ddoudou.xyz/tags/Celery/"/>
+      <category term="Celery" scheme="https://notspr.com/tags/Celery/"/>
     
-      <category term="Django" scheme="http://api.ddoudou.xyz/tags/Django/"/>
+      <category term="Django" scheme="https://notspr.com/tags/Django/"/>
     
-      <category term="RabbitMQ" scheme="http://api.ddoudou.xyz/tags/RabbitMQ/"/>
+      <category term="RabbitMQ" scheme="https://notspr.com/tags/RabbitMQ/"/>
     
   </entry>
   
   <entry>
     <title>Python之多线程与多进程</title>
-    <link href="http://api.ddoudou.xyz/2020/11/18/python-thread-process/"/>
-    <id>http://api.ddoudou.xyz/2020/11/18/python-thread-process/</id>
+    <link href="https://notspr.com/2020/11/18/python-thread-process/"/>
+    <id>https://notspr.com/2020/11/18/python-thread-process/</id>
     <published>2020-11-18T15:31:07.000Z</published>
     <updated>2020-11-18T17:02:33.667Z</updated>
     
@@ -401,23 +404,23 @@
     </summary>
     
     
-      <category term="Python" scheme="http://api.ddoudou.xyz/categories/Python/"/>
+      <category term="Python" scheme="https://notspr.com/categories/Python/"/>
     
-      <category term="多任务" scheme="http://api.ddoudou.xyz/categories/Python/%E5%A4%9A%E4%BB%BB%E5%8A%A1/"/>
+      <category term="多任务" scheme="https://notspr.com/categories/Python/%E5%A4%9A%E4%BB%BB%E5%8A%A1/"/>
     
     
-      <category term="Python" scheme="http://api.ddoudou.xyz/tags/Python/"/>
+      <category term="Python" scheme="https://notspr.com/tags/Python/"/>
     
-      <category term="多线程" scheme="http://api.ddoudou.xyz/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"/>
+      <category term="多线程" scheme="https://notspr.com/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"/>
     
-      <category term="多进程" scheme="http://api.ddoudou.xyz/tags/%E5%A4%9A%E8%BF%9B%E7%A8%8B/"/>
+      <category term="多进程" scheme="https://notspr.com/tags/%E5%A4%9A%E8%BF%9B%E7%A8%8B/"/>
     
   </entry>
   
   <entry>
     <title>Python之使用pyvmomi管理VMware</title>
-    <link href="http://api.ddoudou.xyz/2020/11/17/pyvmomi-sample/"/>
-    <id>http://api.ddoudou.xyz/2020/11/17/pyvmomi-sample/</id>
+    <link href="https://notspr.com/2020/11/17/pyvmomi-sample/"/>
+    <id>https://notspr.com/2020/11/17/pyvmomi-sample/</id>
     <published>2020-11-17T15:40:48.000Z</published>
     <updated>2020-11-17T17:15:18.438Z</updated>
     
@@ -433,27 +436,27 @@
     </summary>
     
     
-      <category term="Python" scheme="http://api.ddoudou.xyz/categories/Python/"/>
+      <category term="Python" scheme="https://notspr.com/categories/Python/"/>
     
-      <category term="虚拟化" scheme="http://api.ddoudou.xyz/categories/Python/%E8%99%9A%E6%8B%9F%E5%8C%96/"/>
+      <category term="虚拟化" scheme="https://notspr.com/categories/Python/%E8%99%9A%E6%8B%9F%E5%8C%96/"/>
     
     
-      <category term="Python" scheme="http://api.ddoudou.xyz/tags/Python/"/>
+      <category term="Python" scheme="https://notspr.com/tags/Python/"/>
     
-      <category term="VMware vSphere" scheme="http://api.ddoudou.xyz/tags/VMware-vSphere/"/>
+      <category term="VMware vSphere" scheme="https://notspr.com/tags/VMware-vSphere/"/>
     
-      <category term="vCenter" scheme="http://api.ddoudou.xyz/tags/vCenter/"/>
+      <category term="vCenter" scheme="https://notspr.com/tags/vCenter/"/>
     
-      <category term="虚拟化" scheme="http://api.ddoudou.xyz/tags/%E8%99%9A%E6%8B%9F%E5%8C%96/"/>
+      <category term="虚拟化" scheme="https://notspr.com/tags/%E8%99%9A%E6%8B%9F%E5%8C%96/"/>
     
-      <category term="pyvmomi" scheme="http://api.ddoudou.xyz/tags/pyvmomi/"/>
+      <category term="pyvmomi" scheme="https://notspr.com/tags/pyvmomi/"/>
     
   </entry>
   
   <entry>
     <title>Redis修炼之使用场景</title>
-    <link href="http://api.ddoudou.xyz/2020/11/16/redis-use-case/"/>
-    <id>http://api.ddoudou.xyz/2020/11/16/redis-use-case/</id>
+    <link href="https://notspr.com/2020/11/16/redis-use-case/"/>
+    <id>https://notspr.com/2020/11/16/redis-use-case/</id>
     <published>2020-11-15T16:33:06.000Z</published>
     <updated>2020-11-16T15:57:06.572Z</updated>
     
@@ -467,21 +470,21 @@
     </summary>
     
     
-      <category term="数据库" scheme="http://api.ddoudou.xyz/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+      <category term="数据库" scheme="https://notspr.com/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
     
-      <category term="Redis修炼" scheme="http://api.ddoudou.xyz/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/Redis%E4%BF%AE%E7%82%BC/"/>
+      <category term="Redis修炼" scheme="https://notspr.com/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/Redis%E4%BF%AE%E7%82%BC/"/>
     
     
-      <category term="Redis" scheme="http://api.ddoudou.xyz/tags/Redis/"/>
+      <category term="Redis" scheme="https://notspr.com/tags/Redis/"/>
     
-      <category term="Redis使用场景" scheme="http://api.ddoudou.xyz/tags/Redis%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/"/>
+      <category term="Redis使用场景" scheme="https://notspr.com/tags/Redis%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/"/>
     
   </entry>
   
   <entry>
     <title>Redis修炼之数据类型</title>
-    <link href="http://api.ddoudou.xyz/2020/11/12/redis-data-types/"/>
-    <id>http://api.ddoudou.xyz/2020/11/12/redis-data-types/</id>
+    <link href="https://notspr.com/2020/11/12/redis-data-types/"/>
+    <id>https://notspr.com/2020/11/12/redis-data-types/</id>
     <published>2020-11-11T16:34:08.000Z</published>
     <updated>2020-11-16T15:50:11.930Z</updated>
     
@@ -496,23 +499,23 @@
     </summary>
     
     
-      <category term="数据库" scheme="http://api.ddoudou.xyz/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+      <category term="数据库" scheme="https://notspr.com/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
     
-      <category term="Redis修炼" scheme="http://api.ddoudou.xyz/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/Redis%E4%BF%AE%E7%82%BC/"/>
+      <category term="Redis修炼" scheme="https://notspr.com/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/Redis%E4%BF%AE%E7%82%BC/"/>
     
     
-      <category term="数据库" scheme="http://api.ddoudou.xyz/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+      <category term="Redis" scheme="https://notspr.com/tags/Redis/"/>
     
-      <category term="Redis" scheme="http://api.ddoudou.xyz/tags/Redis/"/>
+      <category term="数据库" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
     
-      <category term="数据类型" scheme="http://api.ddoudou.xyz/tags/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/"/>
+      <category term="数据类型" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/"/>
     
   </entry>
   
   <entry>
     <title>Python中构建MySql连接池</title>
-    <link href="http://api.ddoudou.xyz/2020/11/09/python-mysql-pool/"/>
-    <id>http://api.ddoudou.xyz/2020/11/09/python-mysql-pool/</id>
+    <link href="https://notspr.com/2020/11/09/python-mysql-pool/"/>
+    <id>https://notspr.com/2020/11/09/python-mysql-pool/</id>
     <published>2020-11-09T15:17:35.000Z</published>
     <updated>2020-11-18T16:58:30.354Z</updated>
     
@@ -526,25 +529,25 @@
     </summary>
     
     
-      <category term="数据库" scheme="http://api.ddoudou.xyz/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+      <category term="数据库" scheme="https://notspr.com/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
     
-      <category term="MySql修炼" scheme="http://api.ddoudou.xyz/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/MySql%E4%BF%AE%E7%82%BC/"/>
+      <category term="MySql修炼" scheme="https://notspr.com/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/MySql%E4%BF%AE%E7%82%BC/"/>
     
     
-      <category term="Python" scheme="http://api.ddoudou.xyz/tags/Python/"/>
+      <category term="Python" scheme="https://notspr.com/tags/Python/"/>
     
-      <category term="数据库" scheme="http://api.ddoudou.xyz/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+      <category term="数据库" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
     
-      <category term="数据库连接池" scheme="http://api.ddoudou.xyz/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0/"/>
+      <category term="数据库连接池" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0/"/>
     
-      <category term="MySql" scheme="http://api.ddoudou.xyz/tags/MySql/"/>
+      <category term="MySql" scheme="https://notspr.com/tags/MySql/"/>
     
   </entry>
   
   <entry>
     <title>红黑树</title>
-    <link href="http://api.ddoudou.xyz/2020/11/01/red-black-tree/"/>
-    <id>http://api.ddoudou.xyz/2020/11/01/red-black-tree/</id>
+    <link href="https://notspr.com/2020/11/01/red-black-tree/"/>
+    <id>https://notspr.com/2020/11/01/red-black-tree/</id>
     <published>2020-11-01T14:13:53.000Z</published>
     <updated>2020-11-16T15:55:46.089Z</updated>
     
@@ -556,19 +559,19 @@
     </summary>
     
     
-      <category term="数据结构" scheme="http://api.ddoudou.xyz/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"/>
+      <category term="数据结构" scheme="https://notspr.com/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"/>
     
     
-      <category term="数据结构" scheme="http://api.ddoudou.xyz/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"/>
+      <category term="数据结构" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"/>
     
-      <category term="红黑树" scheme="http://api.ddoudou.xyz/tags/%E7%BA%A2%E9%BB%91%E6%A0%91/"/>
+      <category term="红黑树" scheme="https://notspr.com/tags/%E7%BA%A2%E9%BB%91%E6%A0%91/"/>
     
   </entry>
   
   <entry>
     <title>B树与B+树</title>
-    <link href="http://api.ddoudou.xyz/2020/10/17/B-B-tree/"/>
-    <id>http://api.ddoudou.xyz/2020/10/17/B-B-tree/</id>
+    <link href="https://notspr.com/2020/10/17/B-B-tree/"/>
+    <id>https://notspr.com/2020/10/17/B-B-tree/</id>
     <published>2020-10-17T11:07:22.000Z</published>
     <updated>2020-11-18T16:48:33.696Z</updated>
     
@@ -580,19 +583,19 @@
     </summary>
     
     
-      <category term="数据结构" scheme="http://api.ddoudou.xyz/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"/>
+      <category term="数据结构" scheme="https://notspr.com/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"/>
     
     
-      <category term="B树与B+树" scheme="http://api.ddoudou.xyz/tags/B%E6%A0%91%E4%B8%8EB-%E6%A0%91/"/>
+      <category term="B树与B+树" scheme="https://notspr.com/tags/B%E6%A0%91%E4%B8%8EB-%E6%A0%91/"/>
     
-      <category term="数据结构" scheme="http://api.ddoudou.xyz/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"/>
+      <category term="数据结构" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"/>
     
   </entry>
   
   <entry>
     <title>VMware vSphere 之 vCenter 指标采集</title>
-    <link href="http://api.ddoudou.xyz/2020/10/09/vmware-vsphere/"/>
-    <id>http://api.ddoudou.xyz/2020/10/09/vmware-vsphere/</id>
+    <link href="https://notspr.com/2020/10/09/vmware-vsphere/"/>
+    <id>https://notspr.com/2020/10/09/vmware-vsphere/</id>
     <published>2020-10-09T10:06:10.000Z</published>
     <updated>2020-11-18T16:58:27.291Z</updated>
     
@@ -606,27 +609,27 @@
     </summary>
     
     
-      <category term="Python" scheme="http://api.ddoudou.xyz/categories/Python/"/>
+      <category term="Python" scheme="https://notspr.com/categories/Python/"/>
     
-      <category term="VMware" scheme="http://api.ddoudou.xyz/categories/Python/VMware/"/>
+      <category term="VMware" scheme="https://notspr.com/categories/Python/VMware/"/>
     
     
-      <category term="Python" scheme="http://api.ddoudou.xyz/tags/Python/"/>
+      <category term="Python" scheme="https://notspr.com/tags/Python/"/>
     
-      <category term="VMware vSphere" scheme="http://api.ddoudou.xyz/tags/VMware-vSphere/"/>
+      <category term="VMware vSphere" scheme="https://notspr.com/tags/VMware-vSphere/"/>
     
-      <category term="vCenter" scheme="http://api.ddoudou.xyz/tags/vCenter/"/>
+      <category term="vCenter" scheme="https://notspr.com/tags/vCenter/"/>
     
-      <category term="虚拟化" scheme="http://api.ddoudou.xyz/tags/%E8%99%9A%E6%8B%9F%E5%8C%96/"/>
+      <category term="虚拟化" scheme="https://notspr.com/tags/%E8%99%9A%E6%8B%9F%E5%8C%96/"/>
     
-      <category term="技术文章" scheme="http://api.ddoudou.xyz/tags/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/"/>
+      <category term="技术文章" scheme="https://notspr.com/tags/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/"/>
     
   </entry>
   
   <entry>
     <title>记一次持续到凌晨两点半的coding</title>
-    <link href="http://api.ddoudou.xyz/2020/09/26/2020-09-26/"/>
-    <id>http://api.ddoudou.xyz/2020/09/26/2020-09-26/</id>
+    <link href="https://notspr.com/2020/09/26/2020-09-26/"/>
+    <id>https://notspr.com/2020/09/26/2020-09-26/</id>
     <published>2020-09-25T18:34:12.000Z</published>
     <updated>2020-11-18T16:58:23.055Z</updated>
     
@@ -638,21 +641,21 @@
     </summary>
     
     
-      <category term="算法修炼" scheme="http://api.ddoudou.xyz/categories/%E7%AE%97%E6%B3%95%E4%BF%AE%E7%82%BC/"/>
+      <category term="算法修炼" scheme="https://notspr.com/categories/%E7%AE%97%E6%B3%95%E4%BF%AE%E7%82%BC/"/>
     
     
-      <category term="Python" scheme="http://api.ddoudou.xyz/tags/Python/"/>
+      <category term="Python" scheme="https://notspr.com/tags/Python/"/>
     
-      <category term="剑指offer" scheme="http://api.ddoudou.xyz/tags/%E5%89%91%E6%8C%87offer/"/>
+      <category term="剑指offer" scheme="https://notspr.com/tags/%E5%89%91%E6%8C%87offer/"/>
     
-      <category term="二叉搜索树" scheme="http://api.ddoudou.xyz/tags/%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/"/>
+      <category term="二叉搜索树" scheme="https://notspr.com/tags/%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/"/>
     
   </entry>
   
   <entry>
     <title>企业(政务)微信浏览器的前端开发兼容问题</title>
-    <link href="http://api.ddoudou.xyz/2020/08/20/weixin-app/"/>
-    <id>http://api.ddoudou.xyz/2020/08/20/weixin-app/</id>
+    <link href="https://notspr.com/2020/08/20/weixin-app/"/>
+    <id>https://notspr.com/2020/08/20/weixin-app/</id>
     <published>2020-08-20T14:50:54.000Z</published>
     <updated>2020-11-16T15:50:11.954Z</updated>
     
@@ -664,12 +667,12 @@
     </summary>
     
     
-      <category term="前端开发指南" scheme="http://api.ddoudou.xyz/categories/%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/"/>
+      <category term="前端开发指南" scheme="https://notspr.com/categories/%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/"/>
     
     
-      <category term="前端" scheme="http://api.ddoudou.xyz/tags/%E5%89%8D%E7%AB%AF/"/>
+      <category term="前端" scheme="https://notspr.com/tags/%E5%89%8D%E7%AB%AF/"/>
     
-      <category term="微信轻应用" scheme="http://api.ddoudou.xyz/tags/%E5%BE%AE%E4%BF%A1%E8%BD%BB%E5%BA%94%E7%94%A8/"/>
+      <category term="微信轻应用" scheme="https://notspr.com/tags/%E5%BE%AE%E4%BF%A1%E8%BD%BB%E5%BA%94%E7%94%A8/"/>
     
   </entry>
   

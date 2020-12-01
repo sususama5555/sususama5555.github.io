@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+<script src="https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/autoload.js"></script>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/picture/pika.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/picture/pika.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+
+  <script>
+  (function(i,s,o,g,r,a,m){i["DaoVoiceObject"]=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;a.charset="utf-8";m.parentNode.insertBefore(a,m)})(window,document,"script",('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/2efd5eff.js","daovoice")
+  daovoice('init', {
+    app_id: "2efd5eff"
+  });
+  daovoice('update');
+  </script>
+
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"notspr.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#ff7600","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言 由于GIL的存在，导致Python多线程性能甚至比单线程更糟。  GIL: 全局解释器锁（英语：Global Interpreter Lock，缩写GIL），是计算机程序设计语言解释器用于同步线程的一种机制，它使得任何时刻仅有一个线程在执行。[1]即便在多核心处理器上，使用 GIL 的解释器也只允许同一时间执行一个线程。  于是出现了协程（Coroutine）这么个东西。  协程: 协程，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="理解Python协程(Coroutine)">
+<meta property="og:url" content="https://notspr.com/2020/06/22/python-coroutine/index.html">
+<meta property="og:site_name" content="Sapphire">
+<meta property="og:description" content="前言 由于GIL的存在，导致Python多线程性能甚至比单线程更糟。  GIL: 全局解释器锁（英语：Global Interpreter Lock，缩写GIL），是计算机程序设计语言解释器用于同步线程的一种机制，它使得任何时刻仅有一个线程在执行。[1]即便在多核心处理器上，使用 GIL 的解释器也只允许同一时间执行一个线程。  于是出现了协程（Coroutine）这么个东西。  协程: 协程，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic2.zhimg.com/v2-551d0dabcd42f19f957835b19d2504d9_b.jpg">
+<meta property="article:published_time" content="2020-06-21T17:07:45.000Z">
+<meta property="article:modified_time" content="2020-12-01T17:15:12.003Z">
+<meta property="article:author" content="Ryan Shu">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="协程">
+<meta property="article:tag" content="生成器">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic2.zhimg.com/v2-551d0dabcd42f19f957835b19d2504d9_b.jpg">
+
+<link rel="canonical" href="https://notspr.com/2020/06/22/python-coroutine/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>理解Python协程(Coroutine) | Sapphire</title>
+  
+
+
+  <script data-pjax>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cb91e256c80f8b8d7202046261e973af";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <!--pjax：防止跳转页面音乐暂停-->
+  <script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script>
+<link rel="alternate" href="/atom.xml" title="Sapphire" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sapphire</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">興趣使然的博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/aboutme/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">61</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">30</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">31</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/sususama5555" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://notspr.com/2020/06/22/python-coroutine/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/picture/avatar.jpg">
+      <meta itemprop="name" content="Ryan Shu">
+      <meta itemprop="description" content="全栈 | 硬件 | 篮球 | 游戏">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sapphire">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          理解Python协程(Coroutine)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-22 01:07:45" itemprop="dateCreated datePublished" datetime="2020-06-22T01:07:45+08:00">2020-06-22</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/%E5%8D%8F%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">协程</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote>
+<p>由于GIL的存在，导致Python多线程性能甚至比单线程更糟。</p>
+<blockquote>
+<p>GIL: 全局解释器锁（英语：Global Interpreter Lock，缩写GIL），是计算机程序设计语言解释器用于同步线程的一种机制，它使得任何时刻仅有一个线程在执行。[1]即便在多核心处理器上，使用 GIL 的解释器也只允许同一时间执行一个线程。</p>
+</blockquote>
+<p>于是出现了协程（Coroutine）这么个东西。</p>
+<blockquote>
+<p>协程: 协程，又称微线程，纤程，英文名Coroutine。协程的作用，是在执行函数A时，可以随时中断，去执行函数B，然后中断继续执行函数A（可以自由切换）。但这一过程并不是函数调用（没有调用语句），这一整个过程看似像多线程，然而协程只有一个线程执行.</p>
+</blockquote>
+<p>协程由于由程序主动控制切换，没有线程切换的开销，所以执行效率极高。对于IO密集型任务非常适用，如果是cpu密集型，推荐多进程+协程的方式。</p>
+<p>在Python3.4之前，官方没有对协程的支持，存在一些三方库的实现，比如gevent和Tornado。3.4之后就内置了asyncio标准库，官方真正实现了协程这一特性。</p>
+<p>而Python对协程的支持，是通过Generator实现的，协程是遵循某些规则的生成器。因此，我们在了解协程之前，我们先要学习生成器。</p>
+<a id="more"></a>
+
+<h2 id="生成器-Generator"><a href="#生成器-Generator" class="headerlink" title="生成器(Generator)"></a>生成器(Generator)</h2><p>我们这里主要讨论<code>yield</code>和<code>yield from</code>这两个表达式，这两个表达式和协程的实现息息相关。</p>
+<ul>
+<li>Python2.5中引入<code>yield</code>表达式，参见<a href="https://link.zhihu.com/?target=https%3A//www.python.org/dev/peps/pep-0342/">PEP342</a></li>
+<li>Python3.3中增加<code>yield from</code>语法，参见<a href="https://link.zhihu.com/?target=https%3A//www.python.org/dev/peps/pep-0380/">PEP380</a>，</li>
+</ul>
+<p>方法中包含<code>yield</code>表达式后，Python会将其视作generator对象，不再是普通的方法。</p>
+<h3 id="yield表达式的使用"><a href="#yield表达式的使用" class="headerlink" title="yield表达式的使用"></a><code>yield</code>表达式的使用</h3><p>我们先来看该表达式的具体使用：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">()</span>:</span></span><br><span class="line">    print(<span class="string">"generator start"</span>)</span><br><span class="line">    n = <span class="number">1</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        yield_expression_value = <span class="keyword">yield</span> n</span><br><span class="line">        print(<span class="string">"yield_expression_value = %d"</span> % yield_expression_value)</span><br><span class="line">        n += <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># ①创建generator对象</span></span><br><span class="line">generator = test()</span><br><span class="line">print(type(generator))</span><br><span class="line"></span><br><span class="line">print(<span class="string">"\n---------------\n"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># ②启动generator</span></span><br><span class="line">next_result = generator.__next__()</span><br><span class="line">print(<span class="string">"next_result = %d"</span> % next_result)</span><br><span class="line"></span><br><span class="line">print(<span class="string">"\n---------------\n"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># ③发送值给yield表达式</span></span><br><span class="line">send_result = generator.send(<span class="number">666</span>)</span><br><span class="line">print(<span class="string">"send_result = %d"</span> % send_result)</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;<span class="class"><span class="keyword">class</span> '<span class="title">generator</span>'&gt;</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">---------------</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="title">generator</span> <span class="title">start</span></span></span><br><span class="line">next_result = 1</span><br><span class="line"></span><br><span class="line">---------------</span><br><span class="line"></span><br><span class="line">yield_expression_value = <span class="number">666</span></span><br><span class="line">send_result = <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<p>方法说明：</p>
+<ul>
+<li><code>__next__()</code>方法: 作用是启动或者恢复generator的执行，相当于send(None)</li>
+<li><code>send(value)</code>方法：作用是发送值给yield表达式。启动generator则是调用send(None)</li>
+</ul>
+<p>执行结果的说明：</p>
+<ul>
+<li>①创建generator对象：包含yield表达式的函数将不再是一个函数，调用之后将会返回generator对象</li>
+<li>②启动generator：使用生成器之前需要先调用<code>__next__</code>或者<code>send(None)</code>，否则将报错。启动generator后，代码将执行到<code>yield</code>出现的位置，也就是执行到<code>yield n</code>，然后将n传递到<code>generator.__next__()</code>这行的返回值。（注意，生成器执行到<code>yield n</code>后将暂停在这里，直到下一次生成器被启动）</li>
+<li>③发送值给yield表达式：调用send方法可以发送值给yield表达式，同时恢复生成器的执行。生成器从上次中断的位置继续向下执行，然后遇到下一个<code>yield</code>，生成器再次暂停，切换到主函数打印出send_result。</li>
+</ul>
+<p>理解这个demo的关键是：生成器启动或恢复执行一次，将会在<code>yield</code>处暂停。上面的第②步仅仅执行到了<code>yield n</code>，并没有执行到赋值语句，到了第③步，生成器恢复执行才给<code>yield_expression_value</code>赋值。</p>
+<h3 id="生产者和消费者模型"><a href="#生产者和消费者模型" class="headerlink" title="生产者和消费者模型"></a>生产者和消费者模型</h3><p>上面的例子中，代码中断–&gt;切换执行，体现出了协程的部分特点。</p>
+<p>我们再举一个生产者、消费者的例子，这个例子来自<a href="https://link.zhihu.com/?target=https%3A//www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000/001432090171191d05dae6e129940518d1d6cf6eeaaa969000">廖雪峰的Python教程</a>：</p>
+<blockquote>
+<p>传统的生产者-消费者模型是一个线程写消息，一个线程取消息，通过锁机制控制队列和等待，但一不小心就可能死锁。<br>现在改用协程，生产者生产消息后，直接通过<code>yield</code>跳转到消费者开始执行，待消费者执行完毕后，切换回生产者继续生产，效率极高。</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">consumer</span><span class="params">()</span>:</span></span><br><span class="line">    print(<span class="string">"[CONSUMER] start"</span>)</span><br><span class="line">    r = <span class="string">'start'</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        n = <span class="keyword">yield</span> r</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> n:</span><br><span class="line">            print(<span class="string">"n is empty"</span>)</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        print(<span class="string">"[CONSUMER] Consumer is consuming %s"</span> % n)</span><br><span class="line">        r = <span class="string">"200 ok"</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">producer</span><span class="params">(c)</span>:</span></span><br><span class="line">    <span class="comment"># 启动generator</span></span><br><span class="line">    start_value = c.send(<span class="literal">None</span>)</span><br><span class="line">    print(start_value)</span><br><span class="line">    n = <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> n &lt; <span class="number">3</span>:</span><br><span class="line">        n += <span class="number">1</span></span><br><span class="line">        print(<span class="string">"[PRODUCER] Producer is producing %d"</span> % n)</span><br><span class="line">        r = c.send(n)</span><br><span class="line">        print(<span class="string">'[PRODUCER] Consumer return: %s'</span> % r)</span><br><span class="line">    <span class="comment"># 关闭generator</span></span><br><span class="line">    c.close()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建生成器</span></span><br><span class="line">c = consumer()</span><br><span class="line"><span class="comment"># 传入generator</span></span><br><span class="line">producer(c)</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[CONSUMER] start</span><br><span class="line">start</span><br><span class="line">[PRODUCER] producer <span class="keyword">is</span> producing <span class="number">1</span></span><br><span class="line">[CONSUMER] consumer <span class="keyword">is</span> consuming <span class="number">1</span></span><br><span class="line">[PRODUCER] Consumer <span class="keyword">return</span>: <span class="number">200</span> ok</span><br><span class="line">[PRODUCER] producer <span class="keyword">is</span> producing <span class="number">2</span></span><br><span class="line">[CONSUMER] consumer <span class="keyword">is</span> consuming <span class="number">2</span></span><br><span class="line">[PRODUCER] Consumer <span class="keyword">return</span>: <span class="number">200</span> ok</span><br><span class="line">[PRODUCER] producer <span class="keyword">is</span> producing <span class="number">3</span></span><br><span class="line">[CONSUMER] consumer <span class="keyword">is</span> consuming <span class="number">3</span></span><br><span class="line">[PRODUCER] Consumer <span class="keyword">return</span>: <span class="number">200</span> ok</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意到<code>consumer</code>函数是一个<code>generator</code>，把一个<code>consumer</code>传入<code>produce</code>后：</p>
+</blockquote>
+<ol>
+<li>首先调用<code>c.send(None)</code>启动生成器；</li>
+<li>然后，一旦生产了东西，通过<code>c.send(n)</code>切换到consumer执行；</li>
+<li><code>consumer</code>通过<code>yield</code>拿到消息，处理，又通过<code>yield</code>把结果传回；</li>
+<li><code>produce</code>拿到<code>consumer</code>处理的结果，继续生产下一条消息；</li>
+<li><code>produce</code>决定不生产了，通过<code>c.close()</code>关闭<code>consumer</code>，整个过程结束。</li>
+</ol>
+<blockquote>
+<p>整个流程无锁，由一个线程执行，<code>produce</code>和<code>consumer</code>协作完成任务，所以称为“协程”，而非线程的抢占式多任务。</p>
+</blockquote>
+<h3 id="yield-from表达式"><a href="#yield-from表达式" class="headerlink" title="yield from表达式"></a><code>yield from</code>表达式</h3><p>Python3.3版本新增<code>yield from</code>语法，新语法用于将一个生成器部分操作委托给另一个生成器。此外，允许子生成器（即yield from后的“参数”）返回一个值，该值可供委派生成器（即包含yield from的生成器）使用。并且在委派生成器中，可对子生成器进行优化。</p>
+<p>我们先来看最简单的应用，例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 子生成器</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">(n)</span>:</span></span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> i &lt; n:</span><br><span class="line">        <span class="keyword">yield</span> i</span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 委派生成器</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test_yield_from</span><span class="params">(n)</span>:</span></span><br><span class="line">    print(<span class="string">"test_yield_from start"</span>)</span><br><span class="line">    <span class="keyword">yield</span> <span class="keyword">from</span> test(n)</span><br><span class="line">    print(<span class="string">"test_yield_from end"</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> test_yield_from(<span class="number">3</span>):</span><br><span class="line">    print(i)</span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">test_yield_from start</span><br><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">test_yield_from end</span><br></pre></td></tr></table></figure>
+
+<p>这里我们仅仅给这个生成器添加了一些打印，如果是正式的代码中，你可以添加正常的执行逻辑。</p>
+<p>如果上面的<code>test_yield_from</code>函数中有两个<code>yield from</code>语句，将串行执行。比如将上面的<code>test_yield_from</code>函数改写成这样：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test_yield_from</span><span class="params">(n)</span>:</span></span><br><span class="line">    print(<span class="string">"test_yield_from start"</span>)</span><br><span class="line">    <span class="keyword">yield</span> <span class="keyword">from</span> test(n)</span><br><span class="line">    print(<span class="string">"test_yield_from doing"</span>)</span><br><span class="line">    <span class="keyword">yield</span> <span class="keyword">from</span> test(n)</span><br><span class="line">    print(<span class="string">"test_yield_from end"</span>)</span><br></pre></td></tr></table></figure>
+
+<p>将输出：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">test_yield_from start</span><br><span class="line"><span class="number">0</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">2</span></span><br><span class="line">test_yield_from doing</span><br><span class="line"><span class="number">0</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">2</span></span><br><span class="line">test_yield_from end</span><br></pre></td></tr></table></figure>
+
+<p>在这里，<code>yield from</code>起到的作用相当于下面写法的简写形式</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> test(n):</span><br><span class="line">    <span class="keyword">yield</span> item</span><br></pre></td></tr></table></figure>
+
+<p>看起来这个<code>yield from</code>也没做什么大不了的事，其实它还帮我们处理了异常之类的。具体可以看stackoverflow上的这个问题：<a href="https://link.zhihu.com/?target=https%3A//stackoverflow.com/questions/9708902/in-practice-what-are-the-main-uses-for-the-new-yield-from-syntax-in-python-3">In practice, what are the main uses for the new “yield from” syntax in Python 3.3?</a></p>
+<h2 id="协程-Coroutine"><a href="#协程-Coroutine" class="headerlink" title="协程(Coroutine)"></a>协程(Coroutine)</h2><ul>
+<li>Python3.4开始，新增了asyncio相关的API，语法使用[<code>@asyncio.coroutine](mailto:</code>@asyncio.coroutine)<code>和</code>yield from`实现协程</li>
+<li>Python3.5中引入<code>async</code>/<code>await</code>语法，参见<a href="https://link.zhihu.com/?target=https%3A//www.python.org/dev/peps/pep-0492/">PEP492</a></li>
+</ul>
+<p>我们先来看Python3.4的实现。</p>
+<h3 id="asyncio-coroutine-mailto-asyncio-coroutine"><a href="#asyncio-coroutine-mailto-asyncio-coroutine" class="headerlink" title="[@asyncio.coroutine](mailto:@asyncio.coroutine)`"></a>[<code>@asyncio.coroutine](mailto:</code>@asyncio.coroutine)`</h3><p>Python3.4中，使用[<code>@asyncio.coroutine](mailto:</code>@asyncio.coroutine)`装饰的函数称为协程。不过没有从语法层面进行严格约束。</p>
+<blockquote>
+<p>对装饰器不了解的小伙伴可以看我的上一篇博客–<a href="https://link.zhihu.com/?target=https%3A//www.jianshu.com/p/ee82b941772a">《理解Python装饰器》</a></p>
+</blockquote>
+<p>对于Python原生支持的协程来说，Python对协程和生成器做了一些区分，便于消除这两个不同但相关的概念的歧义：</p>
+<ul>
+<li>标记了[<code>@asyncio.coroutine](mailto:</code>@asyncio.coroutine)<code>装饰器的函数称为协程函数，</code>iscoroutinefunction()`方法返回True</li>
+<li>调用协程函数返回的对象称为协程对象，<code>iscoroutine()</code>函数返回True</li>
+</ul>
+<p>举个栗子，我们给上面<code>yield from</code>的demo中添加[<code>@asyncio.coroutine](mailto:</code>@asyncio.coroutine)`：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="meta">@asyncio.coroutine</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test_yield_from</span><span class="params">(n)</span>:</span></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line"><span class="comment"># 是否是协程函数</span></span><br><span class="line">print(asyncio.iscoroutinefunction(test_yield_from))</span><br><span class="line"><span class="comment"># 是否是协程对象</span></span><br><span class="line">print(asyncio.iscoroutine(test_yield_from(<span class="number">3</span>)))</span><br></pre></td></tr></table></figure>
+
+<p>毫无疑问输出结果是True。</p>
+<p>可以看下[<code>@asyncio.coroutine](mailto:</code>@asyncio.coroutine)`的源码中查看其做了什么，我将其源码简化下，大致如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> functools</span><br><span class="line"><span class="keyword">import</span> types</span><br><span class="line"><span class="keyword">import</span> inspect</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">coroutine</span><span class="params">(func)</span>:</span></span><br><span class="line">    <span class="comment"># 判断是否是生成器</span></span><br><span class="line">    <span class="keyword">if</span> inspect.isgeneratorfunction(func):</span><br><span class="line">        coro = func</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="comment"># 将普通函数变成generator</span></span><br><span class="line"><span class="meta">        @functools.wraps(func)</span></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">coro</span><span class="params">(*args, **kw)</span>:</span></span><br><span class="line">            res = func(*args, **kw)</span><br><span class="line">            res = <span class="keyword">yield</span> <span class="keyword">from</span> res</span><br><span class="line">            <span class="keyword">return</span> res</span><br><span class="line">    <span class="comment"># 将generator转换成coroutine</span></span><br><span class="line">    wrapper = types.coroutine(coro)</span><br><span class="line">    <span class="comment"># For iscoroutinefunction().</span></span><br><span class="line">    wrapper._is_coroutine = <span class="literal">True</span></span><br><span class="line">    <span class="keyword">return</span> wrapper</span><br></pre></td></tr></table></figure>
+
+<p>将这个装饰器标记在一个生成器上，就会将其转换成coroutine。</p>
+<p>然后，我们来实际使用下[<code>@asyncio.coroutine](mailto:</code>@asyncio.coroutine)<code>和</code>yield from`：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"></span><br><span class="line"><span class="meta">@asyncio.coroutine</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">compute</span><span class="params">(x, y)</span>:</span></span><br><span class="line">    print(<span class="string">"Compute %s + %s ..."</span> % (x, y))</span><br><span class="line">    <span class="keyword">yield</span> <span class="keyword">from</span> asyncio.sleep(<span class="number">1.0</span>)</span><br><span class="line">    <span class="keyword">return</span> x + y</span><br><span class="line"></span><br><span class="line"><span class="meta">@asyncio.coroutine</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">print_sum</span><span class="params">(x, y)</span>:</span></span><br><span class="line">    result = <span class="keyword">yield</span> <span class="keyword">from</span> compute(x, y)</span><br><span class="line">    print(<span class="string">"%s + %s = %s"</span> % (x, y, result))</span><br><span class="line"></span><br><span class="line">loop = asyncio.get_event_loop()</span><br><span class="line">print(<span class="string">"start"</span>)</span><br><span class="line"><span class="comment"># 中断调用，直到协程执行结束</span></span><br><span class="line">loop.run_until_complete(print_sum(<span class="number">1</span>, <span class="number">2</span>))</span><br><span class="line">print(<span class="string">"end"</span>)</span><br><span class="line">loop.close()</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">start</span><br><span class="line">Compute <span class="number">1</span> + <span class="number">2</span> ...</span><br><span class="line"><span class="number">1</span> + <span class="number">2</span> = <span class="number">3</span></span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<p><code>print_sum</code>这个协程中调用了子协程<code>compute</code>，它将等待<code>compute</code>执行结束才返回结果。</p>
+<p>这个demo点调用流程如下图：</p>
+<p><img data-src="https://pic2.zhimg.com/v2-551d0dabcd42f19f957835b19d2504d9_b.jpg" alt="img"></p>
+<p>EventLoop将会把<code>print_sum</code>封装成Task对象</p>
+<p>流程图展示了这个demo的控制流程，不过没有展示其全部细节。比如其中“暂停”的1s，实际上创建了一个future对象, 然后通过<code>BaseEventLoop.call_later()</code>在1s后唤醒这个任务。</p>
+<p>值得注意的是，[<code>@asyncio.coroutine](mailto:</code>@asyncio.coroutine)`将在Python3.10版本中移除。</p>
+<h3 id="async-await"><a href="#async-await" class="headerlink" title="async/await"></a><code>async</code>/<code>await</code></h3><p>Python3.5开始引入<code>async</code>/<code>await</code>语法（<a href="https://link.zhihu.com/?target=https%3A//www.python.org/dev/peps/pep-0492">PEP 492</a>），用来简化协程的使用并且便于理解。</p>
+<p><code>async</code>/<code>await</code>实际上只是[<code>@asyncio.coroutine](mailto:</code>@asyncio.coroutine)<code>和</code>yield from`的语法糖：</p>
+<ul>
+<li>把[<code>@asyncio.coroutine](mailto:</code>@asyncio.coroutine)<code>替换为</code>async`</li>
+<li>把<code>yield from</code>替换为<code>await</code></li>
+</ul>
+<p>即可。</p>
+<p>比如上面的例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">compute</span><span class="params">(x, y)</span>:</span></span><br><span class="line">    print(<span class="string">"Compute %s + %s ..."</span> % (x, y))</span><br><span class="line">    <span class="keyword">await</span> asyncio.sleep(<span class="number">1.0</span>)</span><br><span class="line">    <span class="keyword">return</span> x + y</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">print_sum</span><span class="params">(x, y)</span>:</span></span><br><span class="line">    result = <span class="keyword">await</span> compute(x, y)</span><br><span class="line">    print(<span class="string">"%s + %s = %s"</span> % (x, y, result))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">loop = asyncio.get_event_loop()</span><br><span class="line">print(<span class="string">"start"</span>)</span><br><span class="line">loop.run_until_complete(print_sum(<span class="number">1</span>, <span class="number">2</span>))</span><br><span class="line">print(<span class="string">"end"</span>)</span><br><span class="line">loop.close()</span><br></pre></td></tr></table></figure>
+
+<p>我们再来看一个asyncio中Future的例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"></span><br><span class="line">future = asyncio.Future()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">coro1</span><span class="params">()</span>:</span></span><br><span class="line">    print(<span class="string">"wait 1 second"</span>)</span><br><span class="line">    <span class="keyword">await</span> asyncio.sleep(<span class="number">1</span>)</span><br><span class="line">    print(<span class="string">"set_result"</span>)</span><br><span class="line">    future.set_result(<span class="string">'data'</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">coro2</span><span class="params">()</span>:</span></span><br><span class="line">    result = <span class="keyword">await</span> future</span><br><span class="line">    print(result)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">loop = asyncio.get_event_loop()</span><br><span class="line">loop.run_until_complete(asyncio.wait([</span><br><span class="line">    coro1()</span><br><span class="line">    coro2()</span><br><span class="line">]))</span><br><span class="line">loop.close()</span><br></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wait <span class="number">1</span> second</span><br><span class="line">(大约等待<span class="number">1</span>秒)</span><br><span class="line">set_result</span><br><span class="line">data</span><br></pre></td></tr></table></figure>
+
+<p>这里await后面跟随的future对象，协程中yield from或者await后面可以调用future对象，其作用是：暂停协程，直到future执行结束或者返回result或抛出异常。</p>
+<p>而在我们的例子中，<code>await future</code>必须要等待<code>future.set_result(&#39;data&#39;)</code>后才能够结束。将<code>coro2()</code>作为第二个协程可能体现得不够明显，可以将协程的调用改成这样：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">loop = asyncio.get_event_loop()</span><br><span class="line">loop.run_until_complete(asyncio.wait([</span><br><span class="line">    <span class="comment"># coro1(),</span></span><br><span class="line">    coro2(),</span><br><span class="line">    coro1()</span><br><span class="line">]))</span><br><span class="line">loop.close()</span><br></pre></td></tr></table></figure>
+
+<p>输出的结果仍旧与上面相同。</p>
+<p>其实，<code>async</code>这个关键字的用法不止能用在函数上，还有<code>async with</code>异步上下文管理器，<code>async for</code>异步迭代器. 对这些感兴趣且觉得有用的可以网上找找资料，这里限于篇幅就不过多展开了。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文就生成器和协程做了一些学习、探究和总结，不过并没有做过多深入深入的研究。权且作为入门到一个笔记，之后将会尝试自己实现一下异步API，希望有助于理解学习。</p>
+<hr>
+<p>参考链接：</p>
+<p><a href="https://zhuanlan.zhihu.com/p/68043798" target="_blank" rel="noopener">理解<em>Python协程</em>(Coroutine)</a></p>
+<p><a href="https://eastlakeside.gitbook.io/interpy-zh/coroutines" target="_blank" rel="noopener">Python进阶 - 协程</a></p>
+<p><a href="https://www.liaoxuefeng.com/wiki/897692888725344/923057403198272" target="_blank" rel="noopener">廖雪峰 - Python协程</a></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Ryan Shu
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://notspr.com/2020/06/22/python-coroutine/" title="理解Python协程(Coroutine)">https://notspr.com/2020/06/22/python-coroutine/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/picture/weixin.png">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Python/" rel="tag"><i class="fa fa-tag"></i> Python</a>
+              <a href="/tags/%E5%8D%8F%E7%A8%8B/" rel="tag"><i class="fa fa-tag"></i> 协程</a>
+              <a href="/tags/%E7%94%9F%E6%88%90%E5%99%A8/" rel="tag"><i class="fa fa-tag"></i> 生成器</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/05/20/uWSGI-Nginx-Django/" rel="prev" title="使用 uWSGI + Nginx 部署 Django 项目">
+      <i class="fa fa-chevron-left"></i> 使用 uWSGI + Nginx 部署 Django 项目
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/06/26/python-garbage-collection/" rel="next" title="Python 垃圾回收机制">
+      Python 垃圾回收机制 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#生成器-Generator"><span class="nav-number">2.</span> <span class="nav-text">生成器(Generator)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#yield表达式的使用"><span class="nav-number">2.1.</span> <span class="nav-text">yield表达式的使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#生产者和消费者模型"><span class="nav-number">2.2.</span> <span class="nav-text">生产者和消费者模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#yield-from表达式"><span class="nav-number">2.3.</span> <span class="nav-text">yield from表达式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#协程-Coroutine"><span class="nav-number">3.</span> <span class="nav-text">协程(Coroutine)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#asyncio-coroutine-mailto-asyncio-coroutine"><span class="nav-number">3.1.</span> <span class="nav-text">[@asyncio.coroutine](mailto:@asyncio.coroutine)&#96;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#async-await"><span class="nav-number">3.2.</span> <span class="nav-text">async&#x2F;await</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ryan Shu"
+      src="/picture/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Ryan Shu</p>
+  <div class="site-description" itemprop="description">全栈 | 硬件 | 篮球 | 游戏</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/sususama5555" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;sususama5555" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:876324872@qq.com" title="E-Mail → mailto:876324872@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/5330189327" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;5330189327" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://steamcommunity.com/profiles/76561198294148424/" title="steam → https:&#x2F;&#x2F;steamcommunity.com&#x2F;profiles&#x2F;76561198294148424&#x2F;" rel="noopener" target="_blank"><i class="fab fa-steam fa-fw"></i>steam</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://ddoudou.xyz/" title="http:&#x2F;&#x2F;ddoudou.xyz" rel="noopener" target="_blank">豆豆的博客</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+      <!-- 音乐播放器 -->
+      
+           <div>
+              <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="210" height="110" src="//music.163.com/outchain/player?type=2&id=4226232&auto=1&height=66"></iframe>
+           </div>
+      
+
+      <!-- 滚动条 -->
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备20063016号-2 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ryan Shu</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">128k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:56</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+    </div>
+</body>
+</html>

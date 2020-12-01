@@ -7,61 +7,58 @@
 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1></blockquote>
 <p>最近工作中和<code>Zabbix</code>打了不少交道，大概分为两个用途。</p>
 <p>一种是对接它的API接口，例如创建账号、媒介、触发器、动作等，这种比较简单，照着API文档来就行了，这里不多赘述。</p>
-<p>另一种就是，使用python脚本创建一套Zabbix告警推送的流程，将超过阈值的Zabbix告警按照指定的流程和动作推送到告警中心，而告警中心使用Zabbix作为其中一个告警源，不断拉取并且分发告警。这应该属于监控、告警等最常见的自动化运维的场景了，我对此也比较感兴趣，所有想从Zabbix较为基础的单机版安装及部署学习，也就有了这篇文章。</p>
+<p>另一种就是，使用Python脚本创建一套Zabbix告警推送的流程，将超过阈值的Zabbix告警按照指定的流程和动作推送到告警中心，而告警中心使用Zabbix作为其中一个告警源，不断拉取并且分发告警。这应该属于监控、告警等最常见的自动化运维的场景了，我对此也比较感兴趣，所有想从Zabbix较为基础的单机版安装及部署学习，也就有了这篇文章。</p>
 <p>事先已在本地开发环境的虚拟机中安装与部署成功，现在期望将Zabbix部署到阿里云的机器上。</p>
+<p><strong><em>注意：安装部署时，由于环境和版本的问题也踩了不少坑，希望能给读者一些启示。</em></strong></p>
 <a id="more"></a>
 
 <blockquote>
 <h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1></blockquote>
 <p>这里我们按照官方文档的指引进行安装</p>
 <p>官方地址：<a href="https://www.zabbix.com/download" target="_blank" rel="noopener">https://www.zabbix.com/download</a></p>
-<p>由于本人的阿里云服务器的预先环境为CentOS 7 + Mysql + Nginx，所以这里不再折腾，直接使用这一套最常用的配置。</p>
-<p>由于Zabbix 5.2是最新版本，安装指引和资料也比较少，处于稳定考虑，最终选择Zaabix 5.0 LTS版本。</p>
+<p>由于本人的阿里云服务器的预先环境为<code>CentOS 7</code> + <code>MySQL</code>+ <code>Nginx</code>，所以这里不再折腾，直接使用这一套最常用的配置。</p>
+<p>由于Zabbix 5.2是最新版本，安装指引和资料也比较少，处于稳定考虑，最终选择<code>Zaabix 5.0 LTS</code>版本。</p>
 <p>PS:工作接触的5.0和5.2都有。</p>
-<h2 id="Install-and-configure-Zabbix-server-for-your-platform"><a href="#Install-and-configure-Zabbix-server-for-your-platform" class="headerlink" title="Install and configure Zabbix server for your platform"></a>Install and configure Zabbix server for your platform</h2><h3 id="a-Install-Zabbix-repository（安装Zabbix-yum-源）"><a href="#a-Install-Zabbix-repository（安装Zabbix-yum-源）" class="headerlink" title="a. Install Zabbix repository（安装Zabbix yum 源）"></a>a. Install Zabbix repository（安装Zabbix yum 源）</h3><p>官方文档：<a href="https://www.zabbix.com/documentation/5.0/manual/installation/install_from_packages" target="_blank" rel="noopener">Documentation</a></p>
-<h4 id="官方yum源"><a href="#官方yum源" class="headerlink" title="官方yum源"></a>官方yum源</h4><p>以下是官方推荐的zabbix yum源，不过在国内使用比较麻烦，下载速度慢且经常连接超时。所以推荐使用阿里云的zabbix yum 源</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># rpm -Uvh https:&#x2F;&#x2F;repo.zabbix.com&#x2F;zabbix&#x2F;5.0&#x2F;rhel&#x2F;7&#x2F;x86_64&#x2F;zabbix-release-5.0-1.el7.noarch.rpm</span><br><span class="line"># yum clean all</span><br></pre></td></tr></table></figure>
+<h2 id="安装Zabbix-yum-源"><a href="#安装Zabbix-yum-源" class="headerlink" title="安装Zabbix yum 源"></a>安装Zabbix yum 源</h2><p>官方文档：<a href="https://www.zabbix.com/documentation/5.0/manual/installation/install_from_packages" target="_blank" rel="noopener">Documentation</a></p>
+<h3 id="官方yum源"><a href="#官方yum源" class="headerlink" title="官方yum源"></a>官方yum源</h3><p>以下是官方推荐的Zabbix yum源，不过在国内使用比较麻烦，下载速度慢且经常连接超时。所以推荐使用阿里云的Zabbix yum 源</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">rpm -Uvh https://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/zabbix-release-5.0-1.el7.noarch.rpm</span><br><span class="line">yum clean all</span><br></pre></td></tr></table></figure>
 
-<h4 id="阿里云yum源"><a href="#阿里云yum源" class="headerlink" title="阿里云yum源"></a>阿里云yum源</h4><p>下载地址：<a href="https://mirrors.aliyun.com/zabbix/" target="_blank" rel="noopener">https://mirrors.aliyun.com/zabbix/</a></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># rpm -Uvh https:&#x2F;&#x2F;mirrors.aliyun.com&#x2F;zabbix&#x2F;zabbix&#x2F;5.0&#x2F;rhel&#x2F;7&#x2F;x86_64&#x2F;zabbix-release-5.0-1.el7.noarch.rpm</span><br><span class="line"># yum clean all</span><br></pre></td></tr></table></figure>
+<h3 id="阿里云yum源"><a href="#阿里云yum源" class="headerlink" title="阿里云yum源"></a>阿里云yum源</h3><p>下载地址：<a href="https://mirrors.aliyun.com/zabbix/" target="_blank" rel="noopener">https://mirrors.aliyun.com/zabbix/</a></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">rpm -Uvh https://mirrors.aliyun.com/zabbix/zabbix/5.0/rhel/7/x86_64/zabbix-release-5.0-1.el7.noarch.rpm</span><br><span class="line">yum clean all</span><br></pre></td></tr></table></figure>
 
 <p>打开/etc/yum.repos.d/zabbix.repo，把所有的“<a href="https://repo.zabbix.com/zabbix/”" target="_blank" rel="noopener">https://repo.zabbix.com/zabbix/”</a> 改成 “<a href="https://mirrors.aliyun.com/zabbix/”" target="_blank" rel="noopener">https://mirrors.aliyun.com/zabbix/”</a> （除了zabbix-non-supported，其他的分支的URL都有两个zabbix）</p>
-<h3 id="b-Install-Zabbix-server-and-agent（安装Zabbix-server-和agent）"><a href="#b-Install-Zabbix-server-and-agent（安装Zabbix-server-和agent）" class="headerlink" title="b. Install Zabbix server and agent（安装Zabbix server 和agent）"></a>b. Install Zabbix server and agent（安装Zabbix server 和agent）</h3><p>换了yum源应该安装很快，使用 -y 跳过选择</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># yum install -y zabbix-server-mysql zabbix-agent</span><br></pre></td></tr></table></figure>
+<h2 id="安装Zabbix-server-和agent"><a href="#安装Zabbix-server-和agent" class="headerlink" title="安装Zabbix server 和agent"></a>安装Zabbix server 和agent</h2><p>换了yum源应该安装很快，使用 -y 跳过选择</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y zabbix-server-mysql zabbix-agent</span><br></pre></td></tr></table></figure>
 
-<h3 id="c-Install-Zabbix-frontend（安装Zabbix-前端）"><a href="#c-Install-Zabbix-frontend（安装Zabbix-前端）" class="headerlink" title="c. Install Zabbix frontend（安装Zabbix 前端）"></a>c. Install Zabbix frontend（安装Zabbix 前端）</h3><p><a href="https://www.zabbix.com/documentation/5.0/manual/installation/frontend/frontend_on_rhel7" target="_blank" rel="noopener">Documentation</a></p>
-<p>Zabbix 使用php写的，所以有单独的安装过程：</p>
-<p>Enable Red Hat Software Collections.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># yum install centos-release-scl</span><br></pre></td></tr></table></figure>
+<h2 id="安装Zabbix-前端"><a href="#安装Zabbix-前端" class="headerlink" title="安装Zabbix 前端"></a>安装Zabbix 前端</h2><p><a href="https://www.zabbix.com/documentation/5.0/manual/installation/frontend/frontend_on_rhel7" target="_blank" rel="noopener">Documentation</a></p>
+<p>Zabbix 使用<code>php</code>写的，所以有单独的安装过程：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install centos-release-scl</span><br></pre></td></tr></table></figure>
 
-<p>Edit file /etc/yum.repos.d/zabbix.repo and enable zabbix-frontend repository.</p>
-<p>编辑该配置文件 /etc/yum.repos.d/zabbix.repo，使得enabled=1。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[zabbix-frontend]...enabled&#x3D;1...</span><br></pre></td></tr></table></figure>
+<p>编辑该配置文件 <code>/etc/yum.repos.d/zabbix.repo</code>，使得enabled=1。</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">[zabbix-frontend]...enabled=1...</span><br></pre></td></tr></table></figure>
 
-<p>Install Zabbix frontend packages.</p>
 <p>下载安装Zabbix 前端依赖。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># yum install zabbix-web-mysql-scl zabbix-nginx-conf-scl</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum install zabbix-web-mysql-scl zabbix-nginx-conf-scl</span><br></pre></td></tr></table></figure>
 
-<h3 id="d-Create-initial-database（创建初始数据库）"><a href="#d-Create-initial-database（创建初始数据库）" class="headerlink" title="d. Create initial database（创建初始数据库）"></a>d. Create initial database（创建初始数据库）</h3><p><a href="https://www.zabbix.com/documentation/5.0/manual/appendix/install/db_scripts" target="_blank" rel="noopener">Documentation</a></p>
-<p>Run the following on your database host.</p>
-<p>在数据库主机上运行以下代码，目的是在本地mysql数据库中创建zabbix账号和同名数据库，并且赋予相应权限。</p>
+<h2 id="创建初始数据库"><a href="#创建初始数据库" class="headerlink" title="创建初始数据库"></a>创建初始数据库</h2><p><a href="https://www.zabbix.com/documentation/5.0/manual/appendix/install/db_scripts" target="_blank" rel="noopener">Documentation</a></p>
+<p>在数据库主机上运行以下代码，目的是在本地MySQL数据库中创建zabbix账号和同名数据库，并且赋予相应权限。</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># mysql -uroot -p</span><br><span class="line">password</span><br><span class="line">mysql&gt; create database zabbix character set utf8 collate utf8_bin;</span><br><span class="line">mysql&gt; create user zabbix@localhost identified by &#39;password&#39;;</span><br><span class="line">mysql&gt; grant all privileges on zabbix.* to zabbix@localhost;</span><br><span class="line">mysql&gt; quit;</span><br></pre></td></tr></table></figure>
 
-<p>On Zabbix server host import initial schema and data. You will be prompted to enter your newly created password.</p>
 <p>导入初始架构和数据，系统将提示您输入新创建的密码。</p>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -uzabbix -p zabbix</span><br></pre></td></tr></table></figure>
 
-<p>TODO 其中遇到了问题，愿意是以上语句执行时，发生以下报错：</p>
+<h3 id="x1F449-ATTENTION-ONE"><a href="#x1F449-ATTENTION-ONE" class="headerlink" title="&#x1F449; ATTENTION ONE"></a>&#x1F449; <strong><em>ATTENTION ONE</em></strong></h3><p>以下就是踩坑了：</p>
+<p>执行上一条命令时，MySQL导入数据与结构不成功，发生以下报错：</p>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ERROR 1071 (42000) at line 90: Specified key was too long; max key length is 767 bytes</span><br></pre></td></tr></table></figure>
 
 <img data-src="/2020/12/01/zabbix-install-deploy/character-error.png" class>
 
-<p>应该是mysql字符集的报错，所以去查了Stack Overflow后，可以在mysql命令行中，使用<code>show variables like &#39;character%&#39;</code>查询默认字符集，结果发现许多编码为utf-8。</p>
+<h4 id="错误做法"><a href="#错误做法" class="headerlink" title="错误做法"></a>错误做法</h4><p>初步判断是MySQL字符集的问题，所以去查了 <strong>*<u>Stack Overflow</u>*</strong> 后，在MySQL命令行中，使用<code>show variables like &#39;character%&#39;</code>查询默认字符集，结果发现许多编码为utf-8。</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># mysql -uroot -p</span><br><span class="line">password</span><br><span class="line">mysql&gt; show variables like &#39;character%&#39;;</span><br><span class="line">+--------------------------+----------------------------+</span><br><span class="line">| Variable_name            | Value                      |</span><br><span class="line">+--------------------------+----------------------------+</span><br><span class="line">| character_set_client     | utf8                       |</span><br><span class="line">| character_set_connection | utf8                       |</span><br><span class="line">| character_set_database   | latin1                     |</span><br><span class="line">| character_set_filesystem | binary                     |</span><br><span class="line">| character_set_results    | utf8                       |</span><br><span class="line">| character_set_server     | latin1                     |</span><br><span class="line">| character_set_system     | utf8                       |</span><br><span class="line">| character_sets_dir       | &#x2F;usr&#x2F;share&#x2F;mysql&#x2F;charsets&#x2F; |</span><br><span class="line">+--------------------------+----------------------------+</span><br><span class="line">8 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
 
 <p><strong>*<u>原因分析：</u>*</strong></p>
-<p>MySQL的varchar主键只支持不超过767个字节，需要将mysql的字符编码设置为utf8mb4</p>
-<p>使用<code>vim /etc/my.cnf</code>编辑mysql配置文件（不同系统、安装方式和mysql版本会造成差异）</p>
+<p>MySQL的varchar主键只支持不超过767个字节，需要将MySQL的字符编码设置为<code>utf8mb4</code></p>
+<p>使用<code>vim /etc/my.cnf</code>编辑MySQL配置文件（不同系统、安装方式和MySQL版本会造成差异）</p>
 <p>在[mysqld]下加入以下配置：</p>
 <figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">innodb_file_format</span>=barracuda  </span><br><span class="line"><span class="attr">innodb_file_per_table</span>=<span class="literal">true</span>  </span><br><span class="line"><span class="attr">innodb_large_prefix</span>=<span class="literal">true</span>  </span><br><span class="line"><span class="attr">character-set-server</span>=utf8mb4  </span><br><span class="line"><span class="attr">collation-server</span>=utf8mb4_unicode_ci  </span><br><span class="line"><span class="attr">max_allowed_packet</span>=<span class="number">500</span>M</span><br></pre></td></tr></table></figure>
 
@@ -71,28 +68,78 @@
 <p>现在重新执行Zabbix创建初始数据库这一步，但是又有新的问题，还是字符集的报错：</p>
 <img data-src="/2020/12/01/zabbix-install-deploy/utf8mb4.png" class>
 
-<p>现在是说索引列大小超出，这就与第一次的报错相反。这就很恶心了，未完待续。</p>
-<h3 id="e-Configure-the-database-for-Zabbix-server（为Zabbix-server配置数据库）"><a href="#e-Configure-the-database-for-Zabbix-server（为Zabbix-server配置数据库）" class="headerlink" title="e. Configure the database for Zabbix server（为Zabbix server配置数据库）"></a>e. Configure the database for Zabbix server（为Zabbix server配置数据库）</h3><p>Edit file /etc/zabbix/zabbix_server.conf</p>
-<p>编辑配置文件 /etc/zabbix/zabbix_server.conf，将刚才设置的密码填入该配置文件。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">DBPassword&#x3D;password</span><br></pre></td></tr></table></figure>
+<p>现在出现索引列大小超出的问题，这就与之前的报错相反，这就很恶心了。</p>
+<h4 id="正确做法"><a href="#正确做法" class="headerlink" title="正确做法"></a>正确做法</h4><p>到这里才发现不对劲，有点南辕北辙的感觉，为什么我在个人Linux虚拟机上就能数据迁移成功？</p>
+<p>这肯定是MySQL的问题，所以对比检查云服务器和虚拟机的版本、配置等信息。</p>
+<p>果不其然，正常的虚拟机是MySQL5.7版本的，而有问题的云服务器是MySQL5.6版本的，除此之外，默认编码等配置都一模一样。所以定位到了MySQL5.7和MySQL5.6的差异：</p>
+<p>5.7除了比5.6性能更强、功能更丰富，其中5.7的索引长度也增加了，这就是报错的问题所在，所以折腾来折腾去，升级MySQL版本完美解决。</p>
+<p><strong>*<u>升级方案：</u>*</strong></p>
+<h5 id="首先全库备份mysql-5-6"><a href="#首先全库备份mysql-5-6" class="headerlink" title="首先全库备份mysql 5.6"></a>首先全库备份mysql 5.6</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mysqldump -uroot -p123456 --all-databases &gt; /root/mysql_all.sql</span><br></pre></td></tr></table></figure>
 
-<h3 id="f-Configure-PHP-for-Zabbix-frontend（为Zabbix前端配置PHP）"><a href="#f-Configure-PHP-for-Zabbix-frontend（为Zabbix前端配置PHP）" class="headerlink" title="f. Configure PHP for Zabbix frontend（为Zabbix前端配置PHP）"></a>f. Configure PHP for Zabbix frontend（为Zabbix前端配置PHP）</h3><p>Edit file /etc/opt/rh/rh-nginx116/nginx/conf.d/zabbix.conf, uncomment and set ‘listen’ and ‘server_name’ directives.</p>
-<p>编辑配置文件 /etc/opt/rh/rh-nginx116/nginx/conf.d/zabbix.conf，取消其中listen和server_name的注释。此处就是我们非常熟悉的Nginx，配置反向代理监听的端口和域名。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># listen 80;</span><br><span class="line"># server_name example.com;</span><br></pre></td></tr></table></figure>
+<h5 id="yum配置mysql-5-7"><a href="#yum配置mysql-5-7" class="headerlink" title="yum配置mysql 5.7"></a>yum配置mysql 5.7</h5><p>可以直接使用<code>yum</code>安装，或者源码安装，但是<code>yum</code>安装是非常平滑的升级，数据库和配置文件都不用改，强烈推荐。</p>
+<p>但是首先需要修改MySQL相关的yum源文件，因为5.6版本会默认屏蔽5.7的源，在以下两个文件中，将5.7设置为<code>enable=1</code>，5.6修改为<code>enable=0</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /etc/yum.repos.d/mysql-community.repo</span><br><span class="line">vim /etc/yum.repos.d/mysql-community-source.repo</span><br></pre></td></tr></table></figure>
 
-<p>Edit file /etc/opt/rh/rh-php72/php-fpm.d/zabbix.conf, add nginx to listen.acl_users directive.</p>
-<p>编辑配置文件 /etc/opt/rh/rh-php72/php-fpm.d/zabbix.conf, 将nginx添加到listen.acl_users配置项中。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">listen.acl_users &#x3D; apache,nginx</span><br></pre></td></tr></table></figure>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># <span class="doctag">Note:</span> MySQL 5.7 is currently in development. For use at your own risk.</span></span><br><span class="line"><span class="comment"># Please read with sub pages: https://dev.mysql.com/doc/relnotes/mysql/5.7/en/</span></span><br><span class="line"><span class="section">[mysql57-community-dmr]</span></span><br><span class="line"><span class="attr">name</span>=MySQL <span class="number">5.7</span> Community Server Development Milestone Release</span><br><span class="line"><span class="attr">baseurl</span>=http://repo.mysql.com/yum/mysql-<span class="number">5.7</span>-community/el/<span class="number">7</span>/<span class="variable">$basearch</span>/</span><br><span class="line"><span class="attr">enabled</span>=<span class="number">1</span></span><br><span class="line"><span class="attr">gpgcheck</span>=<span class="number">1</span></span><br><span class="line"><span class="attr">gpgkey</span>=file:/etc/pki/rpm-gpg/RPM-GPG-KEY-mysql</span><br></pre></td></tr></table></figure>
 
-<p>Then uncomment and set the right timezone for you.</p>
-<p>最后取消最后一行的注释（注意注释为分号），我们也可以将市区设置为Asia/Shanghai</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">; php_value[date.timezone] &#x3D; Asia&#x2F;Shanghai</span><br></pre></td></tr></table></figure>
+<p>然后<code>yum clean all</code>清除<code>yum</code>缓存</p>
+<h5 id="yum安装mysql-5-7"><a href="#yum安装mysql-5-7" class="headerlink" title="yum安装mysql 5.7"></a>yum安装mysql 5.7</h5><p><code>yum install mysql</code> 或者 <code>yum upgrade mysql-server</code> 应该都可以升级成功&#x1F308;</p>
+<p>升级完就可以直接使用啦，重复<strong><u><em>创建初始数据库</em></u></strong> 完成这一步。</p>
+<h2 id="为Zabbix-server配置数据库"><a href="#为Zabbix-server配置数据库" class="headerlink" title="为Zabbix server配置数据库"></a>为Zabbix server配置数据库</h2><p>编辑配置文件 <code>/etc/zabbix/zabbix_server.conf</code>，将刚才设置的密码填入该配置文件。</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">DBPassword</span>=password</span><br></pre></td></tr></table></figure>
 
-<h3 id="g-Start-Zabbix-server-and-agent-processes（启动Zabbix-server和agent进程）"><a href="#g-Start-Zabbix-server-and-agent-processes（启动Zabbix-server和agent进程）" class="headerlink" title="g. Start Zabbix server and agent processes（启动Zabbix server和agent进程）"></a>g. Start Zabbix server and agent processes（启动Zabbix server和agent进程）</h3><p>Start Zabbix server and agent processes and make it start at system boot.</p>
-<p>启动Zabbix server和agent进程，并为它们设置开机自启：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># systemctl restart zabbix-server zabbix-agent rh-nginx116-nginx rh-php72-php-fpm</span><br><span class="line"># systemctl enable zabbix-server zabbix-agent rh-nginx116-nginx rh-php72-php-fpm</span><br></pre></td></tr></table></figure>
+<h2 id="为Zabbix前端配置PHP"><a href="#为Zabbix前端配置PHP" class="headerlink" title="为Zabbix前端配置PHP"></a>为Zabbix前端配置PHP</h2><h3 id="配置Nginx"><a href="#配置Nginx" class="headerlink" title="配置Nginx"></a>配置Nginx</h3><p>编辑配置文件 <code>/etc/opt/rh/rh-nginx116/nginx/conf.d/zabbix.conf</code>，取消其中<code>listen</code>和<code>server_name</code>的注释。此处就是我们非常熟悉的<code>Nginx</code>，配置反向代理监听的端口和域名。</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">listen 80;</span><br><span class="line">server_name example.com;</span><br></pre></td></tr></table></figure>
 
-<h5 id="h-Configure-Zabbix-frontend"><a href="#h-Configure-Zabbix-frontend" class="headerlink" title="h. Configure Zabbix frontend"></a>h. Configure Zabbix frontend</h5><p>Connect to your newly installed Zabbix frontend: <a href="http://server_ip_or_name" target="_blank" rel="noopener">http://server_ip_or_name</a><br>Follow steps described in Zabbix documentation: <a href="https://www.zabbix.com/documentation/5.0/manual/installation/install#installing_frontend" target="_blank" rel="noopener">Installing frontend</a></p>
+<h4 id="x1F449-ATTENTION-TWO"><a href="#x1F449-ATTENTION-TWO" class="headerlink" title="&#x1F449; ATTENTION TWO"></a>&#x1F449; <strong><em>ATTENTION TWO</em></strong></h4><p>这里配置<code>rh-nginx116</code>是给之前没有安装Nginx的机器使用的，由于一台机器只能启动一个Nginx服务（Docker除外）,所以如果下一步执行<code>systemctl restart rh-nginx116-nginx</code>报错，那就是两个Nginx冲突了，Nginx服务都监听了80端口，绑定端口失败，具体错误如下：</p>
+<img data-src="/2020/12/01/zabbix-install-deploy/nginx-error.png" class>
+
+<p>所以我们只需要在原有的Nginx上，配置上本次Zabbix的配置就可以了。</p>
+<h4 id="具体方案-："><a href="#具体方案-：" class="headerlink" title="*具体方案*："></a><strong>*<u>具体方案</u>*</strong>：</h4><p>在<code>/etc/nginx/conf.d</code>中创建<code>zabbix.conf</code>，然后使得<code>/etc/nginx/nginx.conf</code>中包含所有<code>conf.d</code>，也就是<code>include /etc/nginx/conf.d/*.conf</code>。</p>
+<p>将Zabbix安装的 <code>rh-nginx116</code>的配置文件<code>/etc/opt/rh/rh-nginx116/nginx/conf.d/zabbix.conf</code>的内容拷贝到<code>zabbix.conf</code>，就可以对接到已有的Nginx。</p>
+<h3 id="配置php"><a href="#配置php" class="headerlink" title="配置php"></a>配置php</h3><p>编辑配置文件 <code>/etc/opt/rh/rh-php72/php-fpm.d/zabbix.conf</code>，将nginx添加到listen.acl_users配置项中。</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">listen.acl_users</span> = apache,nginx</span><br></pre></td></tr></table></figure>
+
+<h4 id="x1F449-ATTENTION-THREE"><a href="#x1F449-ATTENTION-THREE" class="headerlink" title="&#x1F449; ATTENTION THREE"></a>&#x1F449; <strong><em>ATTENTION THREE</em></strong></h4><p>如果下一步<code>rh-php72-php-fpm</code>服务启动不了，原因是 <code>/etc/opt/rh/rh-php72/php-fpm.d/zabbix.conf</code>这个配置文件<code>listen.acl_users = apache,nginx</code>。</p>
+<p><strong><u><em>apache,nginx中间不能有逗号</em></u></strong></p>
+<h3 id="配置时区"><a href="#配置时区" class="headerlink" title="配置时区"></a>配置时区</h3><p>最后取消最后一行的注释（注意注释为分号），我们也可以将市区设置为Asia/Shanghai</p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">php_value[date.timezone]</span> = Asia/Shanghai</span><br></pre></td></tr></table></figure>
+
+<h2 id="启动Zabbix-server和agent进程"><a href="#启动Zabbix-server和agent进程" class="headerlink" title="启动Zabbix server和agent进程"></a>启动Zabbix server和agent进程</h2><p>启动Zabbix server和agent进程，并为它们设置开机自启：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">systemctl restart zabbix-server zabbix-agent rh-nginx116-nginx rh-php72-php-fpm</span><br><span class="line">systemctl enable zabbix-server zabbix-agent rh-nginx116-nginx rh-php72-php-fpm</span><br></pre></td></tr></table></figure>
+
+<p>如果已经对接到了原有的Nginx，需要忽略<code>rh-nginx116-nginx</code>这个服务。</p>
+<h2 id="配置Zabbix前端"><a href="#配置Zabbix前端" class="headerlink" title="配置Zabbix前端"></a>配置Zabbix前端</h2><p>连接到新安装的Zabbix前端： <a href="http://server_ip_or_name" target="_blank" rel="noopener">http://server_ip_or_name</a><br>根据Zabbix文件里步骤操作： <a href="https://www.zabbix.com/documentation/5.0/manual/installation/install#installing_frontend" target="_blank" rel="noopener">Installing frontend</a></p>
+<h1 id="开始使用Zabbix"><a href="#开始使用Zabbix" class="headerlink" title="开始使用Zabbix"></a>开始使用Zabbix</h1><p>在浏览器中打开Zabbix前端url，如果是从软件包安装的Zabbix，url如下：</p>
+<ul>
+<li>for Apache: <em><a href="http://server_ip_or_name/zabbix" target="_blank" rel="noopener">http://server_ip_or_name/zabbix</a></em></li>
+<li>for Nginx: <em><a href="http://server_ip_or_name" target="_blank" rel="noopener">http://server_ip_or_name</a></em></li>
+</ul>
+<h2 id="Zabbix欢迎界面-x1F308"><a href="#Zabbix欢迎界面-x1F308" class="headerlink" title="Zabbix欢迎界面&#x1F308;"></a>Zabbix欢迎界面&#x1F308;</h2><img data-src="/2020/12/01/zabbix-install-deploy/install_1.png" class>
+
+<h2 id="检查先决条件-x1F308"><a href="#检查先决条件-x1F308" class="headerlink" title="检查先决条件&#x1F308;"></a>检查先决条件&#x1F308;</h2><img data-src="/2020/12/01/zabbix-install-deploy/install_2.png" class>
+
+<h2 id="配置连接数据库-x1F308"><a href="#配置连接数据库-x1F308" class="headerlink" title="配置连接数据库&#x1F308;"></a>配置连接数据库&#x1F308;</h2><img data-src="/2020/12/01/zabbix-install-deploy/install_3.png" class>
+
+<h2 id="一直点击NEXT-STEP，完成就会跳转到登陆界面啦-x1F308"><a href="#一直点击NEXT-STEP，完成就会跳转到登陆界面啦-x1F308" class="headerlink" title="一直点击NEXT STEP，完成就会跳转到登陆界面啦&#x1F308;"></a>一直点击<code>NEXT STEP</code>，完成就会跳转到登陆界面啦&#x1F308;</h2><img data-src="/2020/12/01/zabbix-install-deploy/login.png" class>
+
+<h2 id="输入默认账号密码Admin-amp-zabbix就可以登陆啦-x1F308"><a href="#输入默认账号密码Admin-amp-zabbix就可以登陆啦-x1F308" class="headerlink" title="输入默认账号密码Admin &amp; zabbix就可以登陆啦&#x1F308;"></a>输入默认账号密码<code>Admin</code> &amp; <code>zabbix</code>就可以登陆啦&#x1F308;</h2><img data-src="/2020/12/01/zabbix-install-deploy/zabbix-home.png" class>
+
+<blockquote>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1></blockquote>
+<p>Zabbix是一个基于WEB界面的提供分布式系统监视以及网络监视功能的企业级的解决方案，同时也是优秀的开源项目，在监控这个领域也是老大哥了。</p>
+<p>绝大多数运维开发都会接触Zabbix，使用它来组成硬件监控、告警推送等解决方案。</p>
+<p>以上就是Zabbix安装与配置的内容，也是最基础的单机版方案，虽然官方文档比较全，但是由于环境的版本的问题也踩了不少坑，希望能给读者一些启示。</p>
+<p><strong><u>TODO LIST</u></strong></p>
+<ul>
+<li>Zabbix主机监控</li>
+<li>Zabbix告警推送（SMTP邮件、自定义脚本）</li>
+</ul>
+<p>最后附上本人阿里云上的Zabbix网址：</p>
+<p><a href="http://47.112.240.167:8005/" target="_blank" rel="noopener">http://47.112.240.167:8005/</a></p>
+<hr>
+<p>官方文档：<br><a href="https://www.zabbix.com/cn/download?zabbix=5.0&os_distribution=centos&os_version=7&db=mysql&ws=nginx" target="_blank" rel="noopener">官方 - 下载安装Zabbix</a></p>
+<p><a href="https://www.zabbix.com/documentation/5.0/manual/installation/install#installing_frontend" target="_blank" rel="noopener">Zabbix Documentation 5.0</a></p>
 ]]></content>
       <categories>
         <category>监控</category>
@@ -102,6 +149,7 @@
         <tag>监控</tag>
         <tag>Zabbix</tag>
         <tag>告警</tag>
+        <tag>开源</tag>
         <tag>阿里云</tag>
         <tag>安装部署</tag>
       </tags>
@@ -2254,8 +2302,8 @@
         <category>Redis修炼</category>
       </categories>
       <tags>
-        <tag>数据库</tag>
         <tag>Redis</tag>
+        <tag>数据库</tag>
         <tag>数据类型</tag>
       </tags>
   </entry>
@@ -2499,6 +2547,154 @@
       </tags>
   </entry>
   <entry>
+    <title>初识 - Zabbix</title>
+    <url>/2020/07/02/zabbix-summary/</url>
+    <content><![CDATA[<h1 id="Zabbix-介绍"><a href="#Zabbix-介绍" class="headerlink" title="Zabbix 介绍"></a>Zabbix 介绍</h1><ul>
+<li>Zabbix 由 Alexei Vladishev 创建，目前由其成立的公司—— Zabbix SIA 积极的持续开发更新维护， 并为用户提供技术支持服务。</li>
+<li>Zabbix 是一个企业级分布式开源监控解决方案。</li>
+<li>Zabbix 软件能够监控众多网络参数和服务器的健康度、完整性。Zabbix 使用灵活的告警机制，允许用户为几乎任何事件配置基于邮件的告警。这样用户可以快速响应服务器问题。Zabbix 基于存储的数据提供出色的报表和数据可视化功能。这些功能使得 Zabbix 成为容量规划的理想选择。</li>
+<li>Zabbix 支持主动轮询（polling）和被动捕获（trapping）。Zabbix所有的报表、统计数据和配置参数都可以通过基于 Web 的前端页面进行访问。基于 Web 的前端页面确保您可以在任何地方访问您监控的网络状态和服务器健康状况。适当的配置后，Zabbix 可以在监控 IT 基础设施方面发挥重要作用。无论是对于有少量服务器的小型组织，还是拥有大量服务器的大企业而言，同样适用。</li>
+<li>Zabbix 是免费的。Zabbix 是根据 GPL 通用公共许可证的第二版编写和发布的。这意味着产品源代码是免费发布的，可供公共使用。</li>
+</ul>
+<a id="more"></a>
+
+<h1 id="Zabbix-功能"><a href="#Zabbix-功能" class="headerlink" title="Zabbix 功能"></a>Zabbix 功能</h1><p>Zabbix 是一个高度成熟完善的网络监控解决方案，一个的软件包中包含了多种功能。</p>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/config/items" target="_blank" rel="noopener">数据采集</a></strong></p>
+<ul>
+<li>可用性和性能检查；</li>
+<li>支持 SNMP（包括主动轮询和被动捕获）、IPMI、JMX、VMware 监控；</li>
+<li>自定义检查；</li>
+<li>按照自定义的时间间隔采集需要的数据；</li>
+<li>通过 Server/Proxy 和 Agents 来执行数据采集。</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/config/triggers" target="_blank" rel="noopener">灵活的阈值定义</a></strong></p>
+<ul>
+<li>您可以参考后端数据库定义非常灵活的告警阈值，即触发器</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/config/notifications" target="_blank" rel="noopener">高度可配置化的告警</a></strong></p>
+<ul>
+<li>可以根据递增计划、接收者、媒介类型自定义发送告警通知；</li>
+<li>使用宏变量可以使告警通知变得更加高效有用；</li>
+<li>自动操作包含远程执行命令。</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/config/visualisation/graphs/simple" target="_blank" rel="noopener">实时图形</a></strong></p>
+<ul>
+<li>使用内置图形功能可以将监控项实时绘制成图形。</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/web_monitoring" target="_blank" rel="noopener">Web 监控功能</a></strong></p>
+<ul>
+<li>Zabbix可以追踪模拟鼠标在 Web 网站上的点击操作，来检查 Web 网站的功能和响应时间。</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/config/visualisation" target="_blank" rel="noopener">丰富的可视化选项</a></strong></p>
+<ul>
+<li>可以组合多个监控项到单个视图中，创建自定义图表；</li>
+<li>网络拓扑图；</li>
+<li>以仪表盘样式展示自定义聚合图形和幻灯片演示；</li>
+<li>报表；</li>
+<li>监控资源的更高层次展示视图（业务视图）。</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/installation/requirements#database_size" target="_blank" rel="noopener">历史数据存储</a></strong></p>
+<ul>
+<li>存储在数据库中的数据；</li>
+<li>历史配置；</li>
+<li>内置数据管理机制（housekeeping）。</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/config/hosts" target="_blank" rel="noopener">配置简单</a></strong></p>
+<ul>
+<li>将被监控设备添加为主机；</li>
+<li>主机一旦添加到数据库中，就会采集数据用于监控；</li>
+<li>将模板用于监控设备。</li>
+</ul>
+<p><strong>使用<a href="https://www.zabbix.com/documentation/4.0/manual/config/templates" target="_blank" rel="noopener">模板</a></strong></p>
+<ul>
+<li>模板中分组检查；</li>
+<li>模板可以关联模板，继承已关联模板的属性。</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/discovery" target="_blank" rel="noopener">网络发现</a></strong></p>
+<ul>
+<li>自动发现网络设备；</li>
+<li>Zabbix Agent 发现设备后自动注册；</li>
+<li>自动发现文件系统、网络接口和 SNMP OIDs 值。</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/web_interface" target="_blank" rel="noopener">快捷的 Web 界面</a></strong></p>
+<ul>
+<li>基于 PHP 的 Web 前端；</li>
+<li>可以从任何地方访问；</li>
+<li>您可以定制自己的操作方式；</li>
+<li>您可以通过审计日志来查看你的操作。</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/api" target="_blank" rel="noopener">Zabbix API</a></strong></p>
+<ul>
+<li>Zabbix API 为 Zabbix 提供可编程接口，用于批量操作、第三方软件集成和其他用途。</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/config/users_and_usergroups" target="_blank" rel="noopener">权限管理系统</a></strong></p>
+<ul>
+<li>安全的用户身份验证；</li>
+<li>指定的用户只能查看指定的权限范围内的视图。</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/concepts/agent" target="_blank" rel="noopener">功能强大且易于扩展的 Zabbix Agent</a></strong></p>
+<ul>
+<li>部署于被监控对象上；</li>
+<li>支持 Linux 和 Windows ；</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/concepts/server" target="_blank" rel="noopener">二进制守护进程</a></strong></p>
+<ul>
+<li>为了更好的性能和更少的内存占用，采用 C 语言编写；</li>
+<li>便于移植。</li>
+</ul>
+<p><strong><a href="https://www.zabbix.com/documentation/4.0/manual/distributed_monitoring" target="_blank" rel="noopener">适应更复杂的环境</a></strong></p>
+<ul>
+<li>使用 Zabbix Proxy 代理，可以轻松实现分布式远程监控。</li>
+</ul>
+<h1 id="Zabbix-概述"><a href="#Zabbix-概述" class="headerlink" title="Zabbix 概述"></a>Zabbix 概述</h1><h2 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h2><p>Zabbix 由几个主要的功能组件组成，其功能介绍如下所示。</p>
+<h3 id="SERVER"><a href="#SERVER" class="headerlink" title="SERVER"></a>SERVER</h3><p><a href="https://www.zabbix.com/documentation/4.0/manual/concepts/server" target="_blank" rel="noopener">Zabbix server</a> 是 Zabbix软件的核心组件，agent 向其报告可用性、系统完整性信息和统计信息。server也是存储所有配置信息、统计信息和操作信息的核心存储库。</p>
+<h3 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h3><p>所有配置信息以及 Zabbix 采集到的数据都被存储在数据库中。</p>
+<h3 id="WEB-界面"><a href="#WEB-界面" class="headerlink" title="WEB 界面"></a>WEB 界面</h3><p>为了从任何地方和任何平台轻松访问 Zabbix ，我们提供了基于 web 的界面。该界面是 Zabbix server 的一部分，通常（但不一定）和 Zabbix server 运行在同一台物理机器上。</p>
+<h3 id="PROXY"><a href="#PROXY" class="headerlink" title="PROXY"></a>PROXY</h3><p><a href="https://www.zabbix.com/documentation/4.0/manual/concepts/proxy" target="_blank" rel="noopener">Zabbix proxy</a> 可以代替 Zabbix server采集性能和可用性数据。Zabbix proxy在Zabbix的部署是可选部分；但是proxy的部署可以很好的分担单个Zabbix server的负载。</p>
+<h3 id="AGENT"><a href="#AGENT" class="headerlink" title="AGENT"></a>AGENT</h3><p><a href="https://www.zabbix.com/documentation/4.0/manual/concepts/agent" target="_blank" rel="noopener">Zabbix agents</a> 部署在被监控目标上，用于主动监控本地资源和应用程序，并将收集的数据发送给 Zabbix server。</p>
+<h2 id="数据流"><a href="#数据流" class="headerlink" title="数据流"></a>数据流</h2><p>另外，回过头来整体的了解下 Zabbix 内部的数据流对Zabbix的使用也很重要。首先，为了创建一个采集数据的监控项，您就必须先创建主机。其次，在任务的另外一端，必须要有监控项才能创建触发器（trigger），必须要有触发器来创建动作（action）。因此，如果您想要收到类似“X个server上CPU负载过高”这样的告警，您必须首先为 <em>Server X</em> 创建一个主机条目，其次创建一个用于监控其 CPU的监控项，最后创建一个触发器，用来触发 CPU负载过高这个动作，并将其发送到您的邮箱里。虽然这些步骤看起来很繁琐，但是使用模板的话，实际操作非常简单。也正是由于这种设计，使得 Zabbix 的配置变得更加灵活易用。</p>
+<h1 id="软件简介"><a href="#软件简介" class="headerlink" title="软件简介"></a>软件简介</h1><p>以下描述来自<strong>开源中国</strong>：</p>
+<p>Zabbix 是一个基于 WEB 界面的提供分布式系统监视以及网络监视功能的企业级的开源解决方案。</p>
+<p>zabbix能监视各种网络参数，保证服务器系统的安全运营；并提供柔软的通知机制以让系统管理员快速定位/解决存在的各种问题。</p>
+<p><strong>zabbix</strong>由2部分构成，<strong>zabbix server</strong>与可选组件zabbix agent。<br><strong>zabbix server</strong>可以通过SNMP，<strong>zabbix agent</strong>，ping，端口监视等方法提供对远程服务器/网络状态的监视，数据收集等功能，它可以运行在Linux, Solaris, HP-UX, AIX, Free BSD, Open BSD, OS X等平台之上。<br><strong>zabbix agent</strong>需要安装在被监视的目标服务器上，它主要完成对硬件信息或与操作系统有关的内存，CPU等信息的收集。<strong>zabbix agent</strong>可以运行在Linux ,Solaris, HP-UX, AIX, Free BSD, Open BSD, OS X, Tru64/OSF1, Windows NT4.0, Windows 2000/2003/XP/Vista)等系统之上。</p>
+<p><strong>zabbix server</strong>可以单独监视远程服务器的服务状态；同时也可以与<strong>zabbix agent</strong>配合，可以轮询<strong>zabbix agent</strong>主动接收监视数据（trapping方式），同时还可被动接收<strong>zabbix agent</strong>发送的数据（trapping方式）。<br>另外<strong>zabbix server</strong>还支持SNMP (v1,v2)，可以与SNMP软件(例如：net-snmp)等配合使用。</p>
+<h2 id="zabbix的主要特点"><a href="#zabbix的主要特点" class="headerlink" title="zabbix的主要特点"></a>zabbix的主要特点</h2><ul>
+<li>安装与配置简单，学习成本低</li>
+<li>支持多语言（包括中文）</li>
+<li>免费开源</li>
+<li>自动发现服务器与网络设备</li>
+<li>分布式监视以及WEB集中管理功能</li>
+<li>可以无agent监视</li>
+<li>用户安全认证和柔软的授权方式</li>
+<li>通过WEB界面设置或查看监视结果</li>
+<li>email等通知功能</li>
+<li>等等</li>
+</ul>
+<h2 id="Zabbix主要功能"><a href="#Zabbix主要功能" class="headerlink" title="Zabbix主要功能"></a>Zabbix主要功能</h2><ul>
+<li>CPU负荷</li>
+<li>内存使用</li>
+<li>磁盘使用</li>
+<li>网络状况</li>
+<li>端口监视</li>
+<li>日志监视</li>
+</ul>
+<hr>
+<p><a href="https://www.zabbix.com/documentation/5.0/manual/introduction/about" target="_blank" rel="noopener">Zabbix Documentation 5.0 - Introduction</a></p>
+<p><a href="https://www.oschina.net/p/zabbix?hmsr=aladdin1e1" target="_blank" rel="noopener">开源中国- Zabbix软件简介</a></p>
+]]></content>
+      <categories>
+        <category>监控</category>
+        <category>Zabbix</category>
+      </categories>
+      <tags>
+        <tag>监控</tag>
+        <tag>Zabbix</tag>
+        <tag>告警</tag>
+        <tag>开源</tag>
+        <tag>初识</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python 垃圾回收机制</title>
     <url>/2020/06/26/python-garbage-collection/</url>
     <content><![CDATA[<h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>python采用的是<strong>引用计数</strong>机制为主，<strong>标记-清除</strong>和<strong>分代收集</strong>两种机制为辅的策略。</p>
@@ -2599,6 +2795,162 @@
         <tag>Python</tag>
         <tag>垃圾回收</tag>
         <tag>GC</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>理解Python协程(Coroutine)</title>
+    <url>/2020/06/22/python-coroutine/</url>
+    <content><![CDATA[<blockquote>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote>
+<p>由于GIL的存在，导致Python多线程性能甚至比单线程更糟。</p>
+<blockquote>
+<p>GIL: 全局解释器锁（英语：Global Interpreter Lock，缩写GIL），是计算机程序设计语言解释器用于同步线程的一种机制，它使得任何时刻仅有一个线程在执行。[1]即便在多核心处理器上，使用 GIL 的解释器也只允许同一时间执行一个线程。</p>
+</blockquote>
+<p>于是出现了协程（Coroutine）这么个东西。</p>
+<blockquote>
+<p>协程: 协程，又称微线程，纤程，英文名Coroutine。协程的作用，是在执行函数A时，可以随时中断，去执行函数B，然后中断继续执行函数A（可以自由切换）。但这一过程并不是函数调用（没有调用语句），这一整个过程看似像多线程，然而协程只有一个线程执行.</p>
+</blockquote>
+<p>协程由于由程序主动控制切换，没有线程切换的开销，所以执行效率极高。对于IO密集型任务非常适用，如果是cpu密集型，推荐多进程+协程的方式。</p>
+<p>在Python3.4之前，官方没有对协程的支持，存在一些三方库的实现，比如gevent和Tornado。3.4之后就内置了asyncio标准库，官方真正实现了协程这一特性。</p>
+<p>而Python对协程的支持，是通过Generator实现的，协程是遵循某些规则的生成器。因此，我们在了解协程之前，我们先要学习生成器。</p>
+<a id="more"></a>
+
+<h2 id="生成器-Generator"><a href="#生成器-Generator" class="headerlink" title="生成器(Generator)"></a>生成器(Generator)</h2><p>我们这里主要讨论<code>yield</code>和<code>yield from</code>这两个表达式，这两个表达式和协程的实现息息相关。</p>
+<ul>
+<li>Python2.5中引入<code>yield</code>表达式，参见<a href="https://link.zhihu.com/?target=https%3A//www.python.org/dev/peps/pep-0342/">PEP342</a></li>
+<li>Python3.3中增加<code>yield from</code>语法，参见<a href="https://link.zhihu.com/?target=https%3A//www.python.org/dev/peps/pep-0380/">PEP380</a>，</li>
+</ul>
+<p>方法中包含<code>yield</code>表达式后，Python会将其视作generator对象，不再是普通的方法。</p>
+<h3 id="yield表达式的使用"><a href="#yield表达式的使用" class="headerlink" title="yield表达式的使用"></a><code>yield</code>表达式的使用</h3><p>我们先来看该表达式的具体使用：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">()</span>:</span></span><br><span class="line">    print(<span class="string">"generator start"</span>)</span><br><span class="line">    n = <span class="number">1</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        yield_expression_value = <span class="keyword">yield</span> n</span><br><span class="line">        print(<span class="string">"yield_expression_value = %d"</span> % yield_expression_value)</span><br><span class="line">        n += <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># ①创建generator对象</span></span><br><span class="line">generator = test()</span><br><span class="line">print(type(generator))</span><br><span class="line"></span><br><span class="line">print(<span class="string">"\n---------------\n"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># ②启动generator</span></span><br><span class="line">next_result = generator.__next__()</span><br><span class="line">print(<span class="string">"next_result = %d"</span> % next_result)</span><br><span class="line"></span><br><span class="line">print(<span class="string">"\n---------------\n"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># ③发送值给yield表达式</span></span><br><span class="line">send_result = generator.send(<span class="number">666</span>)</span><br><span class="line">print(<span class="string">"send_result = %d"</span> % send_result)</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">&lt;<span class="class"><span class="keyword">class</span> '<span class="title">generator</span>'&gt;</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">---------------</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="title">generator</span> <span class="title">start</span></span></span><br><span class="line">next_result = 1</span><br><span class="line"></span><br><span class="line">---------------</span><br><span class="line"></span><br><span class="line">yield_expression_value = <span class="number">666</span></span><br><span class="line">send_result = <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<p>方法说明：</p>
+<ul>
+<li><code>__next__()</code>方法: 作用是启动或者恢复generator的执行，相当于send(None)</li>
+<li><code>send(value)</code>方法：作用是发送值给yield表达式。启动generator则是调用send(None)</li>
+</ul>
+<p>执行结果的说明：</p>
+<ul>
+<li>①创建generator对象：包含yield表达式的函数将不再是一个函数，调用之后将会返回generator对象</li>
+<li>②启动generator：使用生成器之前需要先调用<code>__next__</code>或者<code>send(None)</code>，否则将报错。启动generator后，代码将执行到<code>yield</code>出现的位置，也就是执行到<code>yield n</code>，然后将n传递到<code>generator.__next__()</code>这行的返回值。（注意，生成器执行到<code>yield n</code>后将暂停在这里，直到下一次生成器被启动）</li>
+<li>③发送值给yield表达式：调用send方法可以发送值给yield表达式，同时恢复生成器的执行。生成器从上次中断的位置继续向下执行，然后遇到下一个<code>yield</code>，生成器再次暂停，切换到主函数打印出send_result。</li>
+</ul>
+<p>理解这个demo的关键是：生成器启动或恢复执行一次，将会在<code>yield</code>处暂停。上面的第②步仅仅执行到了<code>yield n</code>，并没有执行到赋值语句，到了第③步，生成器恢复执行才给<code>yield_expression_value</code>赋值。</p>
+<h3 id="生产者和消费者模型"><a href="#生产者和消费者模型" class="headerlink" title="生产者和消费者模型"></a>生产者和消费者模型</h3><p>上面的例子中，代码中断–&gt;切换执行，体现出了协程的部分特点。</p>
+<p>我们再举一个生产者、消费者的例子，这个例子来自<a href="https://link.zhihu.com/?target=https%3A//www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000/001432090171191d05dae6e129940518d1d6cf6eeaaa969000">廖雪峰的Python教程</a>：</p>
+<blockquote>
+<p>传统的生产者-消费者模型是一个线程写消息，一个线程取消息，通过锁机制控制队列和等待，但一不小心就可能死锁。<br>现在改用协程，生产者生产消息后，直接通过<code>yield</code>跳转到消费者开始执行，待消费者执行完毕后，切换回生产者继续生产，效率极高。</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">consumer</span><span class="params">()</span>:</span></span><br><span class="line">    print(<span class="string">"[CONSUMER] start"</span>)</span><br><span class="line">    r = <span class="string">'start'</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        n = <span class="keyword">yield</span> r</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> n:</span><br><span class="line">            print(<span class="string">"n is empty"</span>)</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        print(<span class="string">"[CONSUMER] Consumer is consuming %s"</span> % n)</span><br><span class="line">        r = <span class="string">"200 ok"</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">producer</span><span class="params">(c)</span>:</span></span><br><span class="line">    <span class="comment"># 启动generator</span></span><br><span class="line">    start_value = c.send(<span class="literal">None</span>)</span><br><span class="line">    print(start_value)</span><br><span class="line">    n = <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> n &lt; <span class="number">3</span>:</span><br><span class="line">        n += <span class="number">1</span></span><br><span class="line">        print(<span class="string">"[PRODUCER] Producer is producing %d"</span> % n)</span><br><span class="line">        r = c.send(n)</span><br><span class="line">        print(<span class="string">'[PRODUCER] Consumer return: %s'</span> % r)</span><br><span class="line">    <span class="comment"># 关闭generator</span></span><br><span class="line">    c.close()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建生成器</span></span><br><span class="line">c = consumer()</span><br><span class="line"><span class="comment"># 传入generator</span></span><br><span class="line">producer(c)</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">[CONSUMER] start</span><br><span class="line">start</span><br><span class="line">[PRODUCER] producer <span class="keyword">is</span> producing <span class="number">1</span></span><br><span class="line">[CONSUMER] consumer <span class="keyword">is</span> consuming <span class="number">1</span></span><br><span class="line">[PRODUCER] Consumer <span class="keyword">return</span>: <span class="number">200</span> ok</span><br><span class="line">[PRODUCER] producer <span class="keyword">is</span> producing <span class="number">2</span></span><br><span class="line">[CONSUMER] consumer <span class="keyword">is</span> consuming <span class="number">2</span></span><br><span class="line">[PRODUCER] Consumer <span class="keyword">return</span>: <span class="number">200</span> ok</span><br><span class="line">[PRODUCER] producer <span class="keyword">is</span> producing <span class="number">3</span></span><br><span class="line">[CONSUMER] consumer <span class="keyword">is</span> consuming <span class="number">3</span></span><br><span class="line">[PRODUCER] Consumer <span class="keyword">return</span>: <span class="number">200</span> ok</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意到<code>consumer</code>函数是一个<code>generator</code>，把一个<code>consumer</code>传入<code>produce</code>后：</p>
+</blockquote>
+<ol>
+<li>首先调用<code>c.send(None)</code>启动生成器；</li>
+<li>然后，一旦生产了东西，通过<code>c.send(n)</code>切换到consumer执行；</li>
+<li><code>consumer</code>通过<code>yield</code>拿到消息，处理，又通过<code>yield</code>把结果传回；</li>
+<li><code>produce</code>拿到<code>consumer</code>处理的结果，继续生产下一条消息；</li>
+<li><code>produce</code>决定不生产了，通过<code>c.close()</code>关闭<code>consumer</code>，整个过程结束。</li>
+</ol>
+<blockquote>
+<p>整个流程无锁，由一个线程执行，<code>produce</code>和<code>consumer</code>协作完成任务，所以称为“协程”，而非线程的抢占式多任务。</p>
+</blockquote>
+<h3 id="yield-from表达式"><a href="#yield-from表达式" class="headerlink" title="yield from表达式"></a><code>yield from</code>表达式</h3><p>Python3.3版本新增<code>yield from</code>语法，新语法用于将一个生成器部分操作委托给另一个生成器。此外，允许子生成器（即yield from后的“参数”）返回一个值，该值可供委派生成器（即包含yield from的生成器）使用。并且在委派生成器中，可对子生成器进行优化。</p>
+<p>我们先来看最简单的应用，例如：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 子生成器</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">(n)</span>:</span></span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> i &lt; n:</span><br><span class="line">        <span class="keyword">yield</span> i</span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 委派生成器</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test_yield_from</span><span class="params">(n)</span>:</span></span><br><span class="line">    print(<span class="string">"test_yield_from start"</span>)</span><br><span class="line">    <span class="keyword">yield</span> <span class="keyword">from</span> test(n)</span><br><span class="line">    print(<span class="string">"test_yield_from end"</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> test_yield_from(<span class="number">3</span>):</span><br><span class="line">    print(i)</span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">test_yield_from start</span><br><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">test_yield_from end</span><br></pre></td></tr></table></figure>
+
+<p>这里我们仅仅给这个生成器添加了一些打印，如果是正式的代码中，你可以添加正常的执行逻辑。</p>
+<p>如果上面的<code>test_yield_from</code>函数中有两个<code>yield from</code>语句，将串行执行。比如将上面的<code>test_yield_from</code>函数改写成这样：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test_yield_from</span><span class="params">(n)</span>:</span></span><br><span class="line">    print(<span class="string">"test_yield_from start"</span>)</span><br><span class="line">    <span class="keyword">yield</span> <span class="keyword">from</span> test(n)</span><br><span class="line">    print(<span class="string">"test_yield_from doing"</span>)</span><br><span class="line">    <span class="keyword">yield</span> <span class="keyword">from</span> test(n)</span><br><span class="line">    print(<span class="string">"test_yield_from end"</span>)</span><br></pre></td></tr></table></figure>
+
+<p>将输出：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">test_yield_from start</span><br><span class="line"><span class="number">0</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">2</span></span><br><span class="line">test_yield_from doing</span><br><span class="line"><span class="number">0</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">2</span></span><br><span class="line">test_yield_from end</span><br></pre></td></tr></table></figure>
+
+<p>在这里，<code>yield from</code>起到的作用相当于下面写法的简写形式</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> test(n):</span><br><span class="line">    <span class="keyword">yield</span> item</span><br></pre></td></tr></table></figure>
+
+<p>看起来这个<code>yield from</code>也没做什么大不了的事，其实它还帮我们处理了异常之类的。具体可以看stackoverflow上的这个问题：<a href="https://link.zhihu.com/?target=https%3A//stackoverflow.com/questions/9708902/in-practice-what-are-the-main-uses-for-the-new-yield-from-syntax-in-python-3">In practice, what are the main uses for the new “yield from” syntax in Python 3.3?</a></p>
+<h2 id="协程-Coroutine"><a href="#协程-Coroutine" class="headerlink" title="协程(Coroutine)"></a>协程(Coroutine)</h2><ul>
+<li>Python3.4开始，新增了asyncio相关的API，语法使用[<code>@asyncio.coroutine](mailto:</code>@asyncio.coroutine)<code>和</code>yield from`实现协程</li>
+<li>Python3.5中引入<code>async</code>/<code>await</code>语法，参见<a href="https://link.zhihu.com/?target=https%3A//www.python.org/dev/peps/pep-0492/">PEP492</a></li>
+</ul>
+<p>我们先来看Python3.4的实现。</p>
+<h3 id="asyncio-coroutine-mailto-asyncio-coroutine"><a href="#asyncio-coroutine-mailto-asyncio-coroutine" class="headerlink" title="[@asyncio.coroutine](mailto:@asyncio.coroutine)`"></a>[<code>@asyncio.coroutine](mailto:</code>@asyncio.coroutine)`</h3><p>Python3.4中，使用[<code>@asyncio.coroutine](mailto:</code>@asyncio.coroutine)`装饰的函数称为协程。不过没有从语法层面进行严格约束。</p>
+<blockquote>
+<p>对装饰器不了解的小伙伴可以看我的上一篇博客–<a href="https://link.zhihu.com/?target=https%3A//www.jianshu.com/p/ee82b941772a">《理解Python装饰器》</a></p>
+</blockquote>
+<p>对于Python原生支持的协程来说，Python对协程和生成器做了一些区分，便于消除这两个不同但相关的概念的歧义：</p>
+<ul>
+<li>标记了[<code>@asyncio.coroutine](mailto:</code>@asyncio.coroutine)<code>装饰器的函数称为协程函数，</code>iscoroutinefunction()`方法返回True</li>
+<li>调用协程函数返回的对象称为协程对象，<code>iscoroutine()</code>函数返回True</li>
+</ul>
+<p>举个栗子，我们给上面<code>yield from</code>的demo中添加[<code>@asyncio.coroutine](mailto:</code>@asyncio.coroutine)`：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="meta">@asyncio.coroutine</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test_yield_from</span><span class="params">(n)</span>:</span></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line"><span class="comment"># 是否是协程函数</span></span><br><span class="line">print(asyncio.iscoroutinefunction(test_yield_from))</span><br><span class="line"><span class="comment"># 是否是协程对象</span></span><br><span class="line">print(asyncio.iscoroutine(test_yield_from(<span class="number">3</span>)))</span><br></pre></td></tr></table></figure>
+
+<p>毫无疑问输出结果是True。</p>
+<p>可以看下[<code>@asyncio.coroutine](mailto:</code>@asyncio.coroutine)`的源码中查看其做了什么，我将其源码简化下，大致如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> functools</span><br><span class="line"><span class="keyword">import</span> types</span><br><span class="line"><span class="keyword">import</span> inspect</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">coroutine</span><span class="params">(func)</span>:</span></span><br><span class="line">    <span class="comment"># 判断是否是生成器</span></span><br><span class="line">    <span class="keyword">if</span> inspect.isgeneratorfunction(func):</span><br><span class="line">        coro = func</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="comment"># 将普通函数变成generator</span></span><br><span class="line"><span class="meta">        @functools.wraps(func)</span></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">coro</span><span class="params">(*args, **kw)</span>:</span></span><br><span class="line">            res = func(*args, **kw)</span><br><span class="line">            res = <span class="keyword">yield</span> <span class="keyword">from</span> res</span><br><span class="line">            <span class="keyword">return</span> res</span><br><span class="line">    <span class="comment"># 将generator转换成coroutine</span></span><br><span class="line">    wrapper = types.coroutine(coro)</span><br><span class="line">    <span class="comment"># For iscoroutinefunction().</span></span><br><span class="line">    wrapper._is_coroutine = <span class="literal">True</span></span><br><span class="line">    <span class="keyword">return</span> wrapper</span><br></pre></td></tr></table></figure>
+
+<p>将这个装饰器标记在一个生成器上，就会将其转换成coroutine。</p>
+<p>然后，我们来实际使用下[<code>@asyncio.coroutine](mailto:</code>@asyncio.coroutine)<code>和</code>yield from`：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"></span><br><span class="line"><span class="meta">@asyncio.coroutine</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">compute</span><span class="params">(x, y)</span>:</span></span><br><span class="line">    print(<span class="string">"Compute %s + %s ..."</span> % (x, y))</span><br><span class="line">    <span class="keyword">yield</span> <span class="keyword">from</span> asyncio.sleep(<span class="number">1.0</span>)</span><br><span class="line">    <span class="keyword">return</span> x + y</span><br><span class="line"></span><br><span class="line"><span class="meta">@asyncio.coroutine</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">print_sum</span><span class="params">(x, y)</span>:</span></span><br><span class="line">    result = <span class="keyword">yield</span> <span class="keyword">from</span> compute(x, y)</span><br><span class="line">    print(<span class="string">"%s + %s = %s"</span> % (x, y, result))</span><br><span class="line"></span><br><span class="line">loop = asyncio.get_event_loop()</span><br><span class="line">print(<span class="string">"start"</span>)</span><br><span class="line"><span class="comment"># 中断调用，直到协程执行结束</span></span><br><span class="line">loop.run_until_complete(print_sum(<span class="number">1</span>, <span class="number">2</span>))</span><br><span class="line">print(<span class="string">"end"</span>)</span><br><span class="line">loop.close()</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">start</span><br><span class="line">Compute <span class="number">1</span> + <span class="number">2</span> ...</span><br><span class="line"><span class="number">1</span> + <span class="number">2</span> = <span class="number">3</span></span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<p><code>print_sum</code>这个协程中调用了子协程<code>compute</code>，它将等待<code>compute</code>执行结束才返回结果。</p>
+<p>这个demo点调用流程如下图：</p>
+<p><img data-src="https://pic2.zhimg.com/v2-551d0dabcd42f19f957835b19d2504d9_b.jpg" alt="img"></p>
+<p>EventLoop将会把<code>print_sum</code>封装成Task对象</p>
+<p>流程图展示了这个demo的控制流程，不过没有展示其全部细节。比如其中“暂停”的1s，实际上创建了一个future对象, 然后通过<code>BaseEventLoop.call_later()</code>在1s后唤醒这个任务。</p>
+<p>值得注意的是，[<code>@asyncio.coroutine](mailto:</code>@asyncio.coroutine)`将在Python3.10版本中移除。</p>
+<h3 id="async-await"><a href="#async-await" class="headerlink" title="async/await"></a><code>async</code>/<code>await</code></h3><p>Python3.5开始引入<code>async</code>/<code>await</code>语法（<a href="https://link.zhihu.com/?target=https%3A//www.python.org/dev/peps/pep-0492">PEP 492</a>），用来简化协程的使用并且便于理解。</p>
+<p><code>async</code>/<code>await</code>实际上只是[<code>@asyncio.coroutine](mailto:</code>@asyncio.coroutine)<code>和</code>yield from`的语法糖：</p>
+<ul>
+<li>把[<code>@asyncio.coroutine](mailto:</code>@asyncio.coroutine)<code>替换为</code>async`</li>
+<li>把<code>yield from</code>替换为<code>await</code></li>
+</ul>
+<p>即可。</p>
+<p>比如上面的例子：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">compute</span><span class="params">(x, y)</span>:</span></span><br><span class="line">    print(<span class="string">"Compute %s + %s ..."</span> % (x, y))</span><br><span class="line">    <span class="keyword">await</span> asyncio.sleep(<span class="number">1.0</span>)</span><br><span class="line">    <span class="keyword">return</span> x + y</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">print_sum</span><span class="params">(x, y)</span>:</span></span><br><span class="line">    result = <span class="keyword">await</span> compute(x, y)</span><br><span class="line">    print(<span class="string">"%s + %s = %s"</span> % (x, y, result))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">loop = asyncio.get_event_loop()</span><br><span class="line">print(<span class="string">"start"</span>)</span><br><span class="line">loop.run_until_complete(print_sum(<span class="number">1</span>, <span class="number">2</span>))</span><br><span class="line">print(<span class="string">"end"</span>)</span><br><span class="line">loop.close()</span><br></pre></td></tr></table></figure>
+
+<p>我们再来看一个asyncio中Future的例子：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"></span><br><span class="line">future = asyncio.Future()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">coro1</span><span class="params">()</span>:</span></span><br><span class="line">    print(<span class="string">"wait 1 second"</span>)</span><br><span class="line">    <span class="keyword">await</span> asyncio.sleep(<span class="number">1</span>)</span><br><span class="line">    print(<span class="string">"set_result"</span>)</span><br><span class="line">    future.set_result(<span class="string">'data'</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">coro2</span><span class="params">()</span>:</span></span><br><span class="line">    result = <span class="keyword">await</span> future</span><br><span class="line">    print(result)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">loop = asyncio.get_event_loop()</span><br><span class="line">loop.run_until_complete(asyncio.wait([</span><br><span class="line">    coro1()</span><br><span class="line">    coro2()</span><br><span class="line">]))</span><br><span class="line">loop.close()</span><br></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">wait <span class="number">1</span> second</span><br><span class="line">(大约等待<span class="number">1</span>秒)</span><br><span class="line">set_result</span><br><span class="line">data</span><br></pre></td></tr></table></figure>
+
+<p>这里await后面跟随的future对象，协程中yield from或者await后面可以调用future对象，其作用是：暂停协程，直到future执行结束或者返回result或抛出异常。</p>
+<p>而在我们的例子中，<code>await future</code>必须要等待<code>future.set_result(&#39;data&#39;)</code>后才能够结束。将<code>coro2()</code>作为第二个协程可能体现得不够明显，可以将协程的调用改成这样：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">loop = asyncio.get_event_loop()</span><br><span class="line">loop.run_until_complete(asyncio.wait([</span><br><span class="line">    <span class="comment"># coro1(),</span></span><br><span class="line">    coro2(),</span><br><span class="line">    coro1()</span><br><span class="line">]))</span><br><span class="line">loop.close()</span><br></pre></td></tr></table></figure>
+
+<p>输出的结果仍旧与上面相同。</p>
+<p>其实，<code>async</code>这个关键字的用法不止能用在函数上，还有<code>async with</code>异步上下文管理器，<code>async for</code>异步迭代器. 对这些感兴趣且觉得有用的可以网上找找资料，这里限于篇幅就不过多展开了。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文就生成器和协程做了一些学习、探究和总结，不过并没有做过多深入深入的研究。权且作为入门到一个笔记，之后将会尝试自己实现一下异步API，希望有助于理解学习。</p>
+<hr>
+<p>参考链接：</p>
+<p><a href="https://zhuanlan.zhihu.com/p/68043798" target="_blank" rel="noopener">理解<em>Python协程</em>(Coroutine)</a></p>
+<p><a href="https://eastlakeside.gitbook.io/interpy-zh/coroutines" target="_blank" rel="noopener">Python进阶 - 协程</a></p>
+<p><a href="https://www.liaoxuefeng.com/wiki/897692888725344/923057403198272" target="_blank" rel="noopener">廖雪峰 - Python协程</a></p>
+]]></content>
+      <categories>
+        <category>Python</category>
+        <category>协程</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>协程</tag>
+        <tag>生成器</tag>
       </tags>
   </entry>
   <entry>

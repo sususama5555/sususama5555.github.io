@@ -29,31 +29,38 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"api.ddoudou.xyz","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#ff7600","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"notspr.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#ff7600","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="前言 最近工作中和Zabbix打了不少交道，大概分为两个用途。 一种是对接它的API接口，例如创建账号、媒介、触发器、动作等，这种比较简单，照着API文档来就行了，这里不多赘述。 另一种就是，使用python脚本创建一套Zabbix告警推送的流程，将超过阈值的Zabbix告警按照指定的流程和动作推送到告警中心，而告警中心使用Zabbix作为其中一个告警源，不断拉取并且分发告警。这应该属于监控、告">
+  <meta name="description" content="前言 最近工作中和Zabbix打了不少交道，大概分为两个用途。 一种是对接它的API接口，例如创建账号、媒介、触发器、动作等，这种比较简单，照着API文档来就行了，这里不多赘述。 另一种就是，使用Python脚本创建一套Zabbix告警推送的流程，将超过阈值的Zabbix告警按照指定的流程和动作推送到告警中心，而告警中心使用Zabbix作为其中一个告警源，不断拉取并且分发告警。这应该属于监控、告">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Zabbix安装与部署">
-<meta property="og:url" content="http://api.ddoudou.xyz/2020/12/01/zabbix-install-deploy/index.html">
+<meta property="og:url" content="https://notspr.com/2020/12/01/zabbix-install-deploy/index.html">
 <meta property="og:site_name" content="Sapphire">
-<meta property="og:description" content="前言 最近工作中和Zabbix打了不少交道，大概分为两个用途。 一种是对接它的API接口，例如创建账号、媒介、触发器、动作等，这种比较简单，照着API文档来就行了，这里不多赘述。 另一种就是，使用python脚本创建一套Zabbix告警推送的流程，将超过阈值的Zabbix告警按照指定的流程和动作推送到告警中心，而告警中心使用Zabbix作为其中一个告警源，不断拉取并且分发告警。这应该属于监控、告">
+<meta property="og:description" content="前言 最近工作中和Zabbix打了不少交道，大概分为两个用途。 一种是对接它的API接口，例如创建账号、媒介、触发器、动作等，这种比较简单，照着API文档来就行了，这里不多赘述。 另一种就是，使用Python脚本创建一套Zabbix告警推送的流程，将超过阈值的Zabbix告警按照指定的流程和动作推送到告警中心，而告警中心使用Zabbix作为其中一个告警源，不断拉取并且分发告警。这应该属于监控、告">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://api.ddoudou.xyz/2020/12/01/zabbix-install-deploy/character-error.png">
-<meta property="og:image" content="http://api.ddoudou.xyz/2020/12/01/zabbix-install-deploy/mysql-cfg.png">
-<meta property="og:image" content="http://api.ddoudou.xyz/2020/12/01/zabbix-install-deploy/utf8mb4.png">
+<meta property="og:image" content="https://notspr.com/2020/12/01/zabbix-install-deploy/character-error.png">
+<meta property="og:image" content="https://notspr.com/2020/12/01/zabbix-install-deploy/mysql-cfg.png">
+<meta property="og:image" content="https://notspr.com/2020/12/01/zabbix-install-deploy/utf8mb4.png">
+<meta property="og:image" content="https://notspr.com/2020/12/01/zabbix-install-deploy/nginx-error.png">
+<meta property="og:image" content="https://notspr.com/2020/12/01/zabbix-install-deploy/install_1.png">
+<meta property="og:image" content="https://notspr.com/2020/12/01/zabbix-install-deploy/install_2.png">
+<meta property="og:image" content="https://notspr.com/2020/12/01/zabbix-install-deploy/install_3.png">
+<meta property="og:image" content="https://notspr.com/2020/12/01/zabbix-install-deploy/login.png">
+<meta property="og:image" content="https://notspr.com/2020/12/01/zabbix-install-deploy/zabbix-home.png">
 <meta property="article:published_time" content="2020-11-30T16:05:19.000Z">
-<meta property="article:modified_time" content="2020-11-30T17:47:32.315Z">
+<meta property="article:modified_time" content="2020-12-01T16:48:58.231Z">
 <meta property="article:author" content="Ryan Shu">
 <meta property="article:tag" content="监控">
 <meta property="article:tag" content="Zabbix">
 <meta property="article:tag" content="告警">
+<meta property="article:tag" content="开源">
 <meta property="article:tag" content="阿里云">
 <meta property="article:tag" content="安装部署">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://api.ddoudou.xyz/2020/12/01/zabbix-install-deploy/character-error.png">
+<meta name="twitter:image" content="https://notspr.com/2020/12/01/zabbix-install-deploy/character-error.png">
 
-<link rel="canonical" href="http://api.ddoudou.xyz/2020/12/01/zabbix-install-deploy/">
+<link rel="canonical" href="https://notspr.com/2020/12/01/zabbix-install-deploy/">
 
 
 <script id="page-configurations">
@@ -159,17 +166,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">57</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">61</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">29</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">30</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">29</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">31</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -227,7 +234,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://api.ddoudou.xyz/2020/12/01/zabbix-install-deploy/">
+    <link itemprop="mainEntityOfPage" href="https://notspr.com/2020/12/01/zabbix-install-deploy/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/picture/avatar.jpg">
@@ -272,14 +279,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>4.7k</span>
+              <span>5.9k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
+              <span>5 分钟</span>
             </span>
 
         </div>
@@ -295,61 +302,58 @@
 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1></blockquote>
 <p>最近工作中和<code>Zabbix</code>打了不少交道，大概分为两个用途。</p>
 <p>一种是对接它的API接口，例如创建账号、媒介、触发器、动作等，这种比较简单，照着API文档来就行了，这里不多赘述。</p>
-<p>另一种就是，使用python脚本创建一套Zabbix告警推送的流程，将超过阈值的Zabbix告警按照指定的流程和动作推送到告警中心，而告警中心使用Zabbix作为其中一个告警源，不断拉取并且分发告警。这应该属于监控、告警等最常见的自动化运维的场景了，我对此也比较感兴趣，所有想从Zabbix较为基础的单机版安装及部署学习，也就有了这篇文章。</p>
+<p>另一种就是，使用Python脚本创建一套Zabbix告警推送的流程，将超过阈值的Zabbix告警按照指定的流程和动作推送到告警中心，而告警中心使用Zabbix作为其中一个告警源，不断拉取并且分发告警。这应该属于监控、告警等最常见的自动化运维的场景了，我对此也比较感兴趣，所有想从Zabbix较为基础的单机版安装及部署学习，也就有了这篇文章。</p>
 <p>事先已在本地开发环境的虚拟机中安装与部署成功，现在期望将Zabbix部署到阿里云的机器上。</p>
+<p><strong><em>注意：安装部署时，由于环境和版本的问题也踩了不少坑，希望能给读者一些启示。</em></strong></p>
 <a id="more"></a>
 
 <blockquote>
 <h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1></blockquote>
 <p>这里我们按照官方文档的指引进行安装</p>
 <p>官方地址：<a href="https://www.zabbix.com/download" target="_blank" rel="noopener">https://www.zabbix.com/download</a></p>
-<p>由于本人的阿里云服务器的预先环境为CentOS 7 + Mysql + Nginx，所以这里不再折腾，直接使用这一套最常用的配置。</p>
-<p>由于Zabbix 5.2是最新版本，安装指引和资料也比较少，处于稳定考虑，最终选择Zaabix 5.0 LTS版本。</p>
+<p>由于本人的阿里云服务器的预先环境为<code>CentOS 7</code> + <code>MySQL</code>+ <code>Nginx</code>，所以这里不再折腾，直接使用这一套最常用的配置。</p>
+<p>由于Zabbix 5.2是最新版本，安装指引和资料也比较少，处于稳定考虑，最终选择<code>Zaabix 5.0 LTS</code>版本。</p>
 <p>PS:工作接触的5.0和5.2都有。</p>
-<h2 id="Install-and-configure-Zabbix-server-for-your-platform"><a href="#Install-and-configure-Zabbix-server-for-your-platform" class="headerlink" title="Install and configure Zabbix server for your platform"></a>Install and configure Zabbix server for your platform</h2><h3 id="a-Install-Zabbix-repository（安装Zabbix-yum-源）"><a href="#a-Install-Zabbix-repository（安装Zabbix-yum-源）" class="headerlink" title="a. Install Zabbix repository（安装Zabbix yum 源）"></a>a. Install Zabbix repository（安装Zabbix yum 源）</h3><p>官方文档：<a href="https://www.zabbix.com/documentation/5.0/manual/installation/install_from_packages" target="_blank" rel="noopener">Documentation</a></p>
-<h4 id="官方yum源"><a href="#官方yum源" class="headerlink" title="官方yum源"></a>官方yum源</h4><p>以下是官方推荐的zabbix yum源，不过在国内使用比较麻烦，下载速度慢且经常连接超时。所以推荐使用阿里云的zabbix yum 源</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># rpm -Uvh https:&#x2F;&#x2F;repo.zabbix.com&#x2F;zabbix&#x2F;5.0&#x2F;rhel&#x2F;7&#x2F;x86_64&#x2F;zabbix-release-5.0-1.el7.noarch.rpm</span><br><span class="line"># yum clean all</span><br></pre></td></tr></table></figure>
+<h2 id="安装Zabbix-yum-源"><a href="#安装Zabbix-yum-源" class="headerlink" title="安装Zabbix yum 源"></a>安装Zabbix yum 源</h2><p>官方文档：<a href="https://www.zabbix.com/documentation/5.0/manual/installation/install_from_packages" target="_blank" rel="noopener">Documentation</a></p>
+<h3 id="官方yum源"><a href="#官方yum源" class="headerlink" title="官方yum源"></a>官方yum源</h3><p>以下是官方推荐的Zabbix yum源，不过在国内使用比较麻烦，下载速度慢且经常连接超时。所以推荐使用阿里云的Zabbix yum 源</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rpm -Uvh https://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/zabbix-release-5.0-1.el7.noarch.rpm</span><br><span class="line">yum clean all</span><br></pre></td></tr></table></figure>
 
-<h4 id="阿里云yum源"><a href="#阿里云yum源" class="headerlink" title="阿里云yum源"></a>阿里云yum源</h4><p>下载地址：<a href="https://mirrors.aliyun.com/zabbix/" target="_blank" rel="noopener">https://mirrors.aliyun.com/zabbix/</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># rpm -Uvh https:&#x2F;&#x2F;mirrors.aliyun.com&#x2F;zabbix&#x2F;zabbix&#x2F;5.0&#x2F;rhel&#x2F;7&#x2F;x86_64&#x2F;zabbix-release-5.0-1.el7.noarch.rpm</span><br><span class="line"># yum clean all</span><br></pre></td></tr></table></figure>
+<h3 id="阿里云yum源"><a href="#阿里云yum源" class="headerlink" title="阿里云yum源"></a>阿里云yum源</h3><p>下载地址：<a href="https://mirrors.aliyun.com/zabbix/" target="_blank" rel="noopener">https://mirrors.aliyun.com/zabbix/</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rpm -Uvh https://mirrors.aliyun.com/zabbix/zabbix/5.0/rhel/7/x86_64/zabbix-release-5.0-1.el7.noarch.rpm</span><br><span class="line">yum clean all</span><br></pre></td></tr></table></figure>
 
 <p>打开/etc/yum.repos.d/zabbix.repo，把所有的“<a href="https://repo.zabbix.com/zabbix/”" target="_blank" rel="noopener">https://repo.zabbix.com/zabbix/”</a> 改成 “<a href="https://mirrors.aliyun.com/zabbix/”" target="_blank" rel="noopener">https://mirrors.aliyun.com/zabbix/”</a> （除了zabbix-non-supported，其他的分支的URL都有两个zabbix）</p>
-<h3 id="b-Install-Zabbix-server-and-agent（安装Zabbix-server-和agent）"><a href="#b-Install-Zabbix-server-and-agent（安装Zabbix-server-和agent）" class="headerlink" title="b. Install Zabbix server and agent（安装Zabbix server 和agent）"></a>b. Install Zabbix server and agent（安装Zabbix server 和agent）</h3><p>换了yum源应该安装很快，使用 -y 跳过选择</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># yum install -y zabbix-server-mysql zabbix-agent</span><br></pre></td></tr></table></figure>
+<h2 id="安装Zabbix-server-和agent"><a href="#安装Zabbix-server-和agent" class="headerlink" title="安装Zabbix server 和agent"></a>安装Zabbix server 和agent</h2><p>换了yum源应该安装很快，使用 -y 跳过选择</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y zabbix-server-mysql zabbix-agent</span><br></pre></td></tr></table></figure>
 
-<h3 id="c-Install-Zabbix-frontend（安装Zabbix-前端）"><a href="#c-Install-Zabbix-frontend（安装Zabbix-前端）" class="headerlink" title="c. Install Zabbix frontend（安装Zabbix 前端）"></a>c. Install Zabbix frontend（安装Zabbix 前端）</h3><p><a href="https://www.zabbix.com/documentation/5.0/manual/installation/frontend/frontend_on_rhel7" target="_blank" rel="noopener">Documentation</a></p>
-<p>Zabbix 使用php写的，所以有单独的安装过程：</p>
-<p>Enable Red Hat Software Collections.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># yum install centos-release-scl</span><br></pre></td></tr></table></figure>
+<h2 id="安装Zabbix-前端"><a href="#安装Zabbix-前端" class="headerlink" title="安装Zabbix 前端"></a>安装Zabbix 前端</h2><p><a href="https://www.zabbix.com/documentation/5.0/manual/installation/frontend/frontend_on_rhel7" target="_blank" rel="noopener">Documentation</a></p>
+<p>Zabbix 使用<code>php</code>写的，所以有单独的安装过程：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install centos-release-scl</span><br></pre></td></tr></table></figure>
 
-<p>Edit file /etc/yum.repos.d/zabbix.repo and enable zabbix-frontend repository.</p>
-<p>编辑该配置文件 /etc/yum.repos.d/zabbix.repo，使得enabled=1。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[zabbix-frontend]...enabled&#x3D;1...</span><br></pre></td></tr></table></figure>
+<p>编辑该配置文件 <code>/etc/yum.repos.d/zabbix.repo</code>，使得enabled=1。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[zabbix-frontend]...enabled=1...</span><br></pre></td></tr></table></figure>
 
-<p>Install Zabbix frontend packages.</p>
 <p>下载安装Zabbix 前端依赖。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># yum install zabbix-web-mysql-scl zabbix-nginx-conf-scl</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install zabbix-web-mysql-scl zabbix-nginx-conf-scl</span><br></pre></td></tr></table></figure>
 
-<h3 id="d-Create-initial-database（创建初始数据库）"><a href="#d-Create-initial-database（创建初始数据库）" class="headerlink" title="d. Create initial database（创建初始数据库）"></a>d. Create initial database（创建初始数据库）</h3><p><a href="https://www.zabbix.com/documentation/5.0/manual/appendix/install/db_scripts" target="_blank" rel="noopener">Documentation</a></p>
-<p>Run the following on your database host.</p>
-<p>在数据库主机上运行以下代码，目的是在本地mysql数据库中创建zabbix账号和同名数据库，并且赋予相应权限。</p>
+<h2 id="创建初始数据库"><a href="#创建初始数据库" class="headerlink" title="创建初始数据库"></a>创建初始数据库</h2><p><a href="https://www.zabbix.com/documentation/5.0/manual/appendix/install/db_scripts" target="_blank" rel="noopener">Documentation</a></p>
+<p>在数据库主机上运行以下代码，目的是在本地MySQL数据库中创建zabbix账号和同名数据库，并且赋予相应权限。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># mysql -uroot -p</span><br><span class="line">password</span><br><span class="line">mysql&gt; create database zabbix character set utf8 collate utf8_bin;</span><br><span class="line">mysql&gt; create user zabbix@localhost identified by &#39;password&#39;;</span><br><span class="line">mysql&gt; grant all privileges on zabbix.* to zabbix@localhost;</span><br><span class="line">mysql&gt; quit;</span><br></pre></td></tr></table></figure>
 
-<p>On Zabbix server host import initial schema and data. You will be prompted to enter your newly created password.</p>
 <p>导入初始架构和数据，系统将提示您输入新创建的密码。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -uzabbix -p zabbix</span><br></pre></td></tr></table></figure>
 
-<p>TODO 其中遇到了问题，愿意是以上语句执行时，发生以下报错：</p>
+<h3 id="x1F449-ATTENTION-ONE"><a href="#x1F449-ATTENTION-ONE" class="headerlink" title="&#x1F449; ATTENTION ONE"></a>&#x1F449; <strong><em>ATTENTION ONE</em></strong></h3><p>以下就是踩坑了：</p>
+<p>执行上一条命令时，MySQL导入数据与结构不成功，发生以下报错：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ERROR 1071 (42000) at line 90: Specified key was too long; max key length is 767 bytes</span><br></pre></td></tr></table></figure>
 
 <img data-src="/2020/12/01/zabbix-install-deploy/character-error.png" class>
 
-<p>应该是mysql字符集的报错，所以去查了Stack Overflow后，可以在mysql命令行中，使用<code>show variables like &#39;character%&#39;</code>查询默认字符集，结果发现许多编码为utf-8。</p>
+<h4 id="错误做法"><a href="#错误做法" class="headerlink" title="错误做法"></a>错误做法</h4><p>初步判断是MySQL字符集的问题，所以去查了 <strong>*<u>Stack Overflow</u>*</strong> 后，在MySQL命令行中，使用<code>show variables like &#39;character%&#39;</code>查询默认字符集，结果发现许多编码为utf-8。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># mysql -uroot -p</span><br><span class="line">password</span><br><span class="line">mysql&gt; show variables like &#39;character%&#39;;</span><br><span class="line">+--------------------------+----------------------------+</span><br><span class="line">| Variable_name            | Value                      |</span><br><span class="line">+--------------------------+----------------------------+</span><br><span class="line">| character_set_client     | utf8                       |</span><br><span class="line">| character_set_connection | utf8                       |</span><br><span class="line">| character_set_database   | latin1                     |</span><br><span class="line">| character_set_filesystem | binary                     |</span><br><span class="line">| character_set_results    | utf8                       |</span><br><span class="line">| character_set_server     | latin1                     |</span><br><span class="line">| character_set_system     | utf8                       |</span><br><span class="line">| character_sets_dir       | &#x2F;usr&#x2F;share&#x2F;mysql&#x2F;charsets&#x2F; |</span><br><span class="line">+--------------------------+----------------------------+</span><br><span class="line">8 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
 
 <p><strong>*<u>原因分析：</u>*</strong></p>
-<p>MySQL的varchar主键只支持不超过767个字节，需要将mysql的字符编码设置为utf8mb4</p>
-<p>使用<code>vim /etc/my.cnf</code>编辑mysql配置文件（不同系统、安装方式和mysql版本会造成差异）</p>
+<p>MySQL的varchar主键只支持不超过767个字节，需要将MySQL的字符编码设置为<code>utf8mb4</code></p>
+<p>使用<code>vim /etc/my.cnf</code>编辑MySQL配置文件（不同系统、安装方式和MySQL版本会造成差异）</p>
 <p>在[mysqld]下加入以下配置：</p>
 <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">innodb_file_format</span>=barracuda  </span><br><span class="line"><span class="attr">innodb_file_per_table</span>=<span class="literal">true</span>  </span><br><span class="line"><span class="attr">innodb_large_prefix</span>=<span class="literal">true</span>  </span><br><span class="line"><span class="attr">character-set-server</span>=utf8mb4  </span><br><span class="line"><span class="attr">collation-server</span>=utf8mb4_unicode_ci  </span><br><span class="line"><span class="attr">max_allowed_packet</span>=<span class="number">500</span>M</span><br></pre></td></tr></table></figure>
 
@@ -359,28 +363,78 @@
 <p>现在重新执行Zabbix创建初始数据库这一步，但是又有新的问题，还是字符集的报错：</p>
 <img data-src="/2020/12/01/zabbix-install-deploy/utf8mb4.png" class>
 
-<p>现在是说索引列大小超出，这就与第一次的报错相反。这就很恶心了，未完待续。</p>
-<h3 id="e-Configure-the-database-for-Zabbix-server（为Zabbix-server配置数据库）"><a href="#e-Configure-the-database-for-Zabbix-server（为Zabbix-server配置数据库）" class="headerlink" title="e. Configure the database for Zabbix server（为Zabbix server配置数据库）"></a>e. Configure the database for Zabbix server（为Zabbix server配置数据库）</h3><p>Edit file /etc/zabbix/zabbix_server.conf</p>
-<p>编辑配置文件 /etc/zabbix/zabbix_server.conf，将刚才设置的密码填入该配置文件。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DBPassword&#x3D;password</span><br></pre></td></tr></table></figure>
+<p>现在出现索引列大小超出的问题，这就与之前的报错相反，这就很恶心了。</p>
+<h4 id="正确做法"><a href="#正确做法" class="headerlink" title="正确做法"></a>正确做法</h4><p>到这里才发现不对劲，有点南辕北辙的感觉，为什么我在个人Linux虚拟机上就能数据迁移成功？</p>
+<p>这肯定是MySQL的问题，所以对比检查云服务器和虚拟机的版本、配置等信息。</p>
+<p>果不其然，正常的虚拟机是MySQL5.7版本的，而有问题的云服务器是MySQL5.6版本的，除此之外，默认编码等配置都一模一样。所以定位到了MySQL5.7和MySQL5.6的差异：</p>
+<p>5.7除了比5.6性能更强、功能更丰富，其中5.7的索引长度也增加了，这就是报错的问题所在，所以折腾来折腾去，升级MySQL版本完美解决。</p>
+<p><strong>*<u>升级方案：</u>*</strong></p>
+<h5 id="首先全库备份mysql-5-6"><a href="#首先全库备份mysql-5-6" class="headerlink" title="首先全库备份mysql 5.6"></a>首先全库备份mysql 5.6</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump -uroot -p123456 --all-databases &gt; /root/mysql_all.sql</span><br></pre></td></tr></table></figure>
 
-<h3 id="f-Configure-PHP-for-Zabbix-frontend（为Zabbix前端配置PHP）"><a href="#f-Configure-PHP-for-Zabbix-frontend（为Zabbix前端配置PHP）" class="headerlink" title="f. Configure PHP for Zabbix frontend（为Zabbix前端配置PHP）"></a>f. Configure PHP for Zabbix frontend（为Zabbix前端配置PHP）</h3><p>Edit file /etc/opt/rh/rh-nginx116/nginx/conf.d/zabbix.conf, uncomment and set ‘listen’ and ‘server_name’ directives.</p>
-<p>编辑配置文件 /etc/opt/rh/rh-nginx116/nginx/conf.d/zabbix.conf，取消其中listen和server_name的注释。此处就是我们非常熟悉的Nginx，配置反向代理监听的端口和域名。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># listen 80;</span><br><span class="line"># server_name example.com;</span><br></pre></td></tr></table></figure>
+<h5 id="yum配置mysql-5-7"><a href="#yum配置mysql-5-7" class="headerlink" title="yum配置mysql 5.7"></a>yum配置mysql 5.7</h5><p>可以直接使用<code>yum</code>安装，或者源码安装，但是<code>yum</code>安装是非常平滑的升级，数据库和配置文件都不用改，强烈推荐。</p>
+<p>但是首先需要修改MySQL相关的yum源文件，因为5.6版本会默认屏蔽5.7的源，在以下两个文件中，将5.7设置为<code>enable=1</code>，5.6修改为<code>enable=0</code>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/yum.repos.d/mysql-community.repo</span><br><span class="line">vim /etc/yum.repos.d/mysql-community-source.repo</span><br></pre></td></tr></table></figure>
 
-<p>Edit file /etc/opt/rh/rh-php72/php-fpm.d/zabbix.conf, add nginx to listen.acl_users directive.</p>
-<p>编辑配置文件 /etc/opt/rh/rh-php72/php-fpm.d/zabbix.conf, 将nginx添加到listen.acl_users配置项中。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">listen.acl_users &#x3D; apache,nginx</span><br></pre></td></tr></table></figure>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># <span class="doctag">Note:</span> MySQL 5.7 is currently in development. For use at your own risk.</span></span><br><span class="line"><span class="comment"># Please read with sub pages: https://dev.mysql.com/doc/relnotes/mysql/5.7/en/</span></span><br><span class="line"><span class="section">[mysql57-community-dmr]</span></span><br><span class="line"><span class="attr">name</span>=MySQL <span class="number">5.7</span> Community Server Development Milestone Release</span><br><span class="line"><span class="attr">baseurl</span>=http://repo.mysql.com/yum/mysql-<span class="number">5.7</span>-community/el/<span class="number">7</span>/<span class="variable">$basearch</span>/</span><br><span class="line"><span class="attr">enabled</span>=<span class="number">1</span></span><br><span class="line"><span class="attr">gpgcheck</span>=<span class="number">1</span></span><br><span class="line"><span class="attr">gpgkey</span>=file:/etc/pki/rpm-gpg/RPM-GPG-KEY-mysql</span><br></pre></td></tr></table></figure>
 
-<p>Then uncomment and set the right timezone for you.</p>
-<p>最后取消最后一行的注释（注意注释为分号），我们也可以将市区设置为Asia/Shanghai</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">; php_value[date.timezone] &#x3D; Asia&#x2F;Shanghai</span><br></pre></td></tr></table></figure>
+<p>然后<code>yum clean all</code>清除<code>yum</code>缓存</p>
+<h5 id="yum安装mysql-5-7"><a href="#yum安装mysql-5-7" class="headerlink" title="yum安装mysql 5.7"></a>yum安装mysql 5.7</h5><p><code>yum install mysql</code> 或者 <code>yum upgrade mysql-server</code> 应该都可以升级成功&#x1F308;</p>
+<p>升级完就可以直接使用啦，重复<strong><u><em>创建初始数据库</em></u></strong> 完成这一步。</p>
+<h2 id="为Zabbix-server配置数据库"><a href="#为Zabbix-server配置数据库" class="headerlink" title="为Zabbix server配置数据库"></a>为Zabbix server配置数据库</h2><p>编辑配置文件 <code>/etc/zabbix/zabbix_server.conf</code>，将刚才设置的密码填入该配置文件。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">DBPassword</span>=password</span><br></pre></td></tr></table></figure>
 
-<h3 id="g-Start-Zabbix-server-and-agent-processes（启动Zabbix-server和agent进程）"><a href="#g-Start-Zabbix-server-and-agent-processes（启动Zabbix-server和agent进程）" class="headerlink" title="g. Start Zabbix server and agent processes（启动Zabbix server和agent进程）"></a>g. Start Zabbix server and agent processes（启动Zabbix server和agent进程）</h3><p>Start Zabbix server and agent processes and make it start at system boot.</p>
-<p>启动Zabbix server和agent进程，并为它们设置开机自启：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># systemctl restart zabbix-server zabbix-agent rh-nginx116-nginx rh-php72-php-fpm</span><br><span class="line"># systemctl enable zabbix-server zabbix-agent rh-nginx116-nginx rh-php72-php-fpm</span><br></pre></td></tr></table></figure>
+<h2 id="为Zabbix前端配置PHP"><a href="#为Zabbix前端配置PHP" class="headerlink" title="为Zabbix前端配置PHP"></a>为Zabbix前端配置PHP</h2><h3 id="配置Nginx"><a href="#配置Nginx" class="headerlink" title="配置Nginx"></a>配置Nginx</h3><p>编辑配置文件 <code>/etc/opt/rh/rh-nginx116/nginx/conf.d/zabbix.conf</code>，取消其中<code>listen</code>和<code>server_name</code>的注释。此处就是我们非常熟悉的<code>Nginx</code>，配置反向代理监听的端口和域名。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">listen 80;</span><br><span class="line">server_name example.com;</span><br></pre></td></tr></table></figure>
 
-<h5 id="h-Configure-Zabbix-frontend"><a href="#h-Configure-Zabbix-frontend" class="headerlink" title="h. Configure Zabbix frontend"></a>h. Configure Zabbix frontend</h5><p>Connect to your newly installed Zabbix frontend: <a href="http://server_ip_or_name" target="_blank" rel="noopener">http://server_ip_or_name</a><br>Follow steps described in Zabbix documentation: <a href="https://www.zabbix.com/documentation/5.0/manual/installation/install#installing_frontend" target="_blank" rel="noopener">Installing frontend</a></p>
+<h4 id="x1F449-ATTENTION-TWO"><a href="#x1F449-ATTENTION-TWO" class="headerlink" title="&#x1F449; ATTENTION TWO"></a>&#x1F449; <strong><em>ATTENTION TWO</em></strong></h4><p>这里配置<code>rh-nginx116</code>是给之前没有安装Nginx的机器使用的，由于一台机器只能启动一个Nginx服务（Docker除外）,所以如果下一步执行<code>systemctl restart rh-nginx116-nginx</code>报错，那就是两个Nginx冲突了，Nginx服务都监听了80端口，绑定端口失败，具体错误如下：</p>
+<img data-src="/2020/12/01/zabbix-install-deploy/nginx-error.png" class>
+
+<p>所以我们只需要在原有的Nginx上，配置上本次Zabbix的配置就可以了。</p>
+<h4 id="具体方案-："><a href="#具体方案-：" class="headerlink" title="*具体方案*："></a><strong>*<u>具体方案</u>*</strong>：</h4><p>在<code>/etc/nginx/conf.d</code>中创建<code>zabbix.conf</code>，然后使得<code>/etc/nginx/nginx.conf</code>中包含所有<code>conf.d</code>，也就是<code>include /etc/nginx/conf.d/*.conf</code>。</p>
+<p>将Zabbix安装的 <code>rh-nginx116</code>的配置文件<code>/etc/opt/rh/rh-nginx116/nginx/conf.d/zabbix.conf</code>的内容拷贝到<code>zabbix.conf</code>，就可以对接到已有的Nginx。</p>
+<h3 id="配置php"><a href="#配置php" class="headerlink" title="配置php"></a>配置php</h3><p>编辑配置文件 <code>/etc/opt/rh/rh-php72/php-fpm.d/zabbix.conf</code>，将nginx添加到listen.acl_users配置项中。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">listen.acl_users</span> = apache,nginx</span><br></pre></td></tr></table></figure>
+
+<h4 id="x1F449-ATTENTION-THREE"><a href="#x1F449-ATTENTION-THREE" class="headerlink" title="&#x1F449; ATTENTION THREE"></a>&#x1F449; <strong><em>ATTENTION THREE</em></strong></h4><p>如果下一步<code>rh-php72-php-fpm</code>服务启动不了，原因是 <code>/etc/opt/rh/rh-php72/php-fpm.d/zabbix.conf</code>这个配置文件<code>listen.acl_users = apache,nginx</code>。</p>
+<p><strong><u><em>apache,nginx中间不能有逗号</em></u></strong></p>
+<h3 id="配置时区"><a href="#配置时区" class="headerlink" title="配置时区"></a>配置时区</h3><p>最后取消最后一行的注释（注意注释为分号），我们也可以将市区设置为Asia/Shanghai</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">php_value[date.timezone]</span> = Asia/Shanghai</span><br></pre></td></tr></table></figure>
+
+<h2 id="启动Zabbix-server和agent进程"><a href="#启动Zabbix-server和agent进程" class="headerlink" title="启动Zabbix server和agent进程"></a>启动Zabbix server和agent进程</h2><p>启动Zabbix server和agent进程，并为它们设置开机自启：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart zabbix-server zabbix-agent rh-nginx116-nginx rh-php72-php-fpm</span><br><span class="line">systemctl enable zabbix-server zabbix-agent rh-nginx116-nginx rh-php72-php-fpm</span><br></pre></td></tr></table></figure>
+
+<p>如果已经对接到了原有的Nginx，需要忽略<code>rh-nginx116-nginx</code>这个服务。</p>
+<h2 id="配置Zabbix前端"><a href="#配置Zabbix前端" class="headerlink" title="配置Zabbix前端"></a>配置Zabbix前端</h2><p>连接到新安装的Zabbix前端： <a href="http://server_ip_or_name" target="_blank" rel="noopener">http://server_ip_or_name</a><br>根据Zabbix文件里步骤操作： <a href="https://www.zabbix.com/documentation/5.0/manual/installation/install#installing_frontend" target="_blank" rel="noopener">Installing frontend</a></p>
+<h1 id="开始使用Zabbix"><a href="#开始使用Zabbix" class="headerlink" title="开始使用Zabbix"></a>开始使用Zabbix</h1><p>在浏览器中打开Zabbix前端url，如果是从软件包安装的Zabbix，url如下：</p>
+<ul>
+<li>for Apache: <em><a href="http://server_ip_or_name/zabbix" target="_blank" rel="noopener">http://server_ip_or_name/zabbix</a></em></li>
+<li>for Nginx: <em><a href="http://server_ip_or_name" target="_blank" rel="noopener">http://server_ip_or_name</a></em></li>
+</ul>
+<h2 id="Zabbix欢迎界面-x1F308"><a href="#Zabbix欢迎界面-x1F308" class="headerlink" title="Zabbix欢迎界面&#x1F308;"></a>Zabbix欢迎界面&#x1F308;</h2><img data-src="/2020/12/01/zabbix-install-deploy/install_1.png" class>
+
+<h2 id="检查先决条件-x1F308"><a href="#检查先决条件-x1F308" class="headerlink" title="检查先决条件&#x1F308;"></a>检查先决条件&#x1F308;</h2><img data-src="/2020/12/01/zabbix-install-deploy/install_2.png" class>
+
+<h2 id="配置连接数据库-x1F308"><a href="#配置连接数据库-x1F308" class="headerlink" title="配置连接数据库&#x1F308;"></a>配置连接数据库&#x1F308;</h2><img data-src="/2020/12/01/zabbix-install-deploy/install_3.png" class>
+
+<h2 id="一直点击NEXT-STEP，完成就会跳转到登陆界面啦-x1F308"><a href="#一直点击NEXT-STEP，完成就会跳转到登陆界面啦-x1F308" class="headerlink" title="一直点击NEXT STEP，完成就会跳转到登陆界面啦&#x1F308;"></a>一直点击<code>NEXT STEP</code>，完成就会跳转到登陆界面啦&#x1F308;</h2><img data-src="/2020/12/01/zabbix-install-deploy/login.png" class>
+
+<h2 id="输入默认账号密码Admin-amp-zabbix就可以登陆啦-x1F308"><a href="#输入默认账号密码Admin-amp-zabbix就可以登陆啦-x1F308" class="headerlink" title="输入默认账号密码Admin &amp; zabbix就可以登陆啦&#x1F308;"></a>输入默认账号密码<code>Admin</code> &amp; <code>zabbix</code>就可以登陆啦&#x1F308;</h2><img data-src="/2020/12/01/zabbix-install-deploy/zabbix-home.png" class>
+
+<blockquote>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1></blockquote>
+<p>Zabbix是一个基于WEB界面的提供分布式系统监视以及网络监视功能的企业级的解决方案，同时也是优秀的开源项目，在监控这个领域也是老大哥了。</p>
+<p>绝大多数运维开发都会接触Zabbix，使用它来组成硬件监控、告警推送等解决方案。</p>
+<p>以上就是Zabbix安装与配置的内容，也是最基础的单机版方案，虽然官方文档比较全，但是由于环境的版本的问题也踩了不少坑，希望能给读者一些启示。</p>
+<p><strong><u>TODO LIST</u></strong></p>
+<ul>
+<li>Zabbix主机监控</li>
+<li>Zabbix告警推送（SMTP邮件、自定义脚本）</li>
+</ul>
+<p>最后附上本人阿里云上的Zabbix网址：</p>
+<p><a href="http://47.112.240.167:8005/" target="_blank" rel="noopener">http://47.112.240.167:8005/</a></p>
+<hr>
+<p>官方文档：<br><a href="https://www.zabbix.com/cn/download?zabbix=5.0&os_distribution=centos&os_version=7&db=mysql&ws=nginx" target="_blank" rel="noopener">官方 - 下载安装Zabbix</a></p>
+<p><a href="https://www.zabbix.com/documentation/5.0/manual/installation/install#installing_frontend" target="_blank" rel="noopener">Zabbix Documentation 5.0</a></p>
 
     </div>
 
@@ -396,7 +450,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://api.ddoudou.xyz/2020/12/01/zabbix-install-deploy/" title="Zabbix安装与部署">http://api.ddoudou.xyz/2020/12/01/zabbix-install-deploy/</a>
+    <a href="https://notspr.com/2020/12/01/zabbix-install-deploy/" title="Zabbix安装与部署">https://notspr.com/2020/12/01/zabbix-install-deploy/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -440,6 +494,7 @@
               <a href="/tags/%E7%9B%91%E6%8E%A7/" rel="tag"><i class="fa fa-tag"></i> 监控</a>
               <a href="/tags/Zabbix/" rel="tag"><i class="fa fa-tag"></i> Zabbix</a>
               <a href="/tags/%E5%91%8A%E8%AD%A6/" rel="tag"><i class="fa fa-tag"></i> 告警</a>
+              <a href="/tags/%E5%BC%80%E6%BA%90/" rel="tag"><i class="fa fa-tag"></i> 开源</a>
               <a href="/tags/%E9%98%BF%E9%87%8C%E4%BA%91/" rel="tag"><i class="fa fa-tag"></i> 阿里云</a>
               <a href="/tags/%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/" rel="tag"><i class="fa fa-tag"></i> 安装部署</a>
           </div>
@@ -512,7 +567,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#安装"><span class="nav-number">2.</span> <span class="nav-text">安装</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Install-and-configure-Zabbix-server-for-your-platform"><span class="nav-number">2.1.</span> <span class="nav-text">Install and configure Zabbix server for your platform</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#a-Install-Zabbix-repository（安装Zabbix-yum-源）"><span class="nav-number">2.1.1.</span> <span class="nav-text">a. Install Zabbix repository（安装Zabbix yum 源）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#官方yum源"><span class="nav-number">2.1.1.1.</span> <span class="nav-text">官方yum源</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#阿里云yum源"><span class="nav-number">2.1.1.2.</span> <span class="nav-text">阿里云yum源</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#b-Install-Zabbix-server-and-agent（安装Zabbix-server-和agent）"><span class="nav-number">2.1.2.</span> <span class="nav-text">b. Install Zabbix server and agent（安装Zabbix server 和agent）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#c-Install-Zabbix-frontend（安装Zabbix-前端）"><span class="nav-number">2.1.3.</span> <span class="nav-text">c. Install Zabbix frontend（安装Zabbix 前端）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#d-Create-initial-database（创建初始数据库）"><span class="nav-number">2.1.4.</span> <span class="nav-text">d. Create initial database（创建初始数据库）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#e-Configure-the-database-for-Zabbix-server（为Zabbix-server配置数据库）"><span class="nav-number">2.1.5.</span> <span class="nav-text">e. Configure the database for Zabbix server（为Zabbix server配置数据库）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#f-Configure-PHP-for-Zabbix-frontend（为Zabbix前端配置PHP）"><span class="nav-number">2.1.6.</span> <span class="nav-text">f. Configure PHP for Zabbix frontend（为Zabbix前端配置PHP）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#g-Start-Zabbix-server-and-agent-processes（启动Zabbix-server和agent进程）"><span class="nav-number">2.1.7.</span> <span class="nav-text">g. Start Zabbix server and agent processes（启动Zabbix server和agent进程）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#h-Configure-Zabbix-frontend"><span class="nav-number">2.1.7.0.1.</span> <span class="nav-text">h. Configure Zabbix frontend</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#安装"><span class="nav-number">2.</span> <span class="nav-text">安装</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装Zabbix-yum-源"><span class="nav-number">2.1.</span> <span class="nav-text">安装Zabbix yum 源</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#官方yum源"><span class="nav-number">2.1.1.</span> <span class="nav-text">官方yum源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#阿里云yum源"><span class="nav-number">2.1.2.</span> <span class="nav-text">阿里云yum源</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装Zabbix-server-和agent"><span class="nav-number">2.2.</span> <span class="nav-text">安装Zabbix server 和agent</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装Zabbix-前端"><span class="nav-number">2.3.</span> <span class="nav-text">安装Zabbix 前端</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建初始数据库"><span class="nav-number">2.4.</span> <span class="nav-text">创建初始数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#x1F449-ATTENTION-ONE"><span class="nav-number">2.4.1.</span> <span class="nav-text">&amp;#x1F449; ATTENTION ONE</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#错误做法"><span class="nav-number">2.4.1.1.</span> <span class="nav-text">错误做法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#正确做法"><span class="nav-number">2.4.1.2.</span> <span class="nav-text">正确做法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#首先全库备份mysql-5-6"><span class="nav-number">2.4.1.2.1.</span> <span class="nav-text">首先全库备份mysql 5.6</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#yum配置mysql-5-7"><span class="nav-number">2.4.1.2.2.</span> <span class="nav-text">yum配置mysql 5.7</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#yum安装mysql-5-7"><span class="nav-number">2.4.1.2.3.</span> <span class="nav-text">yum安装mysql 5.7</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为Zabbix-server配置数据库"><span class="nav-number">2.5.</span> <span class="nav-text">为Zabbix server配置数据库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为Zabbix前端配置PHP"><span class="nav-number">2.6.</span> <span class="nav-text">为Zabbix前端配置PHP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#配置Nginx"><span class="nav-number">2.6.1.</span> <span class="nav-text">配置Nginx</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#x1F449-ATTENTION-TWO"><span class="nav-number">2.6.1.1.</span> <span class="nav-text">&amp;#x1F449; ATTENTION TWO</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#具体方案-："><span class="nav-number">2.6.1.2.</span> <span class="nav-text">*具体方案*：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置php"><span class="nav-number">2.6.2.</span> <span class="nav-text">配置php</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#x1F449-ATTENTION-THREE"><span class="nav-number">2.6.2.1.</span> <span class="nav-text">&amp;#x1F449; ATTENTION THREE</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置时区"><span class="nav-number">2.6.3.</span> <span class="nav-text">配置时区</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#启动Zabbix-server和agent进程"><span class="nav-number">2.7.</span> <span class="nav-text">启动Zabbix server和agent进程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置Zabbix前端"><span class="nav-number">2.8.</span> <span class="nav-text">配置Zabbix前端</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#开始使用Zabbix"><span class="nav-number">3.</span> <span class="nav-text">开始使用Zabbix</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Zabbix欢迎界面-x1F308"><span class="nav-number">3.1.</span> <span class="nav-text">Zabbix欢迎界面&amp;#x1F308;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#检查先决条件-x1F308"><span class="nav-number">3.2.</span> <span class="nav-text">检查先决条件&amp;#x1F308;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置连接数据库-x1F308"><span class="nav-number">3.3.</span> <span class="nav-text">配置连接数据库&amp;#x1F308;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一直点击NEXT-STEP，完成就会跳转到登陆界面啦-x1F308"><span class="nav-number">3.4.</span> <span class="nav-text">一直点击NEXT STEP，完成就会跳转到登陆界面啦&amp;#x1F308;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#输入默认账号密码Admin-amp-zabbix就可以登陆啦-x1F308"><span class="nav-number">3.5.</span> <span class="nav-text">输入默认账号密码Admin &amp; zabbix就可以登陆啦&amp;#x1F308;</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -528,20 +583,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-count">31</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-count">30</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">57</span>
+        <span class="site-state-item-count">61</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -554,7 +609,7 @@
         <a href="mailto:876324872@qq.com" title="E-Mail → mailto:876324872@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://weibo.com/sapphire5555" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;sapphire5555" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+        <a href="https://weibo.com/u/5330189327" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;5330189327" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
       </span>
       <span class="links-of-author-item">
         <a href="https://steamcommunity.com/profiles/76561198294148424/" title="steam → https:&#x2F;&#x2F;steamcommunity.com&#x2F;profiles&#x2F;76561198294148424&#x2F;" rel="noopener" target="_blank"><i class="fab fa-steam fa-fw"></i>steam</a>
@@ -607,7 +662,7 @@
         
 
         
-  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备20063016号 </a>
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">粤ICP备20063016号-2 </a>
   </div>
 
 <div class="copyright">
@@ -623,13 +678,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">116k</span>
+    <span title="站点总字数">128k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">1:46</span>
+    <span title="站点阅读时长">1:56</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
