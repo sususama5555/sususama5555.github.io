@@ -504,9 +504,9 @@
       <category term="Redis修炼" scheme="https://notspr.com/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/Redis%E4%BF%AE%E7%82%BC/"/>
     
     
-      <category term="Redis" scheme="https://notspr.com/tags/Redis/"/>
-    
       <category term="数据库" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+      <category term="Redis" scheme="https://notspr.com/tags/Redis/"/>
     
       <category term="数据类型" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/"/>
     
