@@ -237,13 +237,13 @@
 <p><a href="https://gobook.io/read/gitea.com/xorm/manual-zh-CN/" target="_blank" rel="noopener">xorm 官方操作手册</a></p>
 ]]></content>
       <categories>
-        <category>Go语言</category>
+        <category>Golang</category>
         <category>xorm</category>
       </categories>
       <tags>
         <tag>数据库</tag>
         <tag>ORM</tag>
-        <tag>Go语言</tag>
+        <tag>Golang</tag>
         <tag>xorm</tag>
         <tag>实战练习</tag>
       </tags>
@@ -834,13 +834,13 @@
 <p><a href="https://github.com/go-xorm/xorm" target="_blank" rel="noopener">github地址：https://github.com/go-xorm/xorm</a></p>
 ]]></content>
       <categories>
-        <category>Go语言</category>
+        <category>Golang</category>
         <category>xorm</category>
       </categories>
       <tags>
         <tag>数据库</tag>
         <tag>ORM</tag>
-        <tag>Go语言</tag>
+        <tag>Golang</tag>
         <tag>xorm</tag>
         <tag>操作手册</tag>
         <tag>搬运</tag>
@@ -1072,11 +1072,11 @@
 <p>参考链接：<br><a href="https://bk.tencent.com/docs/document/5.1/19/600" target="_blank" rel="noopener">蓝鲸监控 - Exporter 开发</a></p>
 ]]></content>
       <categories>
-        <category>Go语言</category>
+        <category>Golang</category>
         <category>Prometheus</category>
       </categories>
       <tags>
-        <tag>Go语言</tag>
+        <tag>Golang</tag>
         <tag>Prometheus</tag>
         <tag>Exporter</tag>
         <tag>监控</tag>
@@ -1896,8 +1896,8 @@
       <tags>
         <tag>Python</tag>
         <tag>Redis</tag>
-        <tag>Django</tag>
         <tag>Celery</tag>
+        <tag>Django</tag>
         <tag>RabbitMQ</tag>
       </tags>
   </entry>
@@ -3077,11 +3077,11 @@
 
 ]]></content>
       <categories>
-        <category>JAVA语言</category>
+        <category>Golang</category>
         <category>顺序编程</category>
       </categories>
       <tags>
-        <tag>Go语言</tag>
+        <tag>Golang</tag>
         <tag>基础练习</tag>
         <tag>顺序编程</tag>
       </tags>
@@ -3119,11 +3119,11 @@
 
 ]]></content>
       <categories>
-        <category>Go语言</category>
+        <category>Golang</category>
         <category>基础练习</category>
       </categories>
       <tags>
-        <tag>Go语言</tag>
+        <tag>Golang</tag>
         <tag>基础练习</tag>
         <tag>运算符</tag>
       </tags>
@@ -3166,11 +3166,11 @@
 
 ]]></content>
       <categories>
-        <category>Go语言</category>
+        <category>Golang</category>
         <category>基础练习</category>
       </categories>
       <tags>
-        <tag>Go语言</tag>
+        <tag>Golang</tag>
         <tag>数据类型</tag>
         <tag>基础练习</tag>
       </tags>
