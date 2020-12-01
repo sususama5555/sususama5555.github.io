@@ -1896,8 +1896,8 @@
       <tags>
         <tag>Python</tag>
         <tag>Redis</tag>
-        <tag>Celery</tag>
         <tag>Django</tag>
+        <tag>Celery</tag>
         <tag>RabbitMQ</tag>
       </tags>
   </entry>
@@ -2302,8 +2302,8 @@
         <category>Redis修炼</category>
       </categories>
       <tags>
-        <tag>数据库</tag>
         <tag>Redis</tag>
+        <tag>数据库</tag>
         <tag>数据类型</tag>
       </tags>
   </entry>
@@ -3077,13 +3077,13 @@
 
 ]]></content>
       <categories>
-        <category>Go语言</category>
+        <category>Go</category>
         <category>顺序编程</category>
       </categories>
       <tags>
         <tag>Go语言</tag>
-        <tag>顺序编程</tag>
         <tag>基础练习</tag>
+        <tag>顺序编程</tag>
       </tags>
   </entry>
   <entry>
@@ -3171,8 +3171,8 @@
       </categories>
       <tags>
         <tag>Go语言</tag>
-        <tag>基础练习</tag>
         <tag>数据类型</tag>
+        <tag>基础练习</tag>
       </tags>
   </entry>
   <entry>
