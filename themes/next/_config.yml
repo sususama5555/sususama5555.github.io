@@ -72,7 +72,7 @@ footer:
   # Beian ICP and gongan information for Chinese users. See: https://beian.miit.gov.cn, http://www.beian.gov.cn
   beian:
     enable: true
-    icp: 粤ICP备20063016号
+    icp: 粤ICP备20063016号-2
     # The digit in the num of gongan beian.
     gongan_id:
     # The full num of gongan beian.
@@ -179,7 +179,7 @@ site_state: true
 social:
   GitHub: https://github.com/sususama5555 || fab fa-github
   E-Mail: mailto:876324872@qq.com || fa fa-envelope
-  Weibo: https://weibo.com/sapphire5555 || fab fa-weibo
+  Weibo: https://weibo.com/u/5330189327 || fab fa-weibo
   steam: https://steamcommunity.com/profiles/76561198294148424/ || fab fa-steam
   RSS: /atom.xml || fa fa-rss
   #Google: https://plus.google.com/yourname || fab fa-google
@@ -479,7 +479,8 @@ yandex_site_verification:
 
 # Baidu Webmaster tools verification.
 # See: https://ziyuan.baidu.com/site
-baidu_site_verification:
+# 百度收录
+baidu_site_verification: code-LqqDM3vffE
 
 # Enable baidu push so that the blog will push the url to baidu automatically which is very helpful for SEO.
 baidu_push: true
@@ -680,7 +681,8 @@ google_analytics:
   only_pageview: false
 
 # Baidu Analytics
-baidu_analytics: cb91e256c80f8b8d7202046261e973af # <app_id>
+# 百度分析
+baidu_analytics: 2907d577c8c6c2f7fe3843736d24280d # <app_id>
 
 # Growingio Analytics
 growingio_analytics: # <project_id>
