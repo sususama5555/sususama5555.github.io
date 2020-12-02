@@ -1,6 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>HTTPS 为什么是安全的</title>
+    <url>/2020/12/03/why-https-security/</url>
+    <content><![CDATA[<blockquote>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote>
+<p>在之前《HTTP 与 HTTPS 的区别》中，对比了HTTP/HTTPS的不同，以及HTTP/HTTPS是如何认证的，那么HTTPS为什么是安全的？所以引出了下面的内容。</p>
+<h2 id="HTTP-协议"><a href="#HTTP-协议" class="headerlink" title="HTTP 协议"></a>HTTP 协议</h2><p>在谈论 HTTPS 协议之前，先来回顾一下 HTTP 协议的概念。</p>
+<h3 id="HTTP-协议介绍"><a href="#HTTP-协议介绍" class="headerlink" title="HTTP 协议介绍"></a>HTTP 协议介绍</h3><p>HTTP 协议是一种基于文本的传输协议，它位于 OSI 网络模型中的<code>应用层</code>。</p>
+<p><img data-src="https://segmentfault.com/img/remote/1460000023936431" alt="test"></p>
+<p>HTTP 协议是通过客户端和服务器的请求应答来进行通讯，目前协议由之前的 <a href="https://tools.ietf.org/html/rfc2616" target="_blank" rel="noopener">RFC 2616</a> 拆分成立六个单独的协议说明（<a href="https://tools.ietf.org/html/rfc7230" target="_blank" rel="noopener">RFC 7230</a>、<a href="https://tools.ietf.org/html/rfc7231" target="_blank" rel="noopener">RFC 7231</a>、<a href="https://tools.ietf.org/html/rfc7232" target="_blank" rel="noopener">RFC 7232</a>、<a href="https://tools.ietf.org/html/rfc7233" target="_blank" rel="noopener">RFC 7233</a>、<a href="https://tools.ietf.org/html/rfc7234" target="_blank" rel="noopener">RFC 7234</a>、<a href="https://tools.ietf.org/html/rfc7235" target="_blank" rel="noopener">RFC 7235</a>），通讯报文如下：</p>
+<ul>
+<li>请求</li>
+</ul>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">http://www.baidu.com</span> HTTP/1.1</span><br><span class="line"><span class="attribute">Host</span>: www.baidu.com</span><br><span class="line"><span class="attribute">Connection</span>: keep-alive</span><br><span class="line"><span class="attribute">Content-Length</span>: 7</span><br><span class="line"><span class="attribute">User-Agent</span>: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36</span><br><span class="line"></span><br><span class="line">wd=HTTP</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>响应</li>
+</ul>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">HTTP/1.1 <span class="number">200</span> OK</span><br><span class="line"><span class="attribute">Connection</span>: Keep-Alive</span><br><span class="line"><span class="attribute">Content-Encoding</span>: gzip</span><br><span class="line"><span class="attribute">Content-Type</span>: text/html;charset=utf-8</span><br><span class="line"><span class="attribute">Date</span>: Thu, 14 Feb 2019 07:23:49 GMT</span><br><span class="line"><span class="attribute">Transfer-Encoding</span>: chunked</span><br><span class="line"></span><br><span class="line">&lt;html&gt;...&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+
+<h3 id="HTTP-中间人攻击"><a href="#HTTP-中间人攻击" class="headerlink" title="HTTP 中间人攻击"></a>HTTP 中间人攻击</h3><p>HTTP 协议使用起来确实非常的方便，但是它存在一个致命的缺点：<code>不安全</code>。</p>
+<p>我们知道 HTTP 协议中的报文都是以明文的方式进行传输，不做任何加密，这样会导致什么问题呢？下面来举个例子：</p>
+<ol>
+<li>小明在 JAVA 贴吧发帖，内容为<code>我爱JAVA</code>：<br><img data-src="https://segmentfault.com/img/remote/1460000023936432" alt="img"></li>
+<li>被中间人进行攻击，内容修改为<code>我爱PHP</code><br><img data-src="https://segmentfault.com/img/remote/1460000023936434" alt="img"></li>
+<li>小明被群嘲(手动狗头)</li>
+</ol>
+<p>可以看到在 HTTP 传输过程中，中间人能看到并且修改 HTTP 通讯中所有的请求和响应内容，所以使用 HTTP 是非常的不安全的。</p>
+<h3 id="防止中间人攻击"><a href="#防止中间人攻击" class="headerlink" title="防止中间人攻击"></a>防止中间人攻击</h3><p>这个时候可能就有人想到了，既然内容是明文那我使用<code>对称加密</code>的方式将报文加密这样中间人不就看不到明文了吗，于是如下改造：</p>
+<ol>
+<li>双方约定加密方式<br><img data-src="https://segmentfault.com/img/remote/1460000023936433" alt="img"></li>
+<li>使用 AES 加密报文<br><img data-src="https://segmentfault.com/img/remote/1460000023936436" alt="img"></li>
+</ol>
+<p>这样看似中间人获取不到明文信息了，但其实在通讯过程中还是会以明文的方式暴露加密方式和秘钥，如果第一次通信被拦截到了，那么秘钥就会泄露给中间人，中间人仍然可以解密后续的通信：</p>
+<p><img data-src="https://segmentfault.com/img/remote/1460000023936435" alt="img"></p>
+<p>那么对于这种情况，我们肯定就会考虑能不能将秘钥进行加密不让中间人看到呢？答案是有的，采用<code>非对称加密</code>，我们可以通过 RSA 算法来实现。</p>
+<p>在约定加密方式的时候由服务器生成一对<code>公私钥</code>，服务器将<code>公钥</code>返回给客户端，客户端本地生成一串秘钥(<code>AES_KEY</code>)用于<code>对称加密</code>，并通过服务器发送的<code>公钥</code>进行加密得到(<code>AES_KEY_SECRET</code>)，之后返回给服务端，服务端通过<code>私钥</code>将客户端发送的<code>AES_KEY_SECRET</code>进行解密得到<code>AEK_KEY</code>,最后客户端和服务器通过<code>AEK_KEY</code>进行报文的加密通讯，改造如下：</p>
+<p><img data-src="https://segmentfault.com/img/remote/1460000023936437" alt="img"></p>
+<p>可以看到这种情况下中间人是窃取不到用于<code>AES加密</code>的秘钥，所以对于后续的通讯是肯定无法进行解密了，那么这样做就是绝对安全了吗？</p>
+<p>所谓道高一尺魔高一丈，中间人为了对应这种加密方法又想出了一个新的破解方案，既然拿不到<code>AES_KEY</code>，那我就把自己模拟成一个客户端和服务器端的结合体，在<code>用户-&gt;中间人</code>的过程中中间人模拟服务器的行为，这样可以拿到用户请求的明文，在<code>中间人-&gt;服务器</code>的过程中中间人模拟客户端行为，这样可以拿到服务器响应的明文，以此来进行中间人攻击：</p>
+<p><img data-src="https://segmentfault.com/img/remote/1460000023936438" alt="img"></p>
+<p>这一次通信再次被中间人截获，中间人自己也伪造了一对公私钥，并将公钥发送给用户以此来窃取客户端生成的<code>AES_KEY</code>，在拿到<code>AES_KEY</code>之后就能轻松的进行解密了。</p>
+<p>中间人这样为所欲为，就没有办法制裁下吗，当然有啊，接下来我们看看 HTTPS 是怎么解决通讯安全问题的。</p>
+<h2 id="HTTPS-协议"><a href="#HTTPS-协议" class="headerlink" title="HTTPS 协议"></a>HTTPS 协议</h2><h3 id="HTTPS-简介"><a href="#HTTPS-简介" class="headerlink" title="HTTPS 简介"></a>HTTPS 简介</h3><p>HTTPS 其实是<code>SSL</code>+<code>HTTP</code>的简称,当然现在<code>SSL</code>基本已经被<code>TLS</code>取代了，不过接下来我们还是统一以<code>SSL</code>作为简称，<code>SSL</code>协议其实不止是应用在<code>HTTP</code>协议上，还在应用在各种应用层协议上，例如：<code>FTP</code>、<code>WebSocket</code>。</p>
+<p>其实<code>SSL</code>协议大致就和上一节<code>非对称加密</code>的性质一样，握手的过程中主要也是为了交换秘钥，然后再通讯过程中使用<code>对称加密</code>进行通讯，大概流程如下：</p>
+<p><img data-src="https://segmentfault.com/img/remote/1460000023936439" alt="img"></p>
+<p>这里我只是画了个示意图，其实真正的 SSL 握手会比这个复杂的多，但是性质还是差不多，而且我们这里需要关注的重点在于 HTTPS 是如何防止中间人攻击的。</p>
+<p>通过上图可以观察到，服务器是通过 SSL 证书来传递<code>公钥</code>，客户端会对 SSL 证书进行验证，其中证书认证体系就是确保<code>SSL</code>安全的关键，接下来我们就来讲解下<code>CA 认证体系</code>，看看它是如何防止中间人攻击的。</p>
+<h3 id="CA-认证体系"><a href="#CA-认证体系" class="headerlink" title="CA 认证体系"></a>CA 认证体系</h3><p>上一节我们看到客户端需要对服务器返回的 SSL 证书进行校验，那么客户端是如何校验服务器 SSL 证书的安全性呢。</p>
+<ul>
+<li><p>权威认证机构<br>在 CA 认证体系中，所有的证书都是由权威机构来颁发，而权威机构的 CA 证书都是已经在操作系统中内置的，我们把这些证书称之为<code>CA根证书</code>：<br><img data-src="https://segmentfault.com/img/remote/1460000023936440" alt="img"></p>
+</li>
+<li><p>签发证书</p>
+<p>我们的应用服务器如果想要使用 SSL 的话，需要通过权威认证机构来签发<code>CA证书</code>，我们将服务器生成的公钥和站点相关信息发送给<code>CA签发机构</code>，再由<code>CA签发机构</code>通过服务器发送的相关信息用<code>CA签发机构</code>进行加签，由此得到我们应用服务器的证书，证书会对应的生成证书内容的<code>签名</code>，并将该<code>签名</code>使用<code>CA签发机构</code>的私钥进行加密得到<code>证书指纹</code>，并且与上级证书生成关系链。<br>这里我们把百度的证书下载下来看看：<br><img data-src="https://segmentfault.com/img/remote/1460000023936442" alt="img"><br><img data-src="https://segmentfault.com/img/remote/1460000023936443" alt="img"></p>
+<p>可以看到百度是受信于<code>GlobalSign G2</code>，同样的<code>GlobalSign G2</code>是受信于<code>GlobalSign R1</code>，当客户端(浏览器)做证书校验时，会一级一级的向上做检查，直到最后的<code>根证书</code>，如果没有问题说明<code>服务器证书</code>是可以被信任的。</p>
+</li>
+<li><p>如何验证服务器证书<br>那么客户端(浏览器)又是如何对<code>服务器证书</code>做校验的呢，首先会通过层级关系找到上级证书，通过上级证书里的<code>公钥</code>来对服务器的<code>证书指纹</code>进行解密得到<code>签名(sign1)</code>，再通过签名算法算出服务器证书的<code>签名(sign2)</code>，通过对比<code>sign1</code>和<code>sign2</code>，如果相等就说明证书是没有被<code>篡改</code>也不是<code>伪造</code>的。<br><img data-src="https://segmentfault.com/img/remote/1460000023936441" alt="img"></p>
+<blockquote>
+<p>这里有趣的是，证书校验用的 RSA 是通过私钥加密证书签名，公钥解密来巧妙的验证证书有效性。</p>
+</blockquote>
+</li>
+</ul>
+<p>这样通过证书的认证体系，我们就可以避免了中间人窃取<code>AES_KEY</code>从而发起拦截和修改 HTTP 通讯的报文。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>首先先通过对 HTTP 中间人攻击的来了解到 HTTP 为什么是不安全的，然后再从安全攻防的技术演变一直到 HTTPS 的原理概括，希望能让大家对 HTTPS 有个更深刻的了解。</p>
+]]></content>
+      <categories>
+        <category>计算机网络</category>
+        <category>HTTP/HTTPS</category>
+      </categories>
+      <tags>
+        <tag>HTTP/HTTPS</tag>
+        <tag>传输协议</tag>
+        <tag>SSL</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Zabbix安装与部署</title>
     <url>/2020/12/01/zabbix-install-deploy/</url>
     <content><![CDATA[<blockquote>
@@ -237,7 +314,7 @@
 <p><a href="https://gobook.io/read/gitea.com/xorm/manual-zh-CN/" target="_blank" rel="noopener">xorm 官方操作手册</a></p>
 ]]></content>
       <categories>
-        <category>Golang</category>
+        <category>Golan</category>
         <category>xorm</category>
       </categories>
       <tags>
@@ -2302,8 +2379,8 @@
         <category>Redis修炼</category>
       </categories>
       <tags>
-        <tag>Redis</tag>
         <tag>数据库</tag>
+        <tag>Redis</tag>
         <tag>数据类型</tag>
       </tags>
   </entry>
@@ -3201,6 +3278,65 @@
         <tag>Python</tag>
         <tag>大数据分析</tag>
         <tag>算法</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>HTTP 与 HTTPS 的区别</title>
+    <url>/2019/12/03/http-https/</url>
+    <content><![CDATA[<h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><p><strong>HTTP</strong>（HyperText Transfer Protocol：超文本传输协议）是一种用于分布式、协作式和超媒体信息系统的应用层协议。 简单来说就是一种发布和接收 HTML 页面的方法，被用于在 Web 浏览器和网站服务器之间传递信息。</p>
+<p>HTTP 默认工作在 TCP 协议 80 端口，用户访问网站 <strong><code>http://</code></strong> 打头的都是标准 HTTP 服务。</p>
+<p>HTTP 协议以明文方式发送内容，不提供任何方式的数据加密，如果攻击者截取了Web浏览器和网站服务器之间的传输报文，就可以直接读懂其中的信息，因此，HTTP协议不适合传输一些敏感信息，比如：信用卡号、密码等支付信息。</p>
+<p><strong>HTTPS</strong>（Hypertext Transfer Protocol Secure：超文本传输安全协议）是一种透过计算机网络进行安全通信的传输协议。HTTPS 经由 HTTP 进行通信，但利用 SSL/TLS 来加密数据包。HTTPS 开发的主要目的，是提供对网站服务器的身份认证，保护交换数据的隐私与完整性。</p>
+<p>HTTPS 默认工作在 TCP 协议443端口，它的工作流程一般如以下方式：</p>
+<ul>
+<li>1、TCP 三次同步握手</li>
+<li>2、客户端验证服务器数字证书</li>
+<li>3、DH 算法协商对称加密算法的密钥、hash 算法的密钥</li>
+<li>4、SSL 安全加密隧道协商完成</li>
+<li>5、网页以加密的方式传输，用协商的对称加密算法和密钥加密，保证数据机密性；用协商的hash算法进行数据完整性保护，保证数据不被篡改。</li>
+</ul>
+<a id="more"></a>
+
+<h1 id="HTTP-与-HTTPS-区别"><a href="#HTTP-与-HTTPS-区别" class="headerlink" title="HTTP 与 HTTPS 区别"></a>HTTP 与 HTTPS 区别</h1><ul>
+<li>HTTP 明文传输，数据都是未加密的，安全性较差，HTTPS（SSL+HTTP） 数据传输过程是加密的，安全性较好。</li>
+<li>使用 HTTPS 协议需要到 CA（Certificate Authority，数字证书认证机构） 申请证书，一般免费证书较少，因而需要一定费用。证书颁发机构如：Symantec、Comodo、GoDaddy 和 GlobalSign 等。</li>
+<li>HTTP 页面响应速度比 HTTPS 快，主要是因为 HTTP 使用 TCP 三次握手建立连接，客户端和服务器需要交换 3 个包，而 HTTPS除了 TCP 的三个包，还要加上 ssl 握手需要的 9 个包，所以一共是 12 个包。</li>
+<li>http 和 https 使用的是完全不同的连接方式，用的端口也不一样，前者是 80，后者是 443。</li>
+<li>HTTPS 其实就是建构在 SSL/TLS 之上的 HTTP 协议，所以，要比较 HTTPS 比 HTTP 要更耗费服务器资源。</li>
+</ul>
+<h1 id="TCP-三次握手"><a href="#TCP-三次握手" class="headerlink" title="TCP 三次握手"></a>TCP 三次握手</h1><p>在TCP/IP协议中，TCP协议通过三次握手建立一个可靠的连接</p>
+<p><img data-src="https://www.runoob.com/wp-content/uploads/2018/09/05234233-eed6ddcba93c42be8847e98d6da62802.jpg" alt="img"></p>
+<ul>
+<li>第一次握手：客户端尝试连接服务器，向服务器发送 syn 包（同步序列编号Synchronize Sequence Numbers），syn=j，客户端进入 SYN_SEND 状态等待服务器确认</li>
+<li>第二次握手：服务器接收客户端syn包并确认（ack=j+1），同时向客户端发送一个 SYN包（syn=k），即 SYN+ACK 包，此时服务器进入 SYN_RECV 状态</li>
+<li>第三次握手：第三次握手：客户端收到服务器的SYN+ACK包，向服务器发送确认包ACK(ack=k+1），此包发送完毕，客户端和服务器进入ESTABLISHED状态，完成三次握手</li>
+</ul>
+<p>简化：</p>
+<p><img data-src="https://www.runoob.com/wp-content/uploads/2018/09/dffdff.png" alt="img"></p>
+<h1 id="HTTPS-的工作原理"><a href="#HTTPS-的工作原理" class="headerlink" title="HTTPS 的工作原理"></a>HTTPS 的工作原理</h1><p>我们都知道 HTTPS 能够加密信息，以免敏感信息被第三方获取，所以很多银行网站或电子邮箱等等安全级别较高的服务都会采用 HTTPS 协议。</p>
+<p><img data-src="https://www.runoob.com/wp-content/uploads/2018/09/https-intro.png" alt="img"></p>
+<h2 id="1、客户端发起-HTTPS-请求"><a href="#1、客户端发起-HTTPS-请求" class="headerlink" title="1、客户端发起 HTTPS 请求"></a><strong>1、客户端发起 HTTPS 请求</strong></h2><p>这个没什么好说的，就是用户在浏览器里输入一个 https 网址，然后连接到 server 的 443 端口。</p>
+<h2 id="2、服务端的配置"><a href="#2、服务端的配置" class="headerlink" title="2、服务端的配置"></a><strong>2、服务端的配置</strong></h2><p>采用 HTTPS 协议的服务器必须要有一套数字证书，可以自己制作，也可以向组织申请，区别就是自己颁发的证书需要客户端验证通过，才可以继续访问，而使用受信任的公司申请的证书则不会弹出提示页面(startssl 就是个不错的选择，有 1 年的免费服务)。</p>
+<p>这套证书其实就是一对公钥和私钥，如果对公钥和私钥不太理解，可以想象成一把钥匙和一个锁头，只是全世界只有你一个人有这把钥匙，你可以把锁头给别人，别人可以用这个锁把重要的东西锁起来，然后发给你，因为只有你一个人有这把钥匙，所以只有你才能看到被这把锁锁起来的东西。</p>
+<h2 id="3、传送证书"><a href="#3、传送证书" class="headerlink" title="3、传送证书"></a><strong>3、传送证书</strong></h2><p>这个证书其实就是公钥，只是包含了很多信息，如证书的颁发机构，过期时间等等。</p>
+<h2 id="4、客户端解析证书"><a href="#4、客户端解析证书" class="headerlink" title="4、客户端解析证书"></a><strong>4、客户端解析证书</strong></h2><p>这部分工作是有客户端的TLS来完成的，首先会验证公钥是否有效，比如颁发机构，过期时间等等，如果发现异常，则会弹出一个警告框，提示证书存在问题。</p>
+<p>如果证书没有问题，那么就生成一个随机值，然后用证书对该随机值进行加密，就好像上面说的，把随机值用锁头锁起来，这样除非有钥匙，不然看不到被锁住的内容。</p>
+<h2 id="5、传送加密信息"><a href="#5、传送加密信息" class="headerlink" title="5、传送加密信息"></a><strong>5、传送加密信息</strong></h2><p>这部分传送的是用证书加密后的随机值，目的就是让服务端得到这个随机值，以后客户端和服务端的通信就可以通过这个随机值来进行加密解密了。</p>
+<h2 id="6、服务端解密信息"><a href="#6、服务端解密信息" class="headerlink" title="6、服务端解密信息"></a><strong>6、服务端解密信息</strong></h2><p>服务端用私钥解密后，得到了客户端传过来的随机值(私钥)，然后把内容通过该值进行对称加密，所谓对称加密就是，将信息和私钥通过某种算法混合在一起，这样除非知道私钥，不然无法获取内容，而正好客户端和服务端都知道这个私钥，所以只要加密算法够彪悍，私钥够复杂，数据就够安全。</p>
+<h2 id="7、传输加密后的信息"><a href="#7、传输加密后的信息" class="headerlink" title="7、传输加密后的信息"></a><strong>7、传输加密后的信息</strong></h2><p>这部分信息是服务段用私钥加密后的信息，可以在客户端被还原。</p>
+<h2 id="8、客户端解密信息"><a href="#8、客户端解密信息" class="headerlink" title="8、客户端解密信息"></a><strong>8、客户端解密信息</strong></h2><p>客户端用之前生成的私钥解密服务段传过来的信息，于是获取了解密后的内容，整个过程第三方即使监听到了数据，也束手无策。</p>
+<hr>
+<p>参考链接：</p>
+<p><a href="https://www.runoob.com/w3cnote/http-vs-https.html" target="_blank" rel="noopener">菜鸟教程 - HTTP 与 HTTPS 的区别</a></p>
+]]></content>
+      <categories>
+        <category>计算机网络</category>
+        <category>HTTP/HTTPS</category>
+      </categories>
+      <tags>
+        <tag>HTTP/HTTPS</tag>
+        <tag>传输协议</tag>
+        <tag>SSL</tag>
       </tags>
   </entry>
   <entry>

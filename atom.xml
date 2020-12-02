@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://notspr.com/"/>
-  <updated>2020-12-01T16:48:58.231Z</updated>
+  <updated>2020-12-02T16:37:08.055Z</updated>
   <id>https://notspr.com/</id>
   
   <author>
@@ -15,6 +15,48 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>HTTPS 为什么是安全的</title>
+    <link href="https://notspr.com/2020/12/03/why-https-security/"/>
+    <id>https://notspr.com/2020/12/03/why-https-security/</id>
+    <published>2020-12-02T16:18:01.000Z</published>
+    <updated>2020-12-02T16:37:08.055Z</updated>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;h2 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h2&gt;&lt;/blockquote&gt;
+&lt;p&gt;在之前《HTTP 与 HTTPS 的区别》中，对比了HTTP/HTTPS的不同，以及HTTP/HTTPS是如何认证的，那么HTTPS为什么是安全的？所以引出了下面的内容。&lt;/p&gt;
+&lt;h2 id=&quot;HTTP-协议&quot;&gt;&lt;a href=&quot;#HTTP-协议&quot; class=&quot;headerlink&quot; title=&quot;HTTP 协议&quot;&gt;&lt;/a&gt;HTTP 协议&lt;/h2&gt;&lt;p&gt;在谈论 HTTPS 协议之前，先来回顾一下 HTTP 协议的概念。&lt;/p&gt;
+&lt;h3 id=&quot;HTTP-协议介绍&quot;&gt;&lt;a href=&quot;#HTTP-协议介绍&quot; class=&quot;headerlink&quot; title=&quot;HTTP 协议介绍&quot;&gt;&lt;/a&gt;HTTP 协议介绍&lt;/h3&gt;&lt;p&gt;HTTP 协议是一种基于文本的传输协议，它位于 OSI 网络模型中的&lt;code&gt;应用层&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;img data-src=&quot;https://segmentfault.com/img/remote/1460000023936431&quot; alt=&quot;test&quot;&gt;&lt;/p&gt;
+&lt;p&gt;HTTP 协议是通过客户端和服务器的请求应答来进行通讯，目前协议由之前的 &lt;a href=&quot;https://tools.ietf.org/html/rfc2616&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;RFC 2616&lt;/a&gt; 拆分成立六个单独的协议说明（&lt;a href=&quot;https://tools.ietf.org/html/rfc7230&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;RFC 7230&lt;/a&gt;、&lt;a href=&quot;https://tools.ietf.org/html/rfc7231&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;RFC 7231&lt;/a&gt;、&lt;a href=&quot;https://tools.ietf.org/html/rfc7232&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;RFC 7232&lt;/a&gt;、&lt;a href=&quot;https://tools.ietf.org/html/rfc7233&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;RFC 7233&lt;/a&gt;、&lt;a href=&quot;https://tools.ietf.org/html/rfc7234&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;RFC 7234&lt;/a&gt;、&lt;a href=&quot;https://tools.ietf.org/html/rfc7235&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;RFC 7235&lt;/a&gt;），通讯报文如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;请求&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;POST&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;http://www.baidu.com&lt;/span&gt; HTTP/1.1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;attribute&quot;&gt;Host&lt;/span&gt;: www.baidu.com&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;attribute&quot;&gt;Connection&lt;/span&gt;: keep-alive&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;attribute&quot;&gt;Content-Length&lt;/span&gt;: 7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;attribute&quot;&gt;User-Agent&lt;/span&gt;: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;wd=HTTP&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+
+&lt;ul&gt;
+&lt;li&gt;响应&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;HTTP/1.1 &lt;span class=&quot;number&quot;&gt;200&lt;/span&gt; OK&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;attribute&quot;&gt;Connection&lt;/span&gt;: Keep-Alive&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;attribute&quot;&gt;Content-Encoding&lt;/span&gt;: gzip&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;attribute&quot;&gt;Content-Type&lt;/span&gt;: text/html;charset=utf-8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;attribute&quot;&gt;Date&lt;/span&gt;: Thu, 14 Feb 2019 07:23:49 GMT&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;attribute&quot;&gt;Transfer-Encoding&lt;/span&gt;: chunked&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;lt;html&amp;gt;...&amp;lt;/html&amp;gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+    
+    </summary>
+    
+    
+      <category term="计算机网络" scheme="https://notspr.com/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/"/>
+    
+      <category term="HTTP/HTTPS" scheme="https://notspr.com/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/HTTP-HTTPS/"/>
+    
+    
+      <category term="HTTP/HTTPS" scheme="https://notspr.com/tags/HTTP-HTTPS/"/>
+    
+      <category term="传输协议" scheme="https://notspr.com/tags/%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE/"/>
+    
+      <category term="SSL" scheme="https://notspr.com/tags/SSL/"/>
+    
+  </entry>
   
   <entry>
     <title>Zabbix安装与部署</title>
@@ -60,7 +102,7 @@
     <link href="https://notspr.com/2020/11/30/go-xorm-sample/"/>
     <id>https://notspr.com/2020/11/30/go-xorm-sample/</id>
     <published>2020-11-29T16:52:27.000Z</published>
-    <updated>2020-12-01T17:48:45.220Z</updated>
+    <updated>2020-12-02T16:16:17.164Z</updated>
     
     <summary type="html">
     
@@ -74,9 +116,9 @@
     </summary>
     
     
-      <category term="Golang" scheme="https://notspr.com/categories/Golang/"/>
+      <category term="Golan" scheme="https://notspr.com/categories/Golan/"/>
     
-      <category term="xorm" scheme="https://notspr.com/categories/Golang/xorm/"/>
+      <category term="xorm" scheme="https://notspr.com/categories/Golan/xorm/"/>
     
     
       <category term="数据库" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
@@ -504,9 +546,9 @@
       <category term="Redis修炼" scheme="https://notspr.com/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/Redis%E4%BF%AE%E7%82%BC/"/>
     
     
-      <category term="Redis" scheme="https://notspr.com/tags/Redis/"/>
-    
       <category term="数据库" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+      <category term="Redis" scheme="https://notspr.com/tags/Redis/"/>
     
       <category term="数据类型" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/"/>
     
@@ -649,30 +691,6 @@
       <category term="剑指offer" scheme="https://notspr.com/tags/%E5%89%91%E6%8C%87offer/"/>
     
       <category term="二叉搜索树" scheme="https://notspr.com/tags/%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>企业(政务)微信浏览器的前端开发兼容问题</title>
-    <link href="https://notspr.com/2020/08/20/weixin-app/"/>
-    <id>https://notspr.com/2020/08/20/weixin-app/</id>
-    <published>2020-08-20T14:50:54.000Z</published>
-    <updated>2020-11-16T15:50:11.954Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;&lt;strong&gt;windows版本的企业（政务）微信浏览器基于Chromium 53版本，对ES7某些新特性不兼容&lt;/strong&gt;&lt;/p&gt;
-&lt;img data-src=&quot;/2020/08/20/weixin-app/weixin_browser.png&quot; class&gt;
-    
-    </summary>
-    
-    
-      <category term="前端开发指南" scheme="https://notspr.com/categories/%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/"/>
-    
-    
-      <category term="前端" scheme="https://notspr.com/tags/%E5%89%8D%E7%AB%AF/"/>
-    
-      <category term="微信轻应用" scheme="https://notspr.com/tags/%E5%BE%AE%E4%BF%A1%E8%BD%BB%E5%BA%94%E7%94%A8/"/>
     
   </entry>
   
