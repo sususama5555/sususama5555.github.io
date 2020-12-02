@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://notspr.com/"/>
-  <updated>2020-12-02T16:37:08.055Z</updated>
+  <updated>2020-12-02T16:56:19.662Z</updated>
   <id>https://notspr.com/</id>
   
   <author>
@@ -21,26 +21,18 @@
     <link href="https://notspr.com/2020/12/03/why-https-security/"/>
     <id>https://notspr.com/2020/12/03/why-https-security/</id>
     <published>2020-12-02T16:18:01.000Z</published>
-    <updated>2020-12-02T16:37:08.055Z</updated>
+    <updated>2020-12-02T16:56:19.662Z</updated>
     
     <summary type="html">
     
       &lt;blockquote&gt;
 &lt;h2 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h2&gt;&lt;/blockquote&gt;
-&lt;p&gt;在之前《HTTP 与 HTTPS 的区别》中，对比了HTTP/HTTPS的不同，以及HTTP/HTTPS是如何认证的，那么HTTPS为什么是安全的？所以引出了下面的内容。&lt;/p&gt;
+&lt;p&gt;在之前《HTTP 与 HTTPS 的区别》中，对比了&lt;code&gt;HTTP/HTTPS&lt;/code&gt;的不同，以及&lt;code&gt;HTTP/HTTPS&lt;/code&gt;是如何&lt;code&gt;TCP&lt;/code&gt;握手的，那么HTTPS为什么是安全的？&lt;/p&gt;
+&lt;p&gt;超文本传输协议HTTP协议被用于在Web浏览器和网站服务器之间传递信息，HTTP协议以明文方式发送内容，不提供任何方式的数据加密，如果攻击者截取了Web浏览器和网站服务器之间的传输报文，就可以直接读懂其中的信息，因此，HTTP协议不适合传输一些敏感信息。&lt;/p&gt;
+&lt;p&gt;为了解决HTTP协议的这一缺陷，需要使用另一种协议：安全套接字层超文本传输协议HTTPS，为了数据传输的安全，HTTPS在HTTP的基础上加入了&lt;code&gt;SSL&lt;/code&gt;协议，SSL依靠证书来验证服务器的身份，并为浏览器和服务器之间的通信加密。&lt;/p&gt;
 &lt;h2 id=&quot;HTTP-协议&quot;&gt;&lt;a href=&quot;#HTTP-协议&quot; class=&quot;headerlink&quot; title=&quot;HTTP 协议&quot;&gt;&lt;/a&gt;HTTP 协议&lt;/h2&gt;&lt;p&gt;在谈论 HTTPS 协议之前，先来回顾一下 HTTP 协议的概念。&lt;/p&gt;
-&lt;h3 id=&quot;HTTP-协议介绍&quot;&gt;&lt;a href=&quot;#HTTP-协议介绍&quot; class=&quot;headerlink&quot; title=&quot;HTTP 协议介绍&quot;&gt;&lt;/a&gt;HTTP 协议介绍&lt;/h3&gt;&lt;p&gt;HTTP 协议是一种基于文本的传输协议，它位于 OSI 网络模型中的&lt;code&gt;应用层&lt;/code&gt;。&lt;/p&gt;
-&lt;p&gt;&lt;img data-src=&quot;https://segmentfault.com/img/remote/1460000023936431&quot; alt=&quot;test&quot;&gt;&lt;/p&gt;
-&lt;p&gt;HTTP 协议是通过客户端和服务器的请求应答来进行通讯，目前协议由之前的 &lt;a href=&quot;https://tools.ietf.org/html/rfc2616&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;RFC 2616&lt;/a&gt; 拆分成立六个单独的协议说明（&lt;a href=&quot;https://tools.ietf.org/html/rfc7230&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;RFC 7230&lt;/a&gt;、&lt;a href=&quot;https://tools.ietf.org/html/rfc7231&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;RFC 7231&lt;/a&gt;、&lt;a href=&quot;https://tools.ietf.org/html/rfc7232&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;RFC 7232&lt;/a&gt;、&lt;a href=&quot;https://tools.ietf.org/html/rfc7233&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;RFC 7233&lt;/a&gt;、&lt;a href=&quot;https://tools.ietf.org/html/rfc7234&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;RFC 7234&lt;/a&gt;、&lt;a href=&quot;https://tools.ietf.org/html/rfc7235&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;RFC 7235&lt;/a&gt;），通讯报文如下：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;请求&lt;/li&gt;
-&lt;/ul&gt;
-&lt;figure class=&quot;highlight&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;POST&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;http://www.baidu.com&lt;/span&gt; HTTP/1.1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;attribute&quot;&gt;Host&lt;/span&gt;: www.baidu.com&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;attribute&quot;&gt;Connection&lt;/span&gt;: keep-alive&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;attribute&quot;&gt;Content-Length&lt;/span&gt;: 7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;attribute&quot;&gt;User-Agent&lt;/span&gt;: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;wd=HTTP&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-
-&lt;ul&gt;
-&lt;li&gt;响应&lt;/li&gt;
-&lt;/ul&gt;
-&lt;figure class=&quot;highlight&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;HTTP/1.1 &lt;span class=&quot;number&quot;&gt;200&lt;/span&gt; OK&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;attribute&quot;&gt;Connection&lt;/span&gt;: Keep-Alive&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;attribute&quot;&gt;Content-Encoding&lt;/span&gt;: gzip&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;attribute&quot;&gt;Content-Type&lt;/span&gt;: text/html;charset=utf-8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;attribute&quot;&gt;Date&lt;/span&gt;: Thu, 14 Feb 2019 07:23:49 GMT&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;attribute&quot;&gt;Transfer-Encoding&lt;/span&gt;: chunked&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;lt;html&amp;gt;...&amp;lt;/html&amp;gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;h3 id=&quot;HTTP-协议介绍&quot;&gt;&lt;a href=&quot;#HTTP-协议介绍&quot; class=&quot;headerlink&quot; title=&quot;HTTP 协议介绍&quot;&gt;&lt;/a&gt;HTTP 协议介绍&lt;/h3&gt;&lt;p&gt;HTTP 协议是一种基于文本的传输协议，它位于 OSI 网络模型中的&lt;strong&gt;&lt;code&gt;应用层&lt;/code&gt;&lt;/strong&gt;。&lt;/p&gt;
+&lt;img data-src=&quot;/2020/12/03/why-https-security/osi-7layers.png&quot; class&gt;
     
     </summary>
     

@@ -10,6 +10,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/picture/pika.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/picture/pika.png">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="baidu-site-verification" content="code-LqqDM3vffE">
 
 <link rel="stylesheet" href="/css/main.css">
 
@@ -262,7 +263,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.8k</span>
+              <span>3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -283,20 +284,12 @@
       
           <blockquote>
 <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote>
-<p>在之前《HTTP 与 HTTPS 的区别》中，对比了HTTP/HTTPS的不同，以及HTTP/HTTPS是如何认证的，那么HTTPS为什么是安全的？所以引出了下面的内容。</p>
+<p>在之前《HTTP 与 HTTPS 的区别》中，对比了<code>HTTP/HTTPS</code>的不同，以及<code>HTTP/HTTPS</code>是如何<code>TCP</code>握手的，那么HTTPS为什么是安全的？</p>
+<p>超文本传输协议HTTP协议被用于在Web浏览器和网站服务器之间传递信息，HTTP协议以明文方式发送内容，不提供任何方式的数据加密，如果攻击者截取了Web浏览器和网站服务器之间的传输报文，就可以直接读懂其中的信息，因此，HTTP协议不适合传输一些敏感信息。</p>
+<p>为了解决HTTP协议的这一缺陷，需要使用另一种协议：安全套接字层超文本传输协议HTTPS，为了数据传输的安全，HTTPS在HTTP的基础上加入了<code>SSL</code>协议，SSL依靠证书来验证服务器的身份，并为浏览器和服务器之间的通信加密。</p>
 <h2 id="HTTP-协议"><a href="#HTTP-协议" class="headerlink" title="HTTP 协议"></a>HTTP 协议</h2><p>在谈论 HTTPS 协议之前，先来回顾一下 HTTP 协议的概念。</p>
-<h3 id="HTTP-协议介绍"><a href="#HTTP-协议介绍" class="headerlink" title="HTTP 协议介绍"></a>HTTP 协议介绍</h3><p>HTTP 协议是一种基于文本的传输协议，它位于 OSI 网络模型中的<code>应用层</code>。</p>
-<p><img data-src="https://segmentfault.com/img/remote/1460000023936431" alt="test"></p>
-<p>HTTP 协议是通过客户端和服务器的请求应答来进行通讯，目前协议由之前的 <a href="https://tools.ietf.org/html/rfc2616" target="_blank" rel="noopener">RFC 2616</a> 拆分成立六个单独的协议说明（<a href="https://tools.ietf.org/html/rfc7230" target="_blank" rel="noopener">RFC 7230</a>、<a href="https://tools.ietf.org/html/rfc7231" target="_blank" rel="noopener">RFC 7231</a>、<a href="https://tools.ietf.org/html/rfc7232" target="_blank" rel="noopener">RFC 7232</a>、<a href="https://tools.ietf.org/html/rfc7233" target="_blank" rel="noopener">RFC 7233</a>、<a href="https://tools.ietf.org/html/rfc7234" target="_blank" rel="noopener">RFC 7234</a>、<a href="https://tools.ietf.org/html/rfc7235" target="_blank" rel="noopener">RFC 7235</a>），通讯报文如下：</p>
-<ul>
-<li>请求</li>
-</ul>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">http://www.baidu.com</span> HTTP/1.1</span><br><span class="line"><span class="attribute">Host</span>: www.baidu.com</span><br><span class="line"><span class="attribute">Connection</span>: keep-alive</span><br><span class="line"><span class="attribute">Content-Length</span>: 7</span><br><span class="line"><span class="attribute">User-Agent</span>: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36</span><br><span class="line"></span><br><span class="line">wd=HTTP</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>响应</li>
-</ul>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 <span class="number">200</span> OK</span><br><span class="line"><span class="attribute">Connection</span>: Keep-Alive</span><br><span class="line"><span class="attribute">Content-Encoding</span>: gzip</span><br><span class="line"><span class="attribute">Content-Type</span>: text/html;charset=utf-8</span><br><span class="line"><span class="attribute">Date</span>: Thu, 14 Feb 2019 07:23:49 GMT</span><br><span class="line"><span class="attribute">Transfer-Encoding</span>: chunked</span><br><span class="line"></span><br><span class="line">&lt;html&gt;...&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="HTTP-协议介绍"><a href="#HTTP-协议介绍" class="headerlink" title="HTTP 协议介绍"></a>HTTP 协议介绍</h3><p>HTTP 协议是一种基于文本的传输协议，它位于 OSI 网络模型中的<strong><code>应用层</code></strong>。</p>
+<img data-src="/2020/12/03/why-https-security/osi-7layers.png" class>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2020/12/03/why-https-security/#more" rel="contents">
