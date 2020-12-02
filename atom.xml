@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://notspr.com/"/>
-  <updated>2020-12-02T16:56:19.662Z</updated>
+  <updated>2020-12-01T16:48:58.231Z</updated>
   <id>https://notspr.com/</id>
   
   <author>
@@ -15,40 +15,6 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
-  
-  <entry>
-    <title>HTTPS 为什么是安全的</title>
-    <link href="https://notspr.com/2020/12/03/why-https-security/"/>
-    <id>https://notspr.com/2020/12/03/why-https-security/</id>
-    <published>2020-12-02T16:18:01.000Z</published>
-    <updated>2020-12-02T16:56:19.662Z</updated>
-    
-    <summary type="html">
-    
-      &lt;blockquote&gt;
-&lt;h2 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h2&gt;&lt;/blockquote&gt;
-&lt;p&gt;在之前《HTTP 与 HTTPS 的区别》中，对比了&lt;code&gt;HTTP/HTTPS&lt;/code&gt;的不同，以及&lt;code&gt;HTTP/HTTPS&lt;/code&gt;是如何&lt;code&gt;TCP&lt;/code&gt;握手的，那么HTTPS为什么是安全的？&lt;/p&gt;
-&lt;p&gt;超文本传输协议HTTP协议被用于在Web浏览器和网站服务器之间传递信息，HTTP协议以明文方式发送内容，不提供任何方式的数据加密，如果攻击者截取了Web浏览器和网站服务器之间的传输报文，就可以直接读懂其中的信息，因此，HTTP协议不适合传输一些敏感信息。&lt;/p&gt;
-&lt;p&gt;为了解决HTTP协议的这一缺陷，需要使用另一种协议：安全套接字层超文本传输协议HTTPS，为了数据传输的安全，HTTPS在HTTP的基础上加入了&lt;code&gt;SSL&lt;/code&gt;协议，SSL依靠证书来验证服务器的身份，并为浏览器和服务器之间的通信加密。&lt;/p&gt;
-&lt;h2 id=&quot;HTTP-协议&quot;&gt;&lt;a href=&quot;#HTTP-协议&quot; class=&quot;headerlink&quot; title=&quot;HTTP 协议&quot;&gt;&lt;/a&gt;HTTP 协议&lt;/h2&gt;&lt;p&gt;在谈论 HTTPS 协议之前，先来回顾一下 HTTP 协议的概念。&lt;/p&gt;
-&lt;h3 id=&quot;HTTP-协议介绍&quot;&gt;&lt;a href=&quot;#HTTP-协议介绍&quot; class=&quot;headerlink&quot; title=&quot;HTTP 协议介绍&quot;&gt;&lt;/a&gt;HTTP 协议介绍&lt;/h3&gt;&lt;p&gt;HTTP 协议是一种基于文本的传输协议，它位于 OSI 网络模型中的&lt;strong&gt;&lt;code&gt;应用层&lt;/code&gt;&lt;/strong&gt;。&lt;/p&gt;
-&lt;img data-src=&quot;/2020/12/03/why-https-security/osi-7layers.png&quot; class&gt;
-    
-    </summary>
-    
-    
-      <category term="计算机网络" scheme="https://notspr.com/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/"/>
-    
-      <category term="HTTP/HTTPS" scheme="https://notspr.com/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/HTTP-HTTPS/"/>
-    
-    
-      <category term="HTTP/HTTPS" scheme="https://notspr.com/tags/HTTP-HTTPS/"/>
-    
-      <category term="传输协议" scheme="https://notspr.com/tags/%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE/"/>
-    
-      <category term="SSL" scheme="https://notspr.com/tags/SSL/"/>
-    
-  </entry>
   
   <entry>
     <title>Zabbix安装与部署</title>
@@ -113,9 +79,9 @@
       <category term="xorm" scheme="https://notspr.com/categories/Golan/xorm/"/>
     
     
-      <category term="数据库" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
-    
       <category term="ORM" scheme="https://notspr.com/tags/ORM/"/>
+    
+      <category term="数据库" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
     
       <category term="Golang" scheme="https://notspr.com/tags/Golang/"/>
     
@@ -150,9 +116,9 @@
       <category term="xorm" scheme="https://notspr.com/categories/Golang/xorm/"/>
     
     
-      <category term="数据库" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
-    
       <category term="ORM" scheme="https://notspr.com/tags/ORM/"/>
+    
+      <category term="数据库" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
     
       <category term="Golang" scheme="https://notspr.com/tags/Golang/"/>
     
@@ -366,11 +332,11 @@
     
       <category term="Python" scheme="https://notspr.com/tags/Python/"/>
     
-      <category term="数据库" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
-    
       <category term="Django" scheme="https://notspr.com/tags/Django/"/>
     
       <category term="ORM" scheme="https://notspr.com/tags/ORM/"/>
+    
+      <category term="数据库" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
     
   </entry>
   
@@ -402,13 +368,13 @@
     
       <category term="Python" scheme="https://notspr.com/tags/Python/"/>
     
-      <category term="Redis" scheme="https://notspr.com/tags/Redis/"/>
-    
       <category term="Celery" scheme="https://notspr.com/tags/Celery/"/>
     
       <category term="Django" scheme="https://notspr.com/tags/Django/"/>
     
       <category term="RabbitMQ" scheme="https://notspr.com/tags/RabbitMQ/"/>
+    
+      <category term="Redis" scheme="https://notspr.com/tags/Redis/"/>
     
   </entry>
   
@@ -481,9 +447,9 @@
     
       <category term="vCenter" scheme="https://notspr.com/tags/vCenter/"/>
     
-      <category term="虚拟化" scheme="https://notspr.com/tags/%E8%99%9A%E6%8B%9F%E5%8C%96/"/>
-    
       <category term="pyvmomi" scheme="https://notspr.com/tags/pyvmomi/"/>
+    
+      <category term="虚拟化" scheme="https://notspr.com/tags/%E8%99%9A%E6%8B%9F%E5%8C%96/"/>
     
   </entry>
   
@@ -538,9 +504,9 @@
       <category term="Redis修炼" scheme="https://notspr.com/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/Redis%E4%BF%AE%E7%82%BC/"/>
     
     
-      <category term="数据库" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
-    
       <category term="Redis" scheme="https://notspr.com/tags/Redis/"/>
+    
+      <category term="数据库" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
     
       <category term="数据类型" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/"/>
     
@@ -683,6 +649,30 @@
       <category term="剑指offer" scheme="https://notspr.com/tags/%E5%89%91%E6%8C%87offer/"/>
     
       <category term="二叉搜索树" scheme="https://notspr.com/tags/%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>企业(政务)微信浏览器的前端开发兼容问题</title>
+    <link href="https://notspr.com/2020/08/20/weixin-app/"/>
+    <id>https://notspr.com/2020/08/20/weixin-app/</id>
+    <published>2020-08-20T14:50:54.000Z</published>
+    <updated>2020-11-16T15:50:11.954Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;strong&gt;windows版本的企业（政务）微信浏览器基于Chromium 53版本，对ES7某些新特性不兼容&lt;/strong&gt;&lt;/p&gt;
+&lt;img data-src=&quot;/2020/08/20/weixin-app/weixin_browser.png&quot; class&gt;
+    
+    </summary>
+    
+    
+      <category term="前端开发指南" scheme="https://notspr.com/categories/%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/"/>
+    
+    
+      <category term="前端" scheme="https://notspr.com/tags/%E5%89%8D%E7%AB%AF/"/>
+    
+      <category term="微信轻应用" scheme="https://notspr.com/tags/%E5%BE%AE%E4%BF%A1%E8%BD%BB%E5%BA%94%E7%94%A8/"/>
     
   </entry>
   
