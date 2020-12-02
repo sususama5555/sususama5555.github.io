@@ -10,6 +10,7 @@
 <p>另一种就是，使用Python脚本创建一套Zabbix告警推送的流程，将超过阈值的Zabbix告警按照指定的流程和动作推送到告警中心，而告警中心使用Zabbix作为其中一个告警源，不断拉取并且分发告警。这应该属于监控、告警等最常见的自动化运维的场景了，我对此也比较感兴趣，所有想从Zabbix较为基础的单机版安装及部署学习，也就有了这篇文章。</p>
 <p>事先已在本地开发环境的虚拟机中安装与部署成功，现在期望将Zabbix部署到阿里云的机器上。</p>
 <p><strong><em>注意：安装部署时，由于环境和版本的问题也踩了不少坑，希望能给读者一些启示。</em></strong></p>
+<p><strong><em>作者Zabbix网址</em></strong>：<a href="https://zabbix.notspr.com/" target="_blank" rel="noopener">https://zabbix.notspr.com/</a></p>
 <a id="more"></a>
 
 <blockquote>
@@ -136,7 +137,7 @@
 <li>Zabbix告警推送（SMTP邮件、自定义脚本）</li>
 </ul>
 <p>最后附上本人阿里云上的Zabbix网址：</p>
-<p><a href="http://47.112.240.167:8005/" target="_blank" rel="noopener">http://47.112.240.167:8005/</a></p>
+<p><a href="https://zabbix.notspr.com/" target="_blank" rel="noopener">https://zabbix.notspr.com/</a></p>
 <hr>
 <p>官方文档：<br><a href="https://www.zabbix.com/cn/download?zabbix=5.0&os_distribution=centos&os_version=7&db=mysql&ws=nginx" target="_blank" rel="noopener">官方 - 下载安装Zabbix</a></p>
 <p><a href="https://www.zabbix.com/documentation/5.0/manual/installation/install#installing_frontend" target="_blank" rel="noopener">Zabbix Documentation 5.0</a></p>
@@ -241,8 +242,8 @@
         <category>xorm</category>
       </categories>
       <tags>
-        <tag>ORM</tag>
         <tag>数据库</tag>
+        <tag>ORM</tag>
         <tag>Golang</tag>
         <tag>xorm</tag>
         <tag>实战练习</tag>
@@ -838,8 +839,8 @@
         <category>xorm</category>
       </categories>
       <tags>
-        <tag>ORM</tag>
         <tag>数据库</tag>
+        <tag>ORM</tag>
         <tag>Golang</tag>
         <tag>xorm</tag>
         <tag>操作手册</tag>
@@ -1783,9 +1784,9 @@
       </categories>
       <tags>
         <tag>Python</tag>
+        <tag>数据库</tag>
         <tag>Django</tag>
         <tag>ORM</tag>
-        <tag>数据库</tag>
       </tags>
   </entry>
   <entry>
@@ -1895,10 +1896,10 @@
       </categories>
       <tags>
         <tag>Python</tag>
+        <tag>Redis</tag>
         <tag>Celery</tag>
         <tag>Django</tag>
         <tag>RabbitMQ</tag>
-        <tag>Redis</tag>
       </tags>
   </entry>
   <entry>
@@ -2091,8 +2092,8 @@
         <tag>Python</tag>
         <tag>VMware vSphere</tag>
         <tag>vCenter</tag>
-        <tag>pyvmomi</tag>
         <tag>虚拟化</tag>
+        <tag>pyvmomi</tag>
       </tags>
   </entry>
   <entry>
@@ -2302,8 +2303,8 @@
         <category>Redis修炼</category>
       </categories>
       <tags>
-        <tag>Redis</tag>
         <tag>数据库</tag>
+        <tag>Redis</tag>
         <tag>数据类型</tag>
       </tags>
   </entry>
@@ -2990,8 +2991,8 @@
         <category>Django</category>
       </categories>
       <tags>
-        <tag>Django</tag>
         <tag>技术文章</tag>
+        <tag>Django</tag>
         <tag>uWSGI</tag>
         <tag>Nginx</tag>
       </tags>

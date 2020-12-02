@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://notspr.com/"/>
-  <updated>2020-12-01T16:48:58.231Z</updated>
+  <updated>2020-12-02T17:35:28.072Z</updated>
   <id>https://notspr.com/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://notspr.com/2020/12/01/zabbix-install-deploy/"/>
     <id>https://notspr.com/2020/12/01/zabbix-install-deploy/</id>
     <published>2020-11-30T16:05:19.000Z</published>
-    <updated>2020-12-01T16:48:58.231Z</updated>
+    <updated>2020-12-02T17:35:28.072Z</updated>
     
     <summary type="html">
     
@@ -32,6 +32,7 @@
 &lt;p&gt;另一种就是，使用Python脚本创建一套Zabbix告警推送的流程，将超过阈值的Zabbix告警按照指定的流程和动作推送到告警中心，而告警中心使用Zabbix作为其中一个告警源，不断拉取并且分发告警。这应该属于监控、告警等最常见的自动化运维的场景了，我对此也比较感兴趣，所有想从Zabbix较为基础的单机版安装及部署学习，也就有了这篇文章。&lt;/p&gt;
 &lt;p&gt;事先已在本地开发环境的虚拟机中安装与部署成功，现在期望将Zabbix部署到阿里云的机器上。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&lt;em&gt;注意：安装部署时，由于环境和版本的问题也踩了不少坑，希望能给读者一些启示。&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;作者Zabbix网址&lt;/em&gt;&lt;/strong&gt;：&lt;a href=&quot;https://zabbix.notspr.com/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;https://zabbix.notspr.com/&lt;/a&gt;&lt;/p&gt;
     
     </summary>
     
@@ -79,9 +80,9 @@
       <category term="xorm" scheme="https://notspr.com/categories/Golan/xorm/"/>
     
     
-      <category term="ORM" scheme="https://notspr.com/tags/ORM/"/>
-    
       <category term="数据库" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+      <category term="ORM" scheme="https://notspr.com/tags/ORM/"/>
     
       <category term="Golang" scheme="https://notspr.com/tags/Golang/"/>
     
@@ -116,9 +117,9 @@
       <category term="xorm" scheme="https://notspr.com/categories/Golang/xorm/"/>
     
     
-      <category term="ORM" scheme="https://notspr.com/tags/ORM/"/>
-    
       <category term="数据库" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+      <category term="ORM" scheme="https://notspr.com/tags/ORM/"/>
     
       <category term="Golang" scheme="https://notspr.com/tags/Golang/"/>
     
@@ -332,11 +333,11 @@
     
       <category term="Python" scheme="https://notspr.com/tags/Python/"/>
     
+      <category term="数据库" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
       <category term="Django" scheme="https://notspr.com/tags/Django/"/>
     
       <category term="ORM" scheme="https://notspr.com/tags/ORM/"/>
-    
-      <category term="数据库" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
     
   </entry>
   
@@ -368,13 +369,13 @@
     
       <category term="Python" scheme="https://notspr.com/tags/Python/"/>
     
+      <category term="Redis" scheme="https://notspr.com/tags/Redis/"/>
+    
       <category term="Celery" scheme="https://notspr.com/tags/Celery/"/>
     
       <category term="Django" scheme="https://notspr.com/tags/Django/"/>
     
       <category term="RabbitMQ" scheme="https://notspr.com/tags/RabbitMQ/"/>
-    
-      <category term="Redis" scheme="https://notspr.com/tags/Redis/"/>
     
   </entry>
   
@@ -447,9 +448,9 @@
     
       <category term="vCenter" scheme="https://notspr.com/tags/vCenter/"/>
     
-      <category term="pyvmomi" scheme="https://notspr.com/tags/pyvmomi/"/>
-    
       <category term="虚拟化" scheme="https://notspr.com/tags/%E8%99%9A%E6%8B%9F%E5%8C%96/"/>
+    
+      <category term="pyvmomi" scheme="https://notspr.com/tags/pyvmomi/"/>
     
   </entry>
   
@@ -504,9 +505,9 @@
       <category term="Redis修炼" scheme="https://notspr.com/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/Redis%E4%BF%AE%E7%82%BC/"/>
     
     
-      <category term="Redis" scheme="https://notspr.com/tags/Redis/"/>
-    
       <category term="数据库" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+      <category term="Redis" scheme="https://notspr.com/tags/Redis/"/>
     
       <category term="数据类型" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/"/>
     
