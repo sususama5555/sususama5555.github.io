@@ -2,12 +2,12 @@
 title: GO语言之Prometheus Exporter开发
 date: 2020-11-25 00:52:59
 tags: 
-- Go语言
+- Golang
 - Prometheus
 - Exporter
 - 监控
 categories: 
-- Go语言
+- Golang
 - Prometheus
 ---
 

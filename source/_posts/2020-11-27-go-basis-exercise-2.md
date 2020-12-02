@@ -2,11 +2,11 @@
 title: Go语言基础练习二
 date: 2020-04-09 00:12:07
 tags: 
-- Go语言
+- Golang
 - 运算符
 - 基础练习
 categories: 
-- Go语言
+- Golang
 - 基础练习
 ---
 

@@ -2,11 +2,11 @@
 title: Go语言基础练习一
 date: 2020-04-03 00:04:00
 tags: 
-- Go语言
+- Golang
 - 数据类型
 - 基础练习
 categories: 
-- Go语言
+- Golang
 - 基础练习
 ---
 

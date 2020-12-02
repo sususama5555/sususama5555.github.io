@@ -2,11 +2,11 @@
 title: Go语言之顺序编程
 date: 2020-04-23 00:19:02
 tags: 
-- Go语言
+- Golang
 - 顺序编程
 - 基础练习
 categories: 
-- Go语言
+- Golang
 - 顺序编程
 ---
 

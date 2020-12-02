@@ -2,13 +2,13 @@
 title: Go语言之xorm使用实例
 date: 2020-11-30 00:52:27
 tags: 
-- Go语言
+- Golang
 - xorm
 - ORM
 - 数据库
 - 实战练习
 categories: 
-- Go语言
+- Golan
 - xorm
 ---
 
