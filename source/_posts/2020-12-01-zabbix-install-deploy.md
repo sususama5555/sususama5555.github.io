@@ -25,6 +25,8 @@ categories:
 
 ***注意：安装部署时，由于环境和版本的问题也踩了不少坑，希望能给读者一些启示。***
 
+***作者Zabbix网址***：https://zabbix.notspr.com/
+
 <!-- more -->
 
 > # 安装
@@ -337,7 +339,7 @@ Zabbix是一个基于WEB界面的提供分布式系统监视以及网络监视�
 
 最后附上本人阿里云上的Zabbix网址：
 
-http://47.112.240.167:8005/
+https://zabbix.notspr.com/
 
 
 

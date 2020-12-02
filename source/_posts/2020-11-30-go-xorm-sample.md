@@ -8,7 +8,7 @@ tags:
 - 数据库
 - 实战练习
 categories: 
-- Golan
+- Golang
 - xorm
 ---
 
