@@ -7,7 +7,7 @@ tags:
 - SSL
 categories: 
 - 计算机网络
-- HTTP/HTTPS
+- HTTP
 ---
 
 > ## 前言
