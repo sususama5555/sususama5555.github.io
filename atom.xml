@@ -344,11 +344,11 @@
   </entry>
   
   <entry>
-    <title>Python中构建MySql连接池</title>
+    <title>Python中构建MySQL连接池</title>
     <link href="https://notspr.com/2020/11/09/python-mysql-pool/"/>
     <id>https://notspr.com/2020/11/09/python-mysql-pool/</id>
     <published>2020-11-09T15:17:35.000Z</published>
-    <updated>2020-11-18T16:58:30.354Z</updated>
+    <updated>2020-12-04T18:57:28.324Z</updated>
     
     <summary type="html">
     
@@ -362,7 +362,7 @@
     
       <category term="数据库" scheme="https://notspr.com/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
     
-      <category term="MySql修炼" scheme="https://notspr.com/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/MySql%E4%BF%AE%E7%82%BC/"/>
+      <category term="MySQL修炼" scheme="https://notspr.com/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL%E4%BF%AE%E7%82%BC/"/>
     
     
       <category term="Python" scheme="https://notspr.com/tags/Python/"/>
@@ -371,7 +371,7 @@
     
       <category term="数据库连接池" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0/"/>
     
-      <category term="MySql" scheme="https://notspr.com/tags/MySql/"/>
+      <category term="MySQL" scheme="https://notspr.com/tags/MySQL/"/>
     
   </entry>
   
@@ -454,6 +454,47 @@
       <category term="虚拟化" scheme="https://notspr.com/tags/%E8%99%9A%E6%8B%9F%E5%8C%96/"/>
     
       <category term="技术文章" scheme="https://notspr.com/tags/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MySQL索引及优化</title>
+    <link href="https://notspr.com/2020/10/05/mysql-basis/"/>
+    <id>https://notspr.com/2020/10/05/mysql-basis/</id>
+    <published>2020-10-04T18:53:31.000Z</published>
+    <updated>2020-12-04T20:07:12.695Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;一、索引&quot;&gt;&lt;a href=&quot;#一、索引&quot; class=&quot;headerlink&quot; title=&quot;一、索引&quot;&gt;&lt;/a&gt;一、索引&lt;/h2&gt;&lt;h3 id=&quot;B-Tree-原理&quot;&gt;&lt;a href=&quot;#B-Tree-原理&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="数据库" scheme="https://notspr.com/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+      <category term="MySQL修炼" scheme="https://notspr.com/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL%E4%BF%AE%E7%82%BC/"/>
+    
+    
+      <category term="MySQL" scheme="https://notspr.com/tags/MySQL/"/>
+    
+      <category term="转载" scheme="https://notspr.com/tags/%E8%BD%AC%E8%BD%BD/"/>
+    
+      <category term="B树与B+树" scheme="https://notspr.com/tags/B%E6%A0%91%E4%B8%8EB-%E6%A0%91/"/>
+    
+      <category term="数据结构" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"/>
+    
+      <category term="红黑树" scheme="https://notspr.com/tags/%E7%BA%A2%E9%BB%91%E6%A0%91/"/>
+    
+      <category term="存储引擎" scheme="https://notspr.com/tags/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/"/>
+    
+      <category term="数据库优化" scheme="https://notspr.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BC%98%E5%8C%96/"/>
     
   </entry>
   
@@ -571,13 +612,13 @@
     
       <category term="Python" scheme="https://notspr.com/tags/Python/"/>
     
-      <category term="Redis" scheme="https://notspr.com/tags/Redis/"/>
-    
       <category term="Celery" scheme="https://notspr.com/tags/Celery/"/>
     
       <category term="Django" scheme="https://notspr.com/tags/Django/"/>
     
       <category term="RabbitMQ" scheme="https://notspr.com/tags/RabbitMQ/"/>
+    
+      <category term="Redis" scheme="https://notspr.com/tags/Redis/"/>
     
   </entry>
   
@@ -612,9 +653,9 @@
     
       <category term="告警" scheme="https://notspr.com/tags/%E5%91%8A%E8%AD%A6/"/>
     
-      <category term="初识" scheme="https://notspr.com/tags/%E5%88%9D%E8%AF%86/"/>
-    
       <category term="开源" scheme="https://notspr.com/tags/%E5%BC%80%E6%BA%90/"/>
+    
+      <category term="初识" scheme="https://notspr.com/tags/%E5%88%9D%E8%AF%86/"/>
     
   </entry>
   
@@ -647,45 +688,6 @@
       <category term="垃圾回收" scheme="https://notspr.com/tags/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/"/>
     
       <category term="GC" scheme="https://notspr.com/tags/GC/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>理解Python协程(Coroutine)</title>
-    <link href="https://notspr.com/2020/06/22/python-coroutine/"/>
-    <id>https://notspr.com/2020/06/22/python-coroutine/</id>
-    <published>2020-06-21T17:07:45.000Z</published>
-    <updated>2020-12-01T17:15:12.003Z</updated>
-    
-    <summary type="html">
-    
-      &lt;blockquote&gt;
-&lt;h2 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h2&gt;&lt;/blockquote&gt;
-&lt;p&gt;由于GIL的存在，导致Python多线程性能甚至比单线程更糟。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;GIL: 全局解释器锁（英语：Global Interpreter Lock，缩写GIL），是计算机程序设计语言解释器用于同步线程的一种机制，它使得任何时刻仅有一个线程在执行。[1]即便在多核心处理器上，使用 GIL 的解释器也只允许同一时间执行一个线程。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;于是出现了协程（Coroutine）这么个东西。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;协程: 协程，又称微线程，纤程，英文名Coroutine。协程的作用，是在执行函数A时，可以随时中断，去执行函数B，然后中断继续执行函数A（可以自由切换）。但这一过程并不是函数调用（没有调用语句），这一整个过程看似像多线程，然而协程只有一个线程执行.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;协程由于由程序主动控制切换，没有线程切换的开销，所以执行效率极高。对于IO密集型任务非常适用，如果是cpu密集型，推荐多进程+协程的方式。&lt;/p&gt;
-&lt;p&gt;在Python3.4之前，官方没有对协程的支持，存在一些三方库的实现，比如gevent和Tornado。3.4之后就内置了asyncio标准库，官方真正实现了协程这一特性。&lt;/p&gt;
-&lt;p&gt;而Python对协程的支持，是通过Generator实现的，协程是遵循某些规则的生成器。因此，我们在了解协程之前，我们先要学习生成器。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="Python" scheme="https://notspr.com/categories/Python/"/>
-    
-      <category term="协程" scheme="https://notspr.com/categories/Python/%E5%8D%8F%E7%A8%8B/"/>
-    
-    
-      <category term="Python" scheme="https://notspr.com/tags/Python/"/>
-    
-      <category term="协程" scheme="https://notspr.com/tags/%E5%8D%8F%E7%A8%8B/"/>
-    
-      <category term="生成器" scheme="https://notspr.com/tags/%E7%94%9F%E6%88%90%E5%99%A8/"/>
     
   </entry>
   
