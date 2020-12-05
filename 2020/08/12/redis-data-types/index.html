@@ -33,27 +33,23 @@
     var CONFIG = {"hostname":"notspr.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#ff7600","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="前言 GIL(Global Interpreter Lock)，也称为全局解释器，官方解释为：  In CPython, the global interpreter lock, or GIL, is a mutex that prevents multiple native threads from executing Python bytecodes at once. This lock i">
+  <meta name="description" content="一、Redis 数据类型:  1、String（字符串）string 是 Redis 最基本的类型，理解成与 Memcached 一模一样的类型，一个 key 对应一个 value。 2、Hash（哈希）Redis hash 是一个键值(key&#x3D;&gt;value)对集合。Redis hash 是一个 string 类型的 field 和 value 的映射表，hash 特别适合用于存储对象。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Python之全局解释器锁GIL">
-<meta property="og:url" content="https://notspr.com/2020/11/23/python-GIL/index.html">
+<meta property="og:title" content="Redis修炼之数据类型">
+<meta property="og:url" content="https://notspr.com/2020/08/12/redis-data-types/index.html">
 <meta property="og:site_name" content="Sapphire">
-<meta property="og:description" content="前言 GIL(Global Interpreter Lock)，也称为全局解释器，官方解释为：  In CPython, the global interpreter lock, or GIL, is a mutex that prevents multiple native threads from executing Python bytecodes at once. This lock i">
+<meta property="og:description" content="一、Redis 数据类型:  1、String（字符串）string 是 Redis 最基本的类型，理解成与 Memcached 一模一样的类型，一个 key 对应一个 value。 2、Hash（哈希）Redis hash 是一个键值(key&#x3D;&gt;value)对集合。Redis hash 是一个 string 类型的 field 和 value 的映射表，hash 特别适合用于存储对象。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://notspr.com/2020/11/23/python-GIL/python-gil-single.jpg">
-<meta property="og:image" content="https://notspr.com/2020/11/23/python-GIL/python-gil-muti.jpg">
-<meta property="og:image" content="https://notspr.com/2020/11/23/python-GIL/python-gil-octo.jpg">
-<meta property="article:published_time" content="2020-11-22T16:54:11.000Z">
-<meta property="article:modified_time" content="2020-11-22T17:29:38.088Z">
+<meta property="article:published_time" content="2020-08-11T16:34:08.000Z">
+<meta property="article:modified_time" content="2020-12-05T22:05:11.114Z">
 <meta property="article:author" content="Ryan Shu">
-<meta property="article:tag" content="Python">
-<meta property="article:tag" content="多线程">
-<meta property="article:tag" content="GIL">
-<meta property="article:tag" content="全局解释器锁">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="Redis">
+<meta property="article:tag" content="NoSQL">
+<meta property="article:tag" content="数据类型">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://notspr.com/2020/11/23/python-GIL/python-gil-single.jpg">
 
-<link rel="canonical" href="https://notspr.com/2020/11/23/python-GIL/">
+<link rel="canonical" href="https://notspr.com/2020/08/12/redis-data-types/">
 
 
 <script id="page-configurations">
@@ -66,7 +62,7 @@
   };
 </script>
 
-  <title>Python之全局解释器锁GIL | Sapphire</title>
+  <title>Redis修炼之数据类型 | Sapphire</title>
   
 
 
@@ -159,17 +155,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">75</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">82</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">33</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">34</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">38</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">40</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -227,7 +223,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://notspr.com/2020/11/23/python-GIL/">
+    <link itemprop="mainEntityOfPage" href="https://notspr.com/2020/08/12/redis-data-types/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/picture/avatar.jpg">
@@ -240,7 +236,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Python之全局解释器锁GIL
+          Redis修炼之数据类型
         </h1>
 
         <div class="post-meta">
@@ -250,7 +246,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-11-23 00:54:11" itemprop="dateCreated datePublished" datetime="2020-11-23T00:54:11+08:00">2020-11-23</time>
+              <time title="创建时间：2020-08-12 00:34:08" itemprop="dateCreated datePublished" datetime="2020-08-12T00:34:08+08:00">2020-08-12</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -258,11 +254,11 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
                 </span>
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/GIL/" itemprop="url" rel="index"><span itemprop="name">GIL</span></a>
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/Redis%E4%BF%AE%E7%82%BC/" itemprop="url" rel="index"><span itemprop="name">Redis修炼</span></a>
                 </span>
             </span>
 
@@ -272,14 +268,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3k</span>
+              <span>1.7k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -292,73 +288,69 @@
 
       
         <blockquote>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote>
-<p>GIL(Global Interpreter Lock)，也称为全局解释器，官方解释为：</p>
-<blockquote>
-<p>In CPython, the global interpreter lock, or GIL, is a mutex that prevents multiple native threads from executing Python bytecodes at once. This lock is necessary mainly because CPython’s memory management is not thread-safe. (However, since the GIL exists, other features have grown to depend on the guarantees that it enforces.)</p>
+<p>一、Redis 数据类型:</p>
 </blockquote>
-<p>主要意思为：</p>
-<blockquote>
-<p>GIL是一个互斥锁，它防止多个线程同时执行Python字节码。这个锁是必要的，主要是因为CPython的内存管理不是线程安全的</p>
-</blockquote>
+<p><strong>1、String（字符串）</strong><br>string 是 Redis 最基本的类型，理解成与 Memcached 一模一样的类型，一个 key 对应一个 value。</p>
+<p><strong>2、Hash（哈希）</strong><br>Redis hash 是一个键值(key=&gt;value)对集合。<br>Redis hash 是一个 string 类型的 field 和 value 的映射表，hash 特别适合用于存储对象。</p>
 <a id="more"></a>
 
-<h3 id="Python解释器有哪些"><a href="#Python解释器有哪些" class="headerlink" title="Python解释器有哪些"></a>Python解释器有哪些</h3><ol>
-<li>CPython: 官方默认版本，使用C语言开发，是Python使用最广泛的解释器，有GIL.</li>
-<li>IPython: IPython是基于CPython之上的交互式解释器，其它方面和CPython相同.</li>
-<li>PyPy: PyPy采用JIT(Just In Time)也就是即时编译编译器，对Python代码执行动态编译，目的是加快执行速度，有GIL.</li>
-<li>Jython: 运行在Java平台上的解释器，把Python代码编译为Java字节码执行，没有GIL.</li>
-<li>IronPython: IronPython和Jython类似，只不过IronPython是运行在微软.Net平台上的Python解释器，可以直接把Python代码编译成.Net的字节码，没有GIL.</li>
-</ol>
-<h2 id="GIL的背景"><a href="#GIL的背景" class="headerlink" title="GIL的背景"></a>GIL的背景</h2><p>由于物理上得限制，各CPU厂商在核心频率上的比赛已经被多核所取代。为了更有效的利用多核处理器的性能，就出现了多线程的编程方式，而随之带来的就是线程间数据一致性和状态同步的困难。</p>
-<p>Python当然也逃不开，为了利用多核，Python开始支持多线程。而解决多线程之间数据完整性和状态同步的最简单方法自然就是加锁。于是有了GIL这把超级大锁，而当越来越多的代码库开发者接受了这种设定后，他们开始大量依赖这种特性（即默认python内部对象是thread-safe的，无需在实现时考虑额外的内存锁和同步操作）。</p>
-<h2 id="GIL为什么会存在？"><a href="#GIL为什么会存在？" class="headerlink" title="GIL为什么会存在？"></a>GIL为什么会存在？</h2><p>GIL的问题其实是由于近十几年来应用程序和操作系统逐步从多任务单核心演进到多任务多核心导致的 , 在一个古老的单核CPU上调度多个线程任务，大家相互共享一个全局锁，谁在CPU执行，谁就占有这把锁，直到这个线程因为IO操作或者Timer Tick到期让出CPU，没有在执行的线程就安静的等待着这把锁（除了等待之外，他们应该也无事可做）。下面这个图演示了一个单核CPU的线程调度方式：</p>
-<img data-src="/2020/11/23/python-GIL/python-gil-single.jpg" class>
+<p><strong>3、List（列表）</strong><br>Redis 列表是简单的字符串列表，按照插入顺序排序。你可以添加一个元素到列表的头部（左边）或者尾部（右边）。<br>ps：可以使用List实现简单消息队列</p>
+<p><strong>4、Set（集合）</strong><br>Redis 的 Set 是 string 类型的无序集合。<br>集合是通过哈希表实现的，所以添加，删除，查找的复杂度都是 O(1)。</p>
+<p><strong>5、zset(sorted set：有序集合)</strong><br>Redis zset 和 set 一样也是string类型元素的集合，且不允许重复的成员。<br>不同的是每个元素都会关联一个double类型的分数。Redis正是通过分数来为集合中的成员进行从小到大的排序。<br>zset的成员是唯一的，但分数(score)却可以重复。</p>
+<blockquote>
+<p>二、各个数据类型应用场景:</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>简介</th>
+<th>特性</th>
+<th>场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>String(字符串)</td>
+<td>二进制安全</td>
+<td>可以包含任何数据，比如jpg图片或者序列化的对象，一个键最大能存储512M</td>
+<td>- - -</td>
+</tr>
+<tr>
+<td>Hash(字典)</td>
+<td>键值对集合，即编程语言中的Map类型</td>
+<td>适合存储对象，并且可以像数据库中update一个属性一样只修改某一项属性值(Memcached中需要取出整个字符串反序列化成对象修改完再序列化存回去)</td>
+<td>存储、读取、修改用户属性</td>
+</tr>
+<tr>
+<td>List(列表)</td>
+<td>链表(双向链表)</td>
+<td>增删快，提供了操作某一段元素的API</td>
+<td>1，最新消息排行等功能(比如朋友圈的时间线) 2，消息队列</td>
+</tr>
+<tr>
+<td>Set(集合)</td>
+<td>哈希表实现，元素不重复</td>
+<td>1、添加、删除，查找的复杂度都是O(1) 2、为集合提供了求交集、并集、差集等操作</td>
+<td>1、共同好友 2、利用唯一性，统计访问网站的所有独立ip 3、好友推荐时，根据tag求交集，大于某个阈值就可以推荐</td>
+</tr>
+<tr>
+<td>Sorted Set(有序集合)</td>
+<td>将Set中的元素增加一个权重参数score，元素按score有序排列</td>
+<td>数据插入集合时，已经进行天然排序</td>
+<td>1、排行榜 2、带权重的消息队列</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>三、注意:</p>
+</blockquote>
+<p>&emsp;&emsp;Redis支持多个数据库，并且每个数据库的数据是隔离的不能共享，并且基于单机才有，如果是集群就没有数据库的概念。</p>
+<p>&emsp;&emsp;Redis是一个字典结构的存储服务器，而实际上一个Redis实例提供了多个用来存储数据的字典，客户端可以指定将数据存储在哪个字典中。这与我们熟知的在一个关系数据库实例中可以创建多个数据库类似，所以可以将其中的每个字典都理解成一个独立的数据库。</p>
+<p>&emsp;&emsp;每个数据库对外都是一个从0开始的递增数字命名，Redis默认支持16个数据库（可以通过配置文件支持更多，无上限），可以通过配置databases来修改这一数字。客户端与Redis建立连接后会自动选择0号数据库，不过可以随时使用SELECT命令更换数据库，如要选择1号数据库：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; SELECT 1</span><br><span class="line">OK</span><br><span class="line">redis [1] &gt; GET foo</span><br><span class="line">(nil)</span><br></pre></td></tr></table></figure>
 
-<p>在一个现代多核心的处理器上，上面的模型就有很大优化空间了，原来只能等待的线程任务，现在可以在其它空闲的核心上调度并发执行。由于古老GIL机制，如果线程2需要在CPU 2 上执行，它需要先等待在CPU 1 上执行的线程1释放GIL（记住：GIL是全局的）。如果线程1是因为 i/o 阻塞让出的GIL，那么线程2必定拿到Gil。但如果线程1是因为timer ticks计数满100让出GIL，那么这个时候线程1和线程2公平竞争。但要命的是，在Python 2.x, 线程1不会动态的调整自身的优先级，所以很大概率下次被选中执行的还是线程1，在很多个这样的选举周期内，线程2只能安静的看着线程1拿着GIL在CPU 1上欢快的执行。</p>
-<img data-src="/2020/11/23/python-GIL/python-gil-muti.jpg" class>
-
-<p>在稍微极端一点的情况下，比如线程1使用了while True在CPU 1 上执行，那就真是“一核有难，八核围观”了，如下图所示：</p>
-<img data-src="/2020/11/23/python-GIL/python-gil-octo.jpg" class>
-
-<h2 id="GIL的影响"><a href="#GIL的影响" class="headerlink" title="GIL的影响"></a>GIL的影响</h2><p>从上文的介绍和官方的定义来看，GIL无疑就是一把全局排他锁。毫无疑问全局锁的存在会对多线程的效率有不小影响。甚至就几乎等于Python是个单线程的程序。</p>
-<h3 id="GIL对多线程Python程序的影响"><a href="#GIL对多线程Python程序的影响" class="headerlink" title="GIL对多线程Python程序的影响"></a>GIL对多线程Python程序的影响</h3><p>程序的性能受到计算密集型(CPU)的程序限制和I/O密集型的程序限制影响，那什么是计算密集型和I/O密集型程序?</p>
-<h4 id="计算密集型-CPU"><a href="#计算密集型-CPU" class="headerlink" title="计算密集型(CPU)"></a>计算密集型(CPU)</h4><p>高度使用CPU的程序，例如: 进行数学计算，矩阵运算，搜索，图像处理等.</p>
-<h4 id="I-O密集型"><a href="#I-O密集型" class="headerlink" title="I/O密集型"></a>I/O密集型</h4><p>I/0(Input/Output)程序是进行数据传输，例如: 文件操作，数据库，网络数据等</p>
-<h3 id="顺序执行单线程和并发执行多线程的效率对比"><a href="#顺序执行单线程和并发执行多线程的效率对比" class="headerlink" title="顺序执行单线程和并发执行多线程的效率对比"></a>顺序执行单线程和并发执行多线程的效率对比</h3><h4 id="顺序执行单线程-single-thread-py"><a href="#顺序执行单线程-single-thread-py" class="headerlink" title="- 顺序执行单线程(single_thread.py)"></a>- 顺序执行单线程(single_thread.py)</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test_counter</span><span class="params">()</span>:</span></span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> range(<span class="number">100000000</span>):</span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    start_time = time.time()</span><br><span class="line">    <span class="keyword">for</span> tid <span class="keyword">in</span> range(<span class="number">2</span>):</span><br><span class="line">        t1 = threading.Thread(target=test_counter)</span><br><span class="line">        t1.start()</span><br><span class="line">        t1.join()</span><br><span class="line">    end_time = time.time()</span><br><span class="line">    print(<span class="string">"Total time:&#123;&#125;"</span>.format(end_time-start_time))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
-
-<p>执行结果:</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">Total</span> <span class="selector-tag">time</span>: 11<span class="selector-class">.299654722213745</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="并发执行两个线程-multi-thread-py"><a href="#并发执行两个线程-multi-thread-py" class="headerlink" title="- 并发执行两个线程(multi_thread.py)"></a>- 并发执行两个线程(multi_thread.py)</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test_counter</span><span class="params">()</span>:</span></span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> range(<span class="number">100000000</span>):</span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    thread_array = &#123;&#125;</span><br><span class="line">    start_time = time.time()</span><br><span class="line">    <span class="keyword">for</span> tid <span class="keyword">in</span> range(<span class="number">2</span>):</span><br><span class="line">        t = threading.Thread(target=test_counter)</span><br><span class="line">        t.start()</span><br><span class="line">        thread_array[tid] = t</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>):</span><br><span class="line">        thread_array[i].join()</span><br><span class="line">    end_time = time.time()</span><br><span class="line">    print(<span class="string">"Total time:&#123;&#125;"</span>.format(end_time-start_time))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
-
-<p>执行结果:</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">Total</span> <span class="selector-tag">time</span><span class="selector-pseudo">:13.7098388671875</span></span><br></pre></td></tr></table></figure>
-
-<p>GIL对I/O绑定多线程程序的性能影响不大，因为线程在等待I/O时共享锁.</p>
-<p>GIL对计算型绑定多线程程序有影响，例如: 使用线程处理部分图像的程序，不仅会因锁定而成为单线程，而且还会看到执行时间的增加，这种增加是由锁的获取和释放开销的结果.</p>
-<h2 id="如何处理Python中的GIL"><a href="#如何处理Python中的GIL" class="headerlink" title="如何处理Python中的GIL"></a>如何处理Python中的GIL</h2><ul>
-<li>计算密集型程序<ul>
-<li>使用多进程(什么是多进程呢，后续道来)</li>
-<li>使用其它语言(将计算密集程序放到其它语言中执行)</li>
-<li>替换解释器(可以自己尝试)</li>
-<li>等大神解决GIL</li>
-</ul>
-</li>
-<li>I/O密集型程序<ul>
-<li>使用多线程</li>
-<li>使用多进程</li>
-<li>使用多进程 + 多线程</li>
-</ul>
-</li>
-</ul>
+<p>&emsp;&emsp;然而这些以数字命名的数据库又与我们理解的数据库有所区别。首先Redis不支持自定义数据库的名字，每个数据库都以编号命名，开发者必须自己记录哪些数据库存储了哪些数据。另外Redis也不支持为每个数据库设置不同的访问密码，所以一个客户端要么可以访问全部数据库，要么连一个数据库也没有权限访问。最重要的一点是多个数据库之间并不是完全隔离的，比如FLUSHALL命令可以清空一个Redis实例中所有数据库中的数据。综上所述，这些数据库更像是一种命名空间，而不适宜存储不同应用程序的数据。比如可以使用0号数据库存储某个应用生产环境中的数据，使用1号数据库存储测试环境中的数据，但不适宜使用0号数据库存储A应用的数据而使用1号数据库B应用的数据，不同的应用应该使用不同的Redis实例存储数据。由于Redis非常轻量级，一个空Redis实例占用的内在只有1M左右，所以不用担心多个Redis实例会额外占用很多内存。</p>
 <hr>
-<p>参考链接：</p>
-<p><a href="http://www.dabeaz.com/python/UnderstandingGIL.pdf" target="_blank" rel="noopener">Understanding the Python GIL</a>  </p>
-<p><a href="https://realpython.com/python-gil/" target="_blank" rel="noopener">What Is the Python Global Interpreter Lock (GIL)?</a></p>
-<p><a href="https://zhuanlan.zhihu.com/p/75780308" target="_blank" rel="noopener">深入理解Python中的GIL（全局解释器锁）</a></p>
+<p>参考链接：<a href="https://www.runoob.com/redis/redis-data-types.html" target="_blank" rel="noopener">菜鸟教程——Redis数据类型</a>  </p>
 
     </div>
 
@@ -374,7 +366,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="https://notspr.com/2020/11/23/python-GIL/" title="Python之全局解释器锁GIL">https://notspr.com/2020/11/23/python-GIL/</a>
+    <a href="https://notspr.com/2020/08/12/redis-data-types/" title="Redis修炼之数据类型">https://notspr.com/2020/08/12/redis-data-types/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -415,10 +407,10 @@
       <footer class="post-footer">
           
           <div class="post-tags">
-              <a href="/tags/Python/" rel="tag"><i class="fa fa-tag"></i> Python</a>
-              <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag"><i class="fa fa-tag"></i> 多线程</a>
-              <a href="/tags/GIL/" rel="tag"><i class="fa fa-tag"></i> GIL</a>
-              <a href="/tags/%E5%85%A8%E5%B1%80%E8%A7%A3%E9%87%8A%E5%99%A8%E9%94%81/" rel="tag"><i class="fa fa-tag"></i> 全局解释器锁</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"><i class="fa fa-tag"></i> 数据库</a>
+              <a href="/tags/Redis/" rel="tag"><i class="fa fa-tag"></i> Redis</a>
+              <a href="/tags/NoSQL/" rel="tag"><i class="fa fa-tag"></i> NoSQL</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" rel="tag"><i class="fa fa-tag"></i> 数据类型</a>
           </div>
 
         
@@ -427,12 +419,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/11/17/pyvmomi-sample/" rel="prev" title="Python之使用pyvmomi管理VMware">
-      <i class="fa fa-chevron-left"></i> Python之使用pyvmomi管理VMware
+    <a href="/2020/07/02/zabbix-summary/" rel="prev" title="初识 - Zabbix">
+      <i class="fa fa-chevron-left"></i> 初识 - Zabbix
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/11/25/go-prometheus-export/" rel="next" title="GO语言之Prometheus Exporter开发">
-      GO语言之Prometheus Exporter开发 <i class="fa fa-chevron-right"></i>
+    <a href="/2020/08/16/redis-use-case/" rel="next" title="Redis修炼之使用场景">
+      Redis修炼之使用场景 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -492,7 +484,6 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Python解释器有哪些"><span class="nav-number">1.1.</span> <span class="nav-text">Python解释器有哪些</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GIL的背景"><span class="nav-number">2.</span> <span class="nav-text">GIL的背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GIL为什么会存在？"><span class="nav-number">3.</span> <span class="nav-text">GIL为什么会存在？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GIL的影响"><span class="nav-number">4.</span> <span class="nav-text">GIL的影响</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#GIL对多线程Python程序的影响"><span class="nav-number">4.1.</span> <span class="nav-text">GIL对多线程Python程序的影响</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#计算密集型-CPU"><span class="nav-number">4.1.1.</span> <span class="nav-text">计算密集型(CPU)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#I-O密集型"><span class="nav-number">4.1.2.</span> <span class="nav-text">I&#x2F;O密集型</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#顺序执行单线程和并发执行多线程的效率对比"><span class="nav-number">4.2.</span> <span class="nav-text">顺序执行单线程和并发执行多线程的效率对比</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#顺序执行单线程-single-thread-py"><span class="nav-number">4.2.1.</span> <span class="nav-text">- 顺序执行单线程(single_thread.py)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#并发执行两个线程-multi-thread-py"><span class="nav-number">4.2.2.</span> <span class="nav-text">- 并发执行两个线程(multi_thread.py)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何处理Python中的GIL"><span class="nav-number">5.</span> <span class="nav-text">如何处理Python中的GIL</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -508,20 +499,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-count">40</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-count">34</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">75</span>
+        <span class="site-state-item-count">82</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -603,13 +594,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">166k</span>
+    <span title="站点总字数">180k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">2:31</span>
+    <span title="站点阅读时长">2:44</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

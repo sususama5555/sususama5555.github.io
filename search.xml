@@ -1,6 +1,278 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Redis进阶之高级特性</title>
+    <url>/2020/12/06/redis-advanced/</url>
+    <content><![CDATA[<blockquote>
+<h2 id="基础回顾"><a href="#基础回顾" class="headerlink" title="基础回顾"></a>基础回顾</h2></blockquote>
+<p>之前已经有两篇文章讲到Redis的<strong><code>数据类型</code></strong>和<strong><code>使用场景</code></strong>，本文将继续学习Redis更多的<strong><code>高级特性</code></strong>，例如<strong><code>持久化</code></strong>、<strong><code>事务与事件</code></strong>、<strong><code>主从及哨兵</code></strong>等。</p>
+<p>Redis 是速度非常快的非关系型（NoSQL）内存键值数据库，可以存储键和五种不同类型的值之间的映射。</p>
+<p>键的类型只能为字符串，值支持五种数据类型：字符串、列表、集合、散列表、有序集合。</p>
+<p>Redis 支持很多特性，例如将内存中的数据持久化到硬盘中，使用复制来扩展读性能，使用分片来扩展写性能。</p>
+<a id="more"></a>
+
+<h2 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h2><table>
+<thead>
+<tr>
+<th>数据类型</th>
+<th>可以存储的值</th>
+<th>操作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>STRING</td>
+<td>字符串、整数或者浮点数</td>
+<td>对整个字符串或者字符串的其中一部分执行操作<br> 对整数和浮点数执行自增或者自减操作</td>
+</tr>
+<tr>
+<td>LIST</td>
+<td>列表</td>
+<td>从两端压入或者弹出元素 <br> 对单个或者多个元素进行修剪，<br> 只保留一个范围内的元素</td>
+</tr>
+<tr>
+<td>SET</td>
+<td>无序集合</td>
+<td>添加、获取、移除单个元素<br> 检查一个元素是否存在于集合中<br> 计算交集、并集、差集<br> 从集合里面随机获取元素</td>
+</tr>
+<tr>
+<td>HASH</td>
+<td>包含键值对的无序散列表</td>
+<td>添加、获取、移除单个键值对<br> 获取所有键值对<br> 检查某个键是否存在</td>
+</tr>
+<tr>
+<td>ZSET</td>
+<td>有序集合</td>
+<td>添加、获取、删除元素<br> 根据分值范围或者成员来获取元素<br> 计算一个键的排名</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><a href="https://redislabs.com/ebook/part-1-getting-started/chapter-1-getting-to-know-redis/1-2-what-redis-data-structures-look-like/" target="_blank" rel="noopener">What Redis data structures look like</a></p>
+</blockquote>
+<h3 id="STRING"><a href="#STRING" class="headerlink" title="STRING"></a>STRING</h3><p><a href="https://camo.githubusercontent.com/eeacf69133d193594c5c8b0e5989f49f513612da98c7278fb4187bec26ad082f/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f36303139623264622d626333652d343430382d623664382d3936303235663434383164362e706e67" target="_blank" rel="noopener"><img data-src="https://camo.githubusercontent.com/eeacf69133d193594c5c8b0e5989f49f513612da98c7278fb4187bec26ad082f/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f36303139623264622d626333652d343430382d623664382d3936303235663434383164362e706e67" alt="img"></a></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&gt; set hello world</span><br><span class="line">OK</span><br><span class="line">&gt; get hello</span><br><span class="line">&quot;world&quot;</span><br><span class="line">&gt; del hello</span><br><span class="line">(integer) 1</span><br><span class="line">&gt; get hello</span><br><span class="line">(nil)</span><br></pre></td></tr></table></figure>
+
+<h3 id="LIST"><a href="#LIST" class="headerlink" title="LIST"></a>LIST</h3><p><a href="https://camo.githubusercontent.com/da6116e5709a2320811ad406f4ec169b96ebbe1a54ebee9bdffcf0bf01c3122a/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f66623332373631312d376532622d346632662d396635622d3338353932643430386630372e706e67" target="_blank" rel="noopener"><img data-src="https://camo.githubusercontent.com/da6116e5709a2320811ad406f4ec169b96ebbe1a54ebee9bdffcf0bf01c3122a/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f66623332373631312d376532622d346632662d396635622d3338353932643430386630372e706e67" alt="img"></a></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&gt; rpush list-key item</span><br><span class="line">(integer) 1</span><br><span class="line">&gt; rpush list-key item2</span><br><span class="line">(integer) 2</span><br><span class="line">&gt; rpush list-key item</span><br><span class="line">(integer) 3</span><br><span class="line"></span><br><span class="line">&gt; lrange list-key 0 -1</span><br><span class="line">1) &quot;item&quot;</span><br><span class="line">2) &quot;item2&quot;</span><br><span class="line">3) &quot;item&quot;</span><br><span class="line"></span><br><span class="line">&gt; lindex list-key 1</span><br><span class="line">&quot;item2&quot;</span><br><span class="line"></span><br><span class="line">&gt; lpop list-key</span><br><span class="line">&quot;item&quot;</span><br><span class="line"></span><br><span class="line">&gt; lrange list-key 0 -1</span><br><span class="line">1) &quot;item2&quot;</span><br><span class="line">2) &quot;item&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="SET"><a href="#SET" class="headerlink" title="SET"></a>SET</h3><p><a href="https://camo.githubusercontent.com/c0f9b215227bb4277e3240ad451e6027f081ffc712b92039f788a73eb472f3ab/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f63643566626366662d336633352d343361362d386666612d3038326139336365306630652e706e67" target="_blank" rel="noopener"><img data-src="https://camo.githubusercontent.com/c0f9b215227bb4277e3240ad451e6027f081ffc712b92039f788a73eb472f3ab/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f63643566626366662d336633352d343361362d386666612d3038326139336365306630652e706e67" alt="img"></a></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&gt; sadd set-key item</span><br><span class="line">(integer) 1</span><br><span class="line">&gt; sadd set-key item2</span><br><span class="line">(integer) 1</span><br><span class="line">&gt; sadd set-key item3</span><br><span class="line">(integer) 1</span><br><span class="line">&gt; sadd set-key item</span><br><span class="line">(integer) 0</span><br><span class="line"></span><br><span class="line">&gt; smembers set-key</span><br><span class="line">1) &quot;item&quot;</span><br><span class="line">2) &quot;item2&quot;</span><br><span class="line">3) &quot;item3&quot;</span><br><span class="line"></span><br><span class="line">&gt; sismember set-key item4</span><br><span class="line">(integer) 0</span><br><span class="line">&gt; sismember set-key item</span><br><span class="line">(integer) 1</span><br><span class="line"></span><br><span class="line">&gt; srem set-key item2</span><br><span class="line">(integer) 1</span><br><span class="line">&gt; srem set-key item2</span><br><span class="line">(integer) 0</span><br><span class="line"></span><br><span class="line">&gt; smembers set-key</span><br><span class="line">1) &quot;item&quot;</span><br><span class="line">2) &quot;item3&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="HASH"><a href="#HASH" class="headerlink" title="HASH"></a>HASH</h3><p><a href="https://camo.githubusercontent.com/faa71b8fda769050f18f16904ac49e0a62c3e815d14fe36283404457c1fe3391/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f37626432303261372d393364342d346633612d613837382d6166363861653235353339612e706e67" target="_blank" rel="noopener"><img data-src="https://camo.githubusercontent.com/faa71b8fda769050f18f16904ac49e0a62c3e815d14fe36283404457c1fe3391/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f37626432303261372d393364342d346633612d613837382d6166363861653235353339612e706e67" alt="img"></a></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&gt; hset hash-key sub-key1 value1</span><br><span class="line">(integer) 1</span><br><span class="line">&gt; hset hash-key sub-key2 value2</span><br><span class="line">(integer) 1</span><br><span class="line">&gt; hset hash-key sub-key1 value1</span><br><span class="line">(integer) 0</span><br><span class="line"></span><br><span class="line">&gt; hgetall hash-key</span><br><span class="line">1) &quot;sub-key1&quot;</span><br><span class="line">2) &quot;value1&quot;</span><br><span class="line">3) &quot;sub-key2&quot;</span><br><span class="line">4) &quot;value2&quot;</span><br><span class="line"></span><br><span class="line">&gt; hdel hash-key sub-key2</span><br><span class="line">(integer) 1</span><br><span class="line">&gt; hdel hash-key sub-key2</span><br><span class="line">(integer) 0</span><br><span class="line"></span><br><span class="line">&gt; hget hash-key sub-key1</span><br><span class="line">&quot;value1&quot;</span><br><span class="line"></span><br><span class="line">&gt; hgetall hash-key</span><br><span class="line">1) &quot;sub-key1&quot;</span><br><span class="line">2) &quot;value1&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="ZSET"><a href="#ZSET" class="headerlink" title="ZSET"></a>ZSET</h3><p><a href="https://camo.githubusercontent.com/ff132b1a36d24a44bb9d6960ec06733533751f8b2285422fbbabe483919b03af/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f31323032623264362d393436392d343235312d626434372d6361363033346662363131362e706e67" target="_blank" rel="noopener"><img data-src="https://camo.githubusercontent.com/ff132b1a36d24a44bb9d6960ec06733533751f8b2285422fbbabe483919b03af/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f31323032623264362d393436392d343235312d626434372d6361363033346662363131362e706e67" alt="img"></a></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&gt; zadd zset-key 728 member1</span><br><span class="line">(integer) 1</span><br><span class="line">&gt; zadd zset-key 982 member0</span><br><span class="line">(integer) 1</span><br><span class="line">&gt; zadd zset-key 982 member0</span><br><span class="line">(integer) 0</span><br><span class="line"></span><br><span class="line">&gt; zrange zset-key 0 -1 withscores</span><br><span class="line">1) &quot;member1&quot;</span><br><span class="line">2) &quot;728&quot;</span><br><span class="line">3) &quot;member0&quot;</span><br><span class="line">4) &quot;982&quot;</span><br><span class="line"></span><br><span class="line">&gt; zrangebyscore zset-key 0 800 withscores</span><br><span class="line">1) &quot;member1&quot;</span><br><span class="line">2) &quot;728&quot;</span><br><span class="line"></span><br><span class="line">&gt; zrem zset-key member1</span><br><span class="line">(integer) 1</span><br><span class="line">&gt; zrem zset-key member1</span><br><span class="line">(integer) 0</span><br><span class="line"></span><br><span class="line">&gt; zrange zset-key 0 -1 withscores</span><br><span class="line">1) &quot;member0&quot;</span><br><span class="line">2) &quot;982&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><h3 id="字典"><a href="#字典" class="headerlink" title="字典"></a>字典</h3><p>dictht 是一个散列表结构，使用拉链法解决哈希冲突。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;* This is our hash table structure. Every dictionary has two of this as we</span><br><span class="line"> * implement incremental rehashing, for the old to the new table. *&#x2F;</span><br><span class="line">typedef struct dictht &#123;</span><br><span class="line">    dictEntry **table;</span><br><span class="line">    unsigned long size;</span><br><span class="line">    unsigned long sizemask;</span><br><span class="line">    unsigned long used;</span><br><span class="line">&#125; dictht;</span><br><span class="line">typedef struct dictEntry &#123;</span><br><span class="line">    void *key;</span><br><span class="line">    union &#123;</span><br><span class="line">        void *val;</span><br><span class="line">        uint64_t u64;</span><br><span class="line">        int64_t s64;</span><br><span class="line">        double d;</span><br><span class="line">    &#125; v;</span><br><span class="line">    struct dictEntry *next;</span><br><span class="line">&#125; dictEntry;</span><br></pre></td></tr></table></figure>
+
+<p>Redis 的字典 dict 中包含两个哈希表 dictht，这是为了方便进行 rehash 操作。在扩容时，将其中一个 dictht 上的键值对 rehash 到另一个 dictht 上面，完成之后释放空间并交换两个 dictht 的角色。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">typedef struct dict &#123;</span><br><span class="line">    dictType *type;</span><br><span class="line">    void *privdata;</span><br><span class="line">    dictht ht[2];</span><br><span class="line">    long rehashidx; &#x2F;* rehashing not in progress if rehashidx &#x3D;&#x3D; -1 *&#x2F;</span><br><span class="line">    unsigned long iterators; &#x2F;* number of iterators currently running *&#x2F;</span><br><span class="line">&#125; dict;</span><br></pre></td></tr></table></figure>
+
+<p>rehash 操作不是一次性完成，而是采用渐进方式，这是为了避免一次性执行过多的 rehash 操作给服务器带来过大的负担。</p>
+<p>渐进式 rehash 通过记录 dict 的 rehashidx 完成，它从 0 开始，然后每执行一次 rehash 都会递增。例如在一次 rehash 中，要把 dict[0] rehash 到 dict[1]，这一次会把 dict[0] 上 table[rehashidx] 的键值对 rehash 到 dict[1] 上，dict[0] 的 table[rehashidx] 指向 null，并令 rehashidx++。</p>
+<p>在 rehash 期间，每次对字典执行添加、删除、查找或者更新操作时，都会执行一次渐进式 rehash。</p>
+<p>采用渐进式 rehash 会导致字典中的数据分散在两个 dictht 上，因此对字典的查找操作也需要到对应的 dictht 去执行。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;* Performs N steps of incremental rehashing. Returns 1 if there are still</span><br><span class="line"> * keys to move from the old to the new hash table, otherwise 0 is returned.</span><br><span class="line"> *</span><br><span class="line"> * Note that a rehashing step consists in moving a bucket (that may have more</span><br><span class="line"> * than one key as we use chaining) from the old to the new hash table, however</span><br><span class="line"> * since part of the hash table may be composed of empty spaces, it is not</span><br><span class="line"> * guaranteed that this function will rehash even a single bucket, since it</span><br><span class="line"> * will visit at max N*10 empty buckets in total, otherwise the amount of</span><br><span class="line"> * work it does would be unbound and the function may block for a long time. *&#x2F;</span><br><span class="line">int dictRehash(dict *d, int n) &#123;</span><br><span class="line">    int empty_visits &#x3D; n * 10; &#x2F;* Max number of empty buckets to visit. *&#x2F;</span><br><span class="line">    if (!dictIsRehashing(d)) return 0;</span><br><span class="line"></span><br><span class="line">    while (n-- &amp;&amp; d-&gt;ht[0].used !&#x3D; 0) &#123;</span><br><span class="line">        dictEntry *de, *nextde;</span><br><span class="line"></span><br><span class="line">        &#x2F;* Note that rehashidx can&#39;t overflow as we are sure there are more</span><br><span class="line">         * elements because ht[0].used !&#x3D; 0 *&#x2F;</span><br><span class="line">        assert(d-&gt;ht[0].size &gt; (unsigned long) d-&gt;rehashidx);</span><br><span class="line">        while (d-&gt;ht[0].table[d-&gt;rehashidx] &#x3D;&#x3D; NULL) &#123;</span><br><span class="line">            d-&gt;rehashidx++;</span><br><span class="line">            if (--empty_visits &#x3D;&#x3D; 0) return 1;</span><br><span class="line">        &#125;</span><br><span class="line">        de &#x3D; d-&gt;ht[0].table[d-&gt;rehashidx];</span><br><span class="line">        &#x2F;* Move all the keys in this bucket from the old to the new hash HT *&#x2F;</span><br><span class="line">        while (de) &#123;</span><br><span class="line">            uint64_t h;</span><br><span class="line"></span><br><span class="line">            nextde &#x3D; de-&gt;next;</span><br><span class="line">            &#x2F;* Get the index in the new hash table *&#x2F;</span><br><span class="line">            h &#x3D; dictHashKey(d, de-&gt;key) &amp; d-&gt;ht[1].sizemask;</span><br><span class="line">            de-&gt;next &#x3D; d-&gt;ht[1].table[h];</span><br><span class="line">            d-&gt;ht[1].table[h] &#x3D; de;</span><br><span class="line">            d-&gt;ht[0].used--;</span><br><span class="line">            d-&gt;ht[1].used++;</span><br><span class="line">            de &#x3D; nextde;</span><br><span class="line">        &#125;</span><br><span class="line">        d-&gt;ht[0].table[d-&gt;rehashidx] &#x3D; NULL;</span><br><span class="line">        d-&gt;rehashidx++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;* Check if we already rehashed the whole table... *&#x2F;</span><br><span class="line">    if (d-&gt;ht[0].used &#x3D;&#x3D; 0) &#123;</span><br><span class="line">        zfree(d-&gt;ht[0].table);</span><br><span class="line">        d-&gt;ht[0] &#x3D; d-&gt;ht[1];</span><br><span class="line">        _dictReset(&amp;d-&gt;ht[1]);</span><br><span class="line">        d-&gt;rehashidx &#x3D; -1;</span><br><span class="line">        return 0;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;* More to rehash... *&#x2F;</span><br><span class="line">    return 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="跳跃表"><a href="#跳跃表" class="headerlink" title="跳跃表"></a>跳跃表</h3><p>是有序集合的底层实现之一。</p>
+<p>跳跃表是基于多指针有序链表实现的，可以看成多个有序链表。</p>
+<p><a href="https://camo.githubusercontent.com/db0608e3c815e8ae059eb769b5ad96cd375edb9be9d3f5e9a501f50bea030fc5/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f62656261363132652d646335622d346663322d383639642d3062323334303861633930612e706e67" target="_blank" rel="noopener"><img data-src="https://camo.githubusercontent.com/db0608e3c815e8ae059eb769b5ad96cd375edb9be9d3f5e9a501f50bea030fc5/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f62656261363132652d646335622d346663322d383639642d3062323334303861633930612e706e67" alt="img"></a></p>
+<p>在查找时，从上层指针开始查找，找到对应的区间之后再到下一层去查找。下图演示了查找 22 的过程。</p>
+<p><a href="https://camo.githubusercontent.com/90f439265419d783c6059075bc02be6dd7056356a0e9a88f412790214a70e10d/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f30656133376565322d633232342d346337392d623839352d6531333163363830356334302e706e67" target="_blank" rel="noopener"><img data-src="https://camo.githubusercontent.com/90f439265419d783c6059075bc02be6dd7056356a0e9a88f412790214a70e10d/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f30656133376565322d633232342d346337392d623839352d6531333163363830356334302e706e67" alt="img"></a></p>
+<p>与红黑树等平衡树相比，跳跃表具有以下优点：</p>
+<ul>
+<li>插入速度非常快速，因为不需要进行旋转等操作来维护平衡性；</li>
+<li>更容易实现；</li>
+<li>支持无锁操作。</li>
+</ul>
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><h3 id="计数器"><a href="#计数器" class="headerlink" title="计数器"></a>计数器</h3><p>可以对 String 进行自增自减运算，从而实现计数器功能。</p>
+<p>Redis 这种内存型数据库的读写性能非常高，很适合存储频繁读写的计数量。</p>
+<h3 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h3><p>将热点数据放到内存中，设置内存的最大使用量以及淘汰策略来保证缓存的命中率。</p>
+<h3 id="查找表"><a href="#查找表" class="headerlink" title="查找表"></a>查找表</h3><p>例如 DNS 记录就很适合使用 Redis 进行存储。</p>
+<p>查找表和缓存类似，也是利用了 Redis 快速的查找特性。但是查找表的内容不能失效，而缓存的内容可以失效，因为缓存不作为可靠的数据来源。</p>
+<h3 id="消息队列"><a href="#消息队列" class="headerlink" title="消息队列"></a>消息队列</h3><p>List 是一个双向链表，可以通过 lpush 和 rpop 写入和读取消息</p>
+<p>不过最好使用 Kafka、RabbitMQ 等消息中间件。</p>
+<h3 id="会话缓存"><a href="#会话缓存" class="headerlink" title="会话缓存"></a>会话缓存</h3><p>可以使用 Redis 来统一存储多台应用服务器的会话信息。</p>
+<p>当应用服务器不再存储用户的会话信息，也就不再具有状态，一个用户可以请求任意一个应用服务器，从而更容易实现高可用性以及可伸缩性。</p>
+<h3 id="分布式锁实现"><a href="#分布式锁实现" class="headerlink" title="分布式锁实现"></a>分布式锁实现</h3><p>在分布式场景下，无法使用单机环境下的锁来对多个节点上的进程进行同步。</p>
+<p>可以使用 Redis 自带的 SETNX 命令实现分布式锁，除此之外，还可以使用官方提供的 RedLock 分布式锁实现。</p>
+<h3 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h3><p>Set 可以实现交集、并集等操作，从而实现共同好友等功能。</p>
+<p>ZSet 可以实现有序性操作，从而实现排行榜等功能。</p>
+<h2 id="Redis-与-Memcached"><a href="#Redis-与-Memcached" class="headerlink" title="Redis 与 Memcached"></a>Redis 与 Memcached</h2><p>两者都是非关系型内存键值数据库，主要有以下不同：</p>
+<h3 id="数据类型-1"><a href="#数据类型-1" class="headerlink" title="数据类型"></a>数据类型</h3><p>Memcached 仅支持字符串类型，而 Redis 支持五种不同的数据类型，可以更灵活地解决问题。</p>
+<h3 id="数据持久化"><a href="#数据持久化" class="headerlink" title="数据持久化"></a>数据持久化</h3><p>Redis 支持两种持久化策略：RDB 快照和 AOF 日志，而 Memcached 不支持持久化。</p>
+<h3 id="分布式"><a href="#分布式" class="headerlink" title="分布式"></a>分布式</h3><p>Memcached 不支持分布式，只能通过在客户端使用一致性哈希来实现分布式存储，这种方式在存储和查询时都需要先在客户端计算一次数据所在的节点。</p>
+<p>Redis Cluster 实现了分布式的支持。</p>
+<h3 id="内存管理机制"><a href="#内存管理机制" class="headerlink" title="内存管理机制"></a>内存管理机制</h3><ul>
+<li>在 Redis 中，并不是所有数据都一直存储在内存中，可以将一些很久没用的 value 交换到磁盘，而 Memcached 的数据则会一直在内存中。</li>
+<li>Memcached 将内存分割成特定长度的块来存储数据，以完全解决内存碎片的问题。但是这种方式会使得内存的利用率不高，例如块的大小为 128 bytes，只存储 100 bytes 的数据，那么剩下的 28 bytes 就浪费掉了。</li>
+</ul>
+<h2 id="键的过期时间"><a href="#键的过期时间" class="headerlink" title="键的过期时间"></a>键的过期时间</h2><p>Redis 可以为每个键设置过期时间，当键过期时，会自动删除该键。</p>
+<p>对于散列表这种容器，只能为整个键设置过期时间（整个散列表），而不能为键里面的单个元素设置过期时间。</p>
+<h2 id="数据淘汰策略"><a href="#数据淘汰策略" class="headerlink" title="数据淘汰策略"></a>数据淘汰策略</h2><p>可以设置内存最大使用量，当内存使用量超出时，会施行数据淘汰策略。</p>
+<p>Redis 具体有 6 种淘汰策略：</p>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>volatile-lru</td>
+<td>从已设置过期时间的数据集中挑选最近最少使用的数据淘汰</td>
+</tr>
+<tr>
+<td>volatile-ttl</td>
+<td>从已设置过期时间的数据集中挑选将要过期的数据淘汰</td>
+</tr>
+<tr>
+<td>volatile-random</td>
+<td>从已设置过期时间的数据集中任意选择数据淘汰</td>
+</tr>
+<tr>
+<td>allkeys-lru</td>
+<td>从所有数据集中挑选最近最少使用的数据淘汰</td>
+</tr>
+<tr>
+<td>allkeys-random</td>
+<td>从所有数据集中任意选择数据进行淘汰</td>
+</tr>
+<tr>
+<td>noeviction</td>
+<td>禁止驱逐数据</td>
+</tr>
+</tbody></table>
+<p>作为内存数据库，出于对性能和内存消耗的考虑，Redis 的淘汰算法实际实现上并非针对所有 key，而是抽样一小部分并且从中选出被淘汰的 key。</p>
+<p>使用 Redis 缓存数据时，为了提高缓存命中率，需要保证缓存数据都是热点数据。可以将内存最大使用量设置为热点数据占用的内存量，然后启用 allkeys-lru 淘汰策略，将最近最少使用的数据淘汰。</p>
+<p>Redis 4.0 引入了 volatile-lfu 和 allkeys-lfu 淘汰策略，LFU 策略通过统计访问频率，将访问频率最少的键值对淘汰。</p>
+<h2 id="持久化"><a href="#持久化" class="headerlink" title="持久化"></a>持久化</h2><p>Redis 是内存型数据库，为了保证数据在断电后不会丢失，需要将内存中的数据持久化到硬盘上。</p>
+<h3 id="RDB-持久化"><a href="#RDB-持久化" class="headerlink" title="RDB 持久化"></a>RDB 持久化</h3><p>将某个时间点的所有数据都存放到硬盘上。</p>
+<p>可以将快照复制到其它服务器从而创建具有相同数据的服务器副本。</p>
+<p>如果系统发生故障，将会丢失最后一次创建快照之后的数据。</p>
+<p>如果数据量很大，保存快照的时间会很长。</p>
+<h3 id="AOF-持久化"><a href="#AOF-持久化" class="headerlink" title="AOF 持久化"></a>AOF 持久化</h3><p>将写命令添加到 AOF 文件（Append Only File）的末尾。</p>
+<p>使用 AOF 持久化需要设置同步选项，从而确保写命令同步到磁盘文件上的时机。这是因为对文件进行写入并不会马上将内容同步到磁盘上，而是先存储到缓冲区，然后由操作系统决定什么时候同步到磁盘。有以下同步选项：</p>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>同步频率</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>always</td>
+<td>每个写命令都同步</td>
+</tr>
+<tr>
+<td>everysec</td>
+<td>每秒同步一次</td>
+</tr>
+<tr>
+<td>no</td>
+<td>让操作系统来决定何时同步</td>
+</tr>
+</tbody></table>
+<ul>
+<li>always 选项会严重减低服务器的性能；</li>
+<li>everysec 选项比较合适，可以保证系统崩溃时只会丢失一秒左右的数据，并且 Redis 每秒执行一次同步对服务器性能几乎没有任何影响；</li>
+<li>no 选项并不能给服务器性能带来多大的提升，而且也会增加系统崩溃时数据丢失的数量。</li>
+</ul>
+<p>随着服务器写请求的增多，AOF 文件会越来越大。Redis 提供了一种将 AOF 重写的特性，能够去除 AOF 文件中的冗余写命令。</p>
+<h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><p>一个事务包含了多个命令，服务器在执行事务期间，不会改去执行其它客户端的命令请求。</p>
+<p>事务中的多个命令被一次性发送给服务器，而不是一条一条发送，这种方式被称为流水线，它可以减少客户端与服务器之间的网络通信次数从而提升性能。</p>
+<p>Redis 最简单的事务实现方式是使用 MULTI 和 EXEC 命令将事务操作包围起来。</p>
+<h2 id="事件"><a href="#事件" class="headerlink" title="事件"></a>事件</h2><p>Redis 服务器是一个事件驱动程序。</p>
+<h3 id="文件事件"><a href="#文件事件" class="headerlink" title="文件事件"></a>文件事件</h3><p>服务器通过套接字与客户端或者其它服务器进行通信，文件事件就是对套接字操作的抽象。</p>
+<p>Redis 基于 Reactor 模式开发了自己的网络事件处理器，使用 I/O 多路复用程序来同时监听多个套接字，并将到达的事件传送给文件事件分派器，分派器会根据套接字产生的事件类型调用相应的事件处理器。</p>
+<p><a href="https://camo.githubusercontent.com/9c5ed964c076327df03dc3621415b1c932abed764c9a28fef63103809ec35d3f/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f39656138366562352d303030612d343238312d623934382d3762353637626436663164382e706e67" target="_blank" rel="noopener"><img data-src="https://camo.githubusercontent.com/9c5ed964c076327df03dc3621415b1c932abed764c9a28fef63103809ec35d3f/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f39656138366562352d303030612d343238312d623934382d3762353637626436663164382e706e67" alt="img"></a></p>
+<h3 id="时间事件"><a href="#时间事件" class="headerlink" title="时间事件"></a>时间事件</h3><p>服务器有一些操作需要在给定的时间点执行，时间事件是对这类定时操作的抽象。</p>
+<p>时间事件又分为：</p>
+<ul>
+<li>定时事件：是让一段程序在指定的时间之内执行一次；</li>
+<li>周期性事件：是让一段程序每隔指定时间就执行一次。</li>
+</ul>
+<p>Redis 将所有时间事件都放在一个无序链表中，通过遍历整个链表查找出已到达的时间事件，并调用相应的事件处理器。</p>
+<h3 id="事件的调度与执行"><a href="#事件的调度与执行" class="headerlink" title="事件的调度与执行"></a>事件的调度与执行</h3><p>服务器需要不断监听文件事件的套接字才能得到待处理的文件事件，但是不能一直监听，否则时间事件无法在规定的时间内执行，因此监听时间应该根据距离现在最近的时间事件来决定。</p>
+<p>事件调度与执行由 aeProcessEvents 函数负责，伪代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">def aeProcessEvents():</span><br><span class="line">    # 获取到达时间离当前时间最接近的时间事件</span><br><span class="line">    time_event &#x3D; aeSearchNearestTimer()</span><br><span class="line">    # 计算最接近的时间事件距离到达还有多少毫秒</span><br><span class="line">    remaind_ms &#x3D; time_event.when - unix_ts_now()</span><br><span class="line">    # 如果事件已到达，那么 remaind_ms 的值可能为负数，将它设为 0</span><br><span class="line">    if remaind_ms &lt; 0:</span><br><span class="line">        remaind_ms &#x3D; 0</span><br><span class="line">    # 根据 remaind_ms 的值，创建 timeval</span><br><span class="line">    timeval &#x3D; create_timeval_with_ms(remaind_ms)</span><br><span class="line">    # 阻塞并等待文件事件产生，最大阻塞时间由传入的 timeval 决定</span><br><span class="line">    aeApiPoll(timeval)</span><br><span class="line">    # 处理所有已产生的文件事件</span><br><span class="line">    procesFileEvents()</span><br><span class="line">    # 处理所有已到达的时间事件</span><br><span class="line">    processTimeEvents()</span><br></pre></td></tr></table></figure>
+
+<p>将 aeProcessEvents 函数置于一个循环里面，加上初始化和清理函数，就构成了 Redis 服务器的主函数，伪代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">def main():</span><br><span class="line">    # 初始化服务器</span><br><span class="line">    init_server()</span><br><span class="line">    # 一直处理事件，直到服务器关闭为止</span><br><span class="line">    while server_is_not_shutdown():</span><br><span class="line">        aeProcessEvents()</span><br><span class="line">    # 服务器关闭，执行清理操作</span><br><span class="line">    clean_server()</span><br></pre></td></tr></table></figure>
+
+<p>从事件处理的角度来看，服务器运行流程如下：</p>
+<p><a href="https://camo.githubusercontent.com/8f753d2b9273df71bddd9b854d7f232e8d698357efdb9ce0bfcc2854f0d4ac7b/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f63306139666139312d646132652d343839322d386339662d3830323036613666373034372e706e67" target="_blank" rel="noopener"><img data-src="https://camo.githubusercontent.com/8f753d2b9273df71bddd9b854d7f232e8d698357efdb9ce0bfcc2854f0d4ac7b/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f63306139666139312d646132652d343839322d386339662d3830323036613666373034372e706e67" alt="img"></a></p>
+<h2 id="复制"><a href="#复制" class="headerlink" title="复制"></a>复制</h2><p>通过使用 slaveof host port 命令来让一个服务器成为另一个服务器的从服务器。</p>
+<p>一个从服务器只能有一个主服务器，并且不支持主主复制。</p>
+<h3 id="连接过程"><a href="#连接过程" class="headerlink" title="连接过程"></a>连接过程</h3><ol>
+<li>主服务器创建快照文件，发送给从服务器，并在发送期间使用缓冲区记录执行的写命令。快照文件发送完毕之后，开始向从服务器发送存储在缓冲区中的写命令；</li>
+<li>从服务器丢弃所有旧数据，载入主服务器发来的快照文件，之后从服务器开始接受主服务器发来的写命令；</li>
+<li>主服务器每执行一次写命令，就向从服务器发送相同的写命令。</li>
+</ol>
+<h3 id="主从链"><a href="#主从链" class="headerlink" title="主从链"></a>主从链</h3><p>随着负载不断上升，主服务器可能无法很快地更新所有从服务器，或者重新连接和重新同步从服务器将导致系统超载。为了解决这个问题，可以创建一个中间层来分担主服务器的复制工作。中间层的服务器是最上层服务器的从服务器，又是最下层服务器的主服务器。</p>
+<p><a href="https://camo.githubusercontent.com/07489384b5f9d3227337940307c3feefd05767a28796f2d6979e190794cb74a6/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f33393561396538332d623161312d346131642d623137302d6430383165376262356261622e706e67" target="_blank" rel="noopener"><img data-src="https://camo.githubusercontent.com/07489384b5f9d3227337940307c3feefd05767a28796f2d6979e190794cb74a6/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f33393561396538332d623161312d346131642d623137302d6430383165376262356261622e706e67" alt="img"></a></p>
+<h2 id="Sentinel（哨兵）"><a href="#Sentinel（哨兵）" class="headerlink" title="Sentinel（哨兵）"></a>Sentinel（哨兵）</h2><p>Sentinel（哨兵）可以监听集群中的服务器，并在主服务器进入下线状态时，自动从从服务器中选举出新的主服务器。</p>
+<p>哨兵模式是一种特殊的模式，首先Redis提供了哨兵的命令，哨兵是一个独立的进程，作为进程，它会独立运行。其原理是<strong>哨兵通过发送命令，等待Redis服务器响应，从而监控运行的多个Redis实例。</strong></p>
+<img data-src="/2020/12/06/redis-advanced/sentinel.png" class>
+
+<p>这里的哨兵有两个作用</p>
+<ul>
+<li>通过发送命令，让Redis服务器返回监控其运行状态，包括主服务器和从服务器。</li>
+<li>当哨兵监测到master宕机，会自动将slave切换成master，然后通过<strong>发布订阅模式</strong>通知其他的从服务器，修改配置文件，让它们切换主机。</li>
+</ul>
+<p>然而一个哨兵进程对Redis服务器进行监控，可能会出现问题，为此，我们可以使用多个哨兵进行监控。各个哨兵之间还会进行监控，这样就形成了多哨兵模式。</p>
+<p>用文字描述一下<strong>故障切换（failover）</strong>的过程。假设主服务器宕机，哨兵1先检测到这个结果，系统并不会马上进行failover过程，仅仅是哨兵1主观的认为主服务器不可用，这个现象成为<strong>主观下线</strong>。当后面的哨兵也检测到主服务器不可用，并且数量达到一定值时，那么哨兵之间就会进行一次投票，投票的结果由一个哨兵发起，进行failover操作。切换成功后，就会通过发布订阅模式，让各个哨兵把自己监控的从服务器实现切换主机，这个过程称为<strong>客观下线</strong>。这样对于客户端而言，一切都是透明的。</p>
+<h2 id="分片"><a href="#分片" class="headerlink" title="分片"></a>分片</h2><p>分片是将数据划分为多个部分的方法，可以将数据存储到多台机器里面，这种方法在解决某些问题时可以获得线性级别的性能提升。</p>
+<p>假设有 4 个 Redis 实例 R0，R1，R2，R3，还有很多表示用户的键 user:1，user:2，… ，有不同的方式来选择一个指定的键存储在哪个实例中。</p>
+<ul>
+<li>最简单的方式是范围分片，例如用户 id 从 0<del>1000 的存储到实例 R0 中，用户 id 从 1001</del>2000 的存储到实例 R1 中，等等。但是这样需要维护一张映射范围表，维护操作代价很高。</li>
+<li>还有一种方式是哈希分片，使用 CRC32 哈希函数将键转换为一个数字，再对实例数量求模就能知道应该存储的实例。</li>
+</ul>
+<p>根据执行分片的位置，可以分为三种分片方式：</p>
+<ul>
+<li>客户端分片：客户端使用一致性哈希等算法决定键应当分布到哪个节点。</li>
+<li>代理分片：将客户端请求发送到代理上，由代理转发请求到正确的节点上。</li>
+<li>服务器分片：Redis Cluster。</li>
+</ul>
+<h2 id="一个简单的论坛系统分析"><a href="#一个简单的论坛系统分析" class="headerlink" title="一个简单的论坛系统分析"></a>一个简单的论坛系统分析</h2><p>该论坛系统功能如下：</p>
+<ul>
+<li>可以发布文章；</li>
+<li>可以对文章进行点赞；</li>
+<li>在首页可以按文章的发布时间或者文章的点赞数进行排序显示。</li>
+</ul>
+<h3 id="文章信息"><a href="#文章信息" class="headerlink" title="文章信息"></a>文章信息</h3><p>文章包括标题、作者、赞数等信息，在关系型数据库中很容易构建一张表来存储这些信息，在 Redis 中可以使用 HASH 来存储每种信息以及其对应的值的映射。</p>
+<p>Redis 没有关系型数据库中的表这一概念来将同种类型的数据存放在一起，而是使用命名空间的方式来实现这一功能。键名的前面部分存储命名空间，后面部分的内容存储 ID，通常使用 : 来进行分隔。例如下面的 HASH 的键名为 article:92617，其中 article 为命名空间，ID 为 92617。</p>
+<p><a href="https://camo.githubusercontent.com/42e71d0be01009220b6cb33046d9d3c59e7c092c1a33e6de5ca7dba6c98a9419/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f37633534646532312d653266662d343032652d626334322d3430333764653163313539322e706e67" target="_blank" rel="noopener"><img data-src="https://camo.githubusercontent.com/42e71d0be01009220b6cb33046d9d3c59e7c092c1a33e6de5ca7dba6c98a9419/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f37633534646532312d653266662d343032652d626334322d3430333764653163313539322e706e67" alt="img"></a></p>
+<h3 id="点赞功能"><a href="#点赞功能" class="headerlink" title="点赞功能"></a>点赞功能</h3><p>当有用户为一篇文章点赞时，除了要对该文章的 votes 字段进行加 1 操作，还必须记录该用户已经对该文章进行了点赞，防止用户点赞次数超过 1。可以建立文章的已投票用户集合来进行记录。</p>
+<p>为了节约内存，规定一篇文章发布满一周之后，就不能再对它进行投票，而文章的已投票集合也会被删除，可以为文章的已投票集合设置一个一周的过期时间就能实现这个规定。</p>
+<p><a href="https://camo.githubusercontent.com/8ca1d3b06902051795139d7537f178f4fa385bb01685c2ec5c859d495c2baf47/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f34383566646633342d636366382d343138352d393763362d3137333734656537313961302e706e67" target="_blank" rel="noopener"><img data-src="https://camo.githubusercontent.com/8ca1d3b06902051795139d7537f178f4fa385bb01685c2ec5c859d495c2baf47/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f34383566646633342d636366382d343138352d393763362d3137333734656537313961302e706e67" alt="img"></a></p>
+<h3 id="对文章进行排序"><a href="#对文章进行排序" class="headerlink" title="对文章进行排序"></a>对文章进行排序</h3><p>为了按发布时间和点赞数进行排序，可以建立一个文章发布时间的有序集合和一个文章点赞数的有序集合。（下图中的 score 就是这里所说的点赞数；下面所示的有序集合分值并不直接是时间和点赞数，而是根据时间和点赞数间接计算出来的）</p>
+<p><a href="https://camo.githubusercontent.com/d7ed23ba345bbc919c32dfca60d989e180154ce57c4d39238cc94a683bbe2b77/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f66376431373061332d653434362d346136342d616332642d6362393530323866383161382e706e67" target="_blank" rel="noopener"><img data-src="https://camo.githubusercontent.com/d7ed23ba345bbc919c32dfca60d989e180154ce57c4d39238cc94a683bbe2b77/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f66376431373061332d653434362d346136342d616332642d6362393530323866383161382e706e67" alt="img"></a></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li>Carlson J L. Redis in Action[J]. Media.johnwiley.com.au, 2013.</li>
+<li><a href="http://redisbook.com/index.html" target="_blank" rel="noopener">黄健宏. Redis 设计与实现 [M]. 机械工业出版社, 2014.</a></li>
+<li><a href="https://redislabs.com/ebook/foreword/" target="_blank" rel="noopener">REDIS IN ACTION</a></li>
+<li><a href="http://ticki.github.io/blog/skip-lists-done-right/" target="_blank" rel="noopener">Skip Lists: Done Right</a></li>
+<li><a href="http://www.cnblogs.com/loveincode/p/7411911.html" target="_blank" rel="noopener">论述 Redis 和 Memcached 的差异</a></li>
+<li><a href="http://wiki.jikexueyuan.com/project/redis-guide" target="_blank" rel="noopener">Redis 3.0 中文版- 分片</a></li>
+<li><a href="http://www.scienjus.com/redis-use-case/" target="_blank" rel="noopener">Redis 应用场景</a></li>
+<li><a href="https://redis.io/topics/lru-cache" target="_blank" rel="noopener">Using Redis as an LRU cache</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>数据库</category>
+        <category>Redis修炼</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+        <tag>Redis</tag>
+        <tag>NoSQL</tag>
+        <tag>持久化</tag>
+        <tag>Redis哨兵</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Zabbix安装与部署</title>
     <url>/2020/12/01/zabbix-install-deploy/</url>
     <content><![CDATA[<blockquote>
@@ -1084,89 +1356,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python之全局解释器锁GIL</title>
-    <url>/2020/11/23/python-GIL/</url>
-    <content><![CDATA[<blockquote>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote>
-<p>GIL(Global Interpreter Lock)，也称为全局解释器，官方解释为：</p>
-<blockquote>
-<p>In CPython, the global interpreter lock, or GIL, is a mutex that prevents multiple native threads from executing Python bytecodes at once. This lock is necessary mainly because CPython’s memory management is not thread-safe. (However, since the GIL exists, other features have grown to depend on the guarantees that it enforces.)</p>
-</blockquote>
-<p>主要意思为：</p>
-<blockquote>
-<p>GIL是一个互斥锁，它防止多个线程同时执行Python字节码。这个锁是必要的，主要是因为CPython的内存管理不是线程安全的</p>
-</blockquote>
-<a id="more"></a>
-
-<h3 id="Python解释器有哪些"><a href="#Python解释器有哪些" class="headerlink" title="Python解释器有哪些"></a>Python解释器有哪些</h3><ol>
-<li>CPython: 官方默认版本，使用C语言开发，是Python使用最广泛的解释器，有GIL.</li>
-<li>IPython: IPython是基于CPython之上的交互式解释器，其它方面和CPython相同.</li>
-<li>PyPy: PyPy采用JIT(Just In Time)也就是即时编译编译器，对Python代码执行动态编译，目的是加快执行速度，有GIL.</li>
-<li>Jython: 运行在Java平台上的解释器，把Python代码编译为Java字节码执行，没有GIL.</li>
-<li>IronPython: IronPython和Jython类似，只不过IronPython是运行在微软.Net平台上的Python解释器，可以直接把Python代码编译成.Net的字节码，没有GIL.</li>
-</ol>
-<h2 id="GIL的背景"><a href="#GIL的背景" class="headerlink" title="GIL的背景"></a>GIL的背景</h2><p>由于物理上得限制，各CPU厂商在核心频率上的比赛已经被多核所取代。为了更有效的利用多核处理器的性能，就出现了多线程的编程方式，而随之带来的就是线程间数据一致性和状态同步的困难。</p>
-<p>Python当然也逃不开，为了利用多核，Python开始支持多线程。而解决多线程之间数据完整性和状态同步的最简单方法自然就是加锁。于是有了GIL这把超级大锁，而当越来越多的代码库开发者接受了这种设定后，他们开始大量依赖这种特性（即默认python内部对象是thread-safe的，无需在实现时考虑额外的内存锁和同步操作）。</p>
-<h2 id="GIL为什么会存在？"><a href="#GIL为什么会存在？" class="headerlink" title="GIL为什么会存在？"></a>GIL为什么会存在？</h2><p>GIL的问题其实是由于近十几年来应用程序和操作系统逐步从多任务单核心演进到多任务多核心导致的 , 在一个古老的单核CPU上调度多个线程任务，大家相互共享一个全局锁，谁在CPU执行，谁就占有这把锁，直到这个线程因为IO操作或者Timer Tick到期让出CPU，没有在执行的线程就安静的等待着这把锁（除了等待之外，他们应该也无事可做）。下面这个图演示了一个单核CPU的线程调度方式：</p>
-<img data-src="/2020/11/23/python-GIL/python-gil-single.jpg" class>
-
-<p>在一个现代多核心的处理器上，上面的模型就有很大优化空间了，原来只能等待的线程任务，现在可以在其它空闲的核心上调度并发执行。由于古老GIL机制，如果线程2需要在CPU 2 上执行，它需要先等待在CPU 1 上执行的线程1释放GIL（记住：GIL是全局的）。如果线程1是因为 i/o 阻塞让出的GIL，那么线程2必定拿到Gil。但如果线程1是因为timer ticks计数满100让出GIL，那么这个时候线程1和线程2公平竞争。但要命的是，在Python 2.x, 线程1不会动态的调整自身的优先级，所以很大概率下次被选中执行的还是线程1，在很多个这样的选举周期内，线程2只能安静的看着线程1拿着GIL在CPU 1上欢快的执行。</p>
-<img data-src="/2020/11/23/python-GIL/python-gil-muti.jpg" class>
-
-<p>在稍微极端一点的情况下，比如线程1使用了while True在CPU 1 上执行，那就真是“一核有难，八核围观”了，如下图所示：</p>
-<img data-src="/2020/11/23/python-GIL/python-gil-octo.jpg" class>
-
-<h2 id="GIL的影响"><a href="#GIL的影响" class="headerlink" title="GIL的影响"></a>GIL的影响</h2><p>从上文的介绍和官方的定义来看，GIL无疑就是一把全局排他锁。毫无疑问全局锁的存在会对多线程的效率有不小影响。甚至就几乎等于Python是个单线程的程序。</p>
-<h3 id="GIL对多线程Python程序的影响"><a href="#GIL对多线程Python程序的影响" class="headerlink" title="GIL对多线程Python程序的影响"></a>GIL对多线程Python程序的影响</h3><p>程序的性能受到计算密集型(CPU)的程序限制和I/O密集型的程序限制影响，那什么是计算密集型和I/O密集型程序?</p>
-<h4 id="计算密集型-CPU"><a href="#计算密集型-CPU" class="headerlink" title="计算密集型(CPU)"></a>计算密集型(CPU)</h4><p>高度使用CPU的程序，例如: 进行数学计算，矩阵运算，搜索，图像处理等.</p>
-<h4 id="I-O密集型"><a href="#I-O密集型" class="headerlink" title="I/O密集型"></a>I/O密集型</h4><p>I/0(Input/Output)程序是进行数据传输，例如: 文件操作，数据库，网络数据等</p>
-<h3 id="顺序执行单线程和并发执行多线程的效率对比"><a href="#顺序执行单线程和并发执行多线程的效率对比" class="headerlink" title="顺序执行单线程和并发执行多线程的效率对比"></a>顺序执行单线程和并发执行多线程的效率对比</h3><h4 id="顺序执行单线程-single-thread-py"><a href="#顺序执行单线程-single-thread-py" class="headerlink" title="- 顺序执行单线程(single_thread.py)"></a>- 顺序执行单线程(single_thread.py)</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test_counter</span><span class="params">()</span>:</span></span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> range(<span class="number">100000000</span>):</span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    start_time = time.time()</span><br><span class="line">    <span class="keyword">for</span> tid <span class="keyword">in</span> range(<span class="number">2</span>):</span><br><span class="line">        t1 = threading.Thread(target=test_counter)</span><br><span class="line">        t1.start()</span><br><span class="line">        t1.join()</span><br><span class="line">    end_time = time.time()</span><br><span class="line">    print(<span class="string">"Total time:&#123;&#125;"</span>.format(end_time-start_time))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
-
-<p>执行结果:</p>
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">Total</span> <span class="selector-tag">time</span>: 11<span class="selector-class">.299654722213745</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="并发执行两个线程-multi-thread-py"><a href="#并发执行两个线程-multi-thread-py" class="headerlink" title="- 并发执行两个线程(multi_thread.py)"></a>- 并发执行两个线程(multi_thread.py)</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test_counter</span><span class="params">()</span>:</span></span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> range(<span class="number">100000000</span>):</span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    thread_array = &#123;&#125;</span><br><span class="line">    start_time = time.time()</span><br><span class="line">    <span class="keyword">for</span> tid <span class="keyword">in</span> range(<span class="number">2</span>):</span><br><span class="line">        t = threading.Thread(target=test_counter)</span><br><span class="line">        t.start()</span><br><span class="line">        thread_array[tid] = t</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>):</span><br><span class="line">        thread_array[i].join()</span><br><span class="line">    end_time = time.time()</span><br><span class="line">    print(<span class="string">"Total time:&#123;&#125;"</span>.format(end_time-start_time))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
-
-<p>执行结果:</p>
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">Total</span> <span class="selector-tag">time</span><span class="selector-pseudo">:13.7098388671875</span></span><br></pre></td></tr></table></figure>
-
-<p>GIL对I/O绑定多线程程序的性能影响不大，因为线程在等待I/O时共享锁.</p>
-<p>GIL对计算型绑定多线程程序有影响，例如: 使用线程处理部分图像的程序，不仅会因锁定而成为单线程，而且还会看到执行时间的增加，这种增加是由锁的获取和释放开销的结果.</p>
-<h2 id="如何处理Python中的GIL"><a href="#如何处理Python中的GIL" class="headerlink" title="如何处理Python中的GIL"></a>如何处理Python中的GIL</h2><ul>
-<li>计算密集型程序<ul>
-<li>使用多进程(什么是多进程呢，后续道来)</li>
-<li>使用其它语言(将计算密集程序放到其它语言中执行)</li>
-<li>替换解释器(可以自己尝试)</li>
-<li>等大神解决GIL</li>
-</ul>
-</li>
-<li>I/O密集型程序<ul>
-<li>使用多线程</li>
-<li>使用多进程</li>
-<li>使用多进程 + 多线程</li>
-</ul>
-</li>
-</ul>
-<hr>
-<p>参考链接：</p>
-<p><a href="http://www.dabeaz.com/python/UnderstandingGIL.pdf" target="_blank" rel="noopener">Understanding the Python GIL</a>  </p>
-<p><a href="https://realpython.com/python-gil/" target="_blank" rel="noopener">What Is the Python Global Interpreter Lock (GIL)?</a></p>
-<p><a href="https://zhuanlan.zhihu.com/p/75780308" target="_blank" rel="noopener">深入理解Python中的GIL（全局解释器锁）</a></p>
-]]></content>
-      <categories>
-        <category>Python</category>
-        <category>GIL</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-        <tag>多线程</tag>
-        <tag>GIL</tag>
-        <tag>全局解释器锁</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python之使用pyvmomi管理VMware</title>
     <url>/2020/11/17/pyvmomi-sample/</url>
     <content><![CDATA[<blockquote>
@@ -1215,218 +1404,6 @@
         <tag>vCenter</tag>
         <tag>虚拟化</tag>
         <tag>pyvmomi</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Redis修炼之使用场景</title>
-    <url>/2020/11/16/redis-use-case/</url>
-    <content><![CDATA[<blockquote>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote>
-<p>接着Redis数据类型来说，来谈谈Redis的具体使用场景，首先回顾一下：</p>
-<p>Redis是一种基于键值对的NoSQL数据库，它的值主要由string（字符串），hash（哈希），list（列表），set（集合），zset（有序集合）五种基本数据结构构成。那么这些数据结构的使用场景有哪些？以下将用内部编码及使用场景的方式浅析Redis的五种数据类型。</p>
-<a id="more"></a>
-
-
-<blockquote>
-<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2></blockquote>
-<h3 id="一-字符串"><a href="#一-字符串" class="headerlink" title="一 字符串"></a><strong>一 字符串</strong></h3><p>字符串类型是Redis最基础的数据结构，字符串类型可以是<code>JSON</code>、<code>XML</code>甚至是二进制的图片等数据，但是最大值不能超过512MB。</p>
-<h4 id="1-1-内部编码"><a href="#1-1-内部编码" class="headerlink" title="1.1 内部编码"></a><strong>1.1 内部编码</strong></h4><p>Redis会根据当前值的类型和长度决定使用哪种内部编码来实现。</p>
-<p>字符串类型的内部编码有3种：</p>
-<ul>
-<li>int：8个字节的长整型。</li>
-<li>embstr：小于等于39个字节的字符串。</li>
-<li>raw：大于39个字节的字符串。</li>
-</ul>
-<h4 id="1-2-使用场景"><a href="#1-2-使用场景" class="headerlink" title="1.2 使用场景"></a><strong>1.2 使用场景</strong></h4><h5 id="1-2-1-缓存"><a href="#1-2-1-缓存" class="headerlink" title="1.2.1 缓存"></a>1.2.1 缓存</h5><p>在web服务中，使用MySQL作为数据库，Redis作为缓存。由于Redis具有支撑高并发的特性，通常能起到加速读写和降低后端压力的作用。web端的大多数请求都是从Redis中获取的数据，如果Redis中没有需要的数据，则会从MySQL中去获取，并将获取到的数据写入redis。</p>
-<h5 id="1-2-2-计数"><a href="#1-2-2-计数" class="headerlink" title="1.2.2 计数"></a>1.2.2 计数</h5><p>Redis中有一个字符串相关的命令<code>incr key</code>，<code>incr</code>命令对值做自增操作，返回结果分为以下三种情况：</p>
-<ul>
-<li>值不是整数，返回错误</li>
-<li>值是整数，返回自增后的结果</li>
-<li>key不存在，默认键为<code>0</code>，返回<code>1</code></li>
-</ul>
-<p>比如文章的阅读量，视频的播放量等等都会使用redis来计数，每播放一次，对应的播放量就会加1，同时将这些数据异步存储到数据库中达到持久化的目的。</p>
-<h5 id="1-2-3-共享Session"><a href="#1-2-3-共享Session" class="headerlink" title="1.2.3 共享Session"></a>1.2.3 共享Session</h5><p>在分布式系统中，用户的每次请求会访问到不同的服务器，这就会导致session不同步的问题，假如一个用来获取用户信息的请求落在A服务器上，获取到用户信息后存入session。下一个请求落在B服务器上，想要从session中获取用户信息就不能正常获取了，因为用户信息的session在服务器A上，为了解决这个问题，使用redis集中管理这些session，将session存入redis，使用的时候直接从redis中获取就可以了。</p>
-<h5 id="1-2-4-限速"><a href="#1-2-4-限速" class="headerlink" title="1.2.4 限速"></a>1.2.4 限速</h5><p>为了安全考虑，有些网站会对IP进行限制，限制同一IP在一定时间内访问次数不能超过n次。</p>
-<h3 id="二-哈希"><a href="#二-哈希" class="headerlink" title="二 哈希"></a><strong>二 哈希</strong></h3><p>Redis中，哈希类型是指一个键值对的存储结构。</p>
-<h4 id="2-1-内部编码"><a href="#2-1-内部编码" class="headerlink" title="2.1 内部编码"></a><strong>2.1 内部编码</strong></h4><p>哈希类型的内部编码有两种：</p>
-<ul>
-<li>ziplist（压缩列表）：当哈希类型元素个数小于<code>hash-max-ziplist-entries</code>配置（默认512个）同时所有值都小于<code>hash-max-ziplist-value</code>配置（默认64字节）时使用。ziplist使用更加紧凑的结构实现多个元素的连续存储，所以比hashtable更加节省内存。</li>
-<li>hashtable（哈希表）：当ziplist不能满足要求时，会使用hashtable。</li>
-</ul>
-<h4 id="2-2-使用场景"><a href="#2-2-使用场景" class="headerlink" title="2.2 使用场景"></a><strong>2.2 使用场景</strong></h4><p>由于hash类型存储的是一个键值对，比如数据库有以下一个用户表结构</p>
-<table>
-<thead>
-<tr>
-<th align="left">id</th>
-<th align="left">name</th>
-<th align="left">age</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">1</td>
-<td align="left">豆豆</td>
-<td align="left">24</td>
-</tr>
-</tbody></table>
-<p>将以上信息存入redis，用表明:id作为key，用户属性作为值：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">hset user:1 name 豆豆 age 24</span><br></pre></td></tr></table></figure>
-
-<p>使用哈希存储会比字符串更加方便直观</p>
-<h3 id="三-列表"><a href="#三-列表" class="headerlink" title="三 列表"></a><strong>三 列表</strong></h3><p>列表类型用来存储多个<strong>有序</strong>的字符串，一个列表最多可以存储<code>2^32-1</code>个元素，列表的两端都可以插入和弹出元素。</p>
-<h4 id="3-1-内部编码"><a href="#3-1-内部编码" class="headerlink" title="3.1 内部编码"></a><strong>3.1 内部编码</strong></h4><p>列表的内部编码有两种：</p>
-<ul>
-<li>ziplist（压缩列表）：当哈希类型元素个数小于<code>list-max-ziplist-entries</code>配置（默认512个）同时所有值都小于<code>list-max-ziplist-value</code>配置（默认64字节）时使用。ziplist使用更加紧凑的结构实现多个元素的连续存储，所以比hashtable更加节省内存。</li>
-<li>linkedlist（链表）：当ziplist不能满足要求时，会使用linkedlist。</li>
-</ul>
-<h4 id="3-2-使用场景"><a href="#3-2-使用场景" class="headerlink" title="3.2 使用场景"></a><strong>3.2 使用场景</strong></h4><h5 id="3-2-1-消息队列"><a href="#3-2-1-消息队列" class="headerlink" title="3.2.1 消息队列"></a>3.2.1 消息队列</h5><p>列表用来存储多个有序的字符串，既然是有序的，那么就满足消息队列的特点。使用<code>lpush</code>+<code>rpop</code>或者<code>rpush</code>+<code>lpop</code>实现消息队列。除此之外，redis支持阻塞操作，在弹出元素的时候使用阻塞命令来实现阻塞队列。</p>
-<p>在蓝鲸SaaS开发中，Django的Celery本身不提供消息服务，但是可以方便的和第三方提供的消息中间件集成。包括，RabbitMQ、Redis等等。SaaS的本地开发中，Celery也默认选择了Redis作为消息队列。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Celery 消息队列设置 RabbitMQ</span></span><br><span class="line"><span class="comment"># BROKER_URL = 'amqp://guest:guest@localhost:5672//'</span></span><br><span class="line"><span class="comment"># Celery 消息队列设置 Redis</span></span><br><span class="line">BROKER_URL = <span class="string">"redis://localhost:6379/0"</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h5 id="3-2-2-栈"><a href="#3-2-2-栈" class="headerlink" title="3.2.2 栈"></a>3.2.2 栈</h5><p>由于列表存储的是有序字符串，满足队列的特点，也就能满足栈先进后出的特点，使用<code>lpush</code>+<code>lpop</code>或者<code>rpush</code>+<code>rpop</code>实现栈。</p>
-<h5 id="3-2-3-文章列表"><a href="#3-2-3-文章列表" class="headerlink" title="3.2.3 文章列表"></a>3.2.3 文章列表</h5><p>因为列表的元素不但是有序的，而且还支持按照索引范围获取元素。因此我们可以使用命令<code>lrange key 0 9</code>分页获取文章列表</p>
-<h3 id="四-集合"><a href="#四-集合" class="headerlink" title="四 集合"></a><strong>四 集合</strong></h3><p>集合类型也可以保存多个字符串元素，与列表不同的是，集合中不允许有重复元素并且集合中的元素是无序的。一个集合最多可以存储<code>2^32-1</code>个元素。</p>
-<h4 id="4-1-内部编码"><a href="#4-1-内部编码" class="headerlink" title="4.1 内部编码"></a><strong>4.1 内部编码</strong></h4><p>集合类型的内部编码有两种：</p>
-<ul>
-<li>intset（整数集合）：当集合中的元素都是整数且元素个数小于<code>set-max-intset-entries</code>配置（默认512个）时，redis会选用intset来作为集合的内部实现，从而减少内存的使用。</li>
-<li>hashtable（哈希表）：当intset不能满足要求时，会使用hashtable。</li>
-</ul>
-<h4 id="4-2-使用场景"><a href="#4-2-使用场景" class="headerlink" title="4.2 使用场景"></a><strong>4.2 使用场景</strong></h4><h5 id="4-2-1-用户标签"><a href="#4-2-1-用户标签" class="headerlink" title="4.2.1 用户标签"></a>4.2.1 用户标签</h5><p>例如一个用户对篮球、足球感兴趣，另一个用户对橄榄球、乒乓球感兴趣，这些兴趣点就是一个标签。有了这些数据就可以得到喜欢同一个标签的人，以及用户的共同感兴趣的标签。给用户打标签的时候需要①给用户打标签，②给标签加用户，需要给这两个操作增加事务。</p>
-<ul>
-<li>给用户打标签</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sadd user:1:tags tag1 tag2</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>给标签添加用户</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sadd tag1:users user:1</span><br><span class="line">sadd tag2:users user:1</span><br></pre></td></tr></table></figure>
-
-<p>使用交集（sinter）求两个user的共同标签</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sinter user:1:tags user:2:tags</span><br></pre></td></tr></table></figure>
-
-<h5 id="4-2-2-抽奖功能"><a href="#4-2-2-抽奖功能" class="headerlink" title="4.2.2 抽奖功能"></a>4.2.2 抽奖功能</h5><p>集合有两个命令支持获取随机数，分别是：</p>
-<ul>
-<li>随机获取count个元素，集合元素个数不变</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">srandmember key [count]</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>随机弹出count个元素，元素从集合弹出，集合元素个数改变</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">spop key [count]</span><br></pre></td></tr></table></figure>
-
-<p>用户点击抽奖按钮，参数抽奖，将用户编号放入集合，然后抽奖，分别抽一等奖、二等奖，如果已经抽中一等奖的用户不能参数抽二等奖则使用<code>spop</code>，反之使用<code>srandmember</code>。</p>
-<h3 id="五-有序集合"><a href="#五-有序集合" class="headerlink" title="五 有序集合"></a><strong>五 有序集合</strong></h3><p>有序集合和集合一样，不能有重复元素。但是可以排序，它给每个元素设置一个score作为排序的依据。最多可以存储<code>2^32-1</code>个元素。</p>
-<h4 id="5-1-内部编码"><a href="#5-1-内部编码" class="headerlink" title="5.1 内部编码"></a><strong>5.1 内部编码</strong></h4><p>有序集合类型的内部编码有两种：</p>
-<ul>
-<li>ziplist（压缩列表）：当有序集合的元素个数小于<code>list-max-ziplist-entries</code>配置（默认128个）同时所有值都小于<code>list-max-ziplist-value</code>配置（默认64字节）时使用。ziplist使用更加紧凑的结构实现多个元素的连续存储，更加节省内存。</li>
-<li>skiplist（跳跃表）：当不满足ziplist的要求时，会使用skiplist。</li>
-</ul>
-<h4 id="5-2-使用场景"><a href="#5-2-使用场景" class="headerlink" title="5.2 使用场景"></a><strong>5.2 使用场景</strong></h4><h5 id="5-2-1-排行榜"><a href="#5-2-1-排行榜" class="headerlink" title="5.2.1 排行榜"></a>5.2.1 排行榜</h5><p>用户发布了n篇文章，其他人看到文章后给喜欢的文章点赞，使用score来记录点赞数，有序集合会根据score排行。流程如下</p>
-<p>用户发布一篇文章，初始点赞数为0，即score为0</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">zadd user:article 0 a</span><br></pre></td></tr></table></figure>
-
-<p>有人给文章a点赞，递增<code>1</code></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">zincrby user:article 1 a</span><br></pre></td></tr></table></figure>
-
-<p>查询点赞前三篇文章</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">zrevrangebyscore user:article 0 2</span><br></pre></td></tr></table></figure>
-
-<p>查询点赞后三篇文章</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">zrangebyscore user:article 0 2</span><br></pre></td></tr></table></figure>
-
-<h5 id="5-2-2-延迟消息队列"><a href="#5-2-2-延迟消息队列" class="headerlink" title="5.2.2 延迟消息队列"></a>5.2.2 延迟消息队列</h5><p>下单系统，下单后需要在15分钟内进行支付，如果15分钟未支付则自动取消订单。将下单后的十五分钟后时间作为score，订单作为value存入redis，消费者轮询去消费，如果消费的大于等于这笔记录的score，则将这笔记录移除队列，取消订单。</p>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a><strong>总结</strong></h3><p>在开发中，字符串类型是用的最多的数据类型，导致我们忽视了redis的其他四种数据类型，在具体场景下选择具体的数据类型对提升redis性能有非常大的帮助。redis虽然支持消息队列的实现，但是并不支持ack。所以redis实现的消息队列不能保证消息的可靠性，除非自己实现消息确认机制，不过这非常麻烦，所以如果是重要的消息还是推荐使用专门的消息队列去做，如RabbitMQ、RocketMQ。</p>
-<hr>
-<p>参考链接：<a href="https://mp.weixin.qq.com/s/FsL-54ALoNUAPcft-u8Leg?v_p=86&WBAPIAnalysisOriUICodes=10000001_10000002&launchid=10000365--x&wm=3333_2001&aid=01A0GdQv0UejmN65Ntcd4pBeamMWOPan5tHaY8rK5tZGJgPOs.&from=10AA393010" target="_blank" rel="noopener">Redis 五大数据类型使用场景</a>  </p>
-]]></content>
-      <categories>
-        <category>数据库</category>
-        <category>Redis修炼</category>
-      </categories>
-      <tags>
-        <tag>Redis</tag>
-        <tag>Redis使用场景</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Redis修炼之数据类型</title>
-    <url>/2020/11/12/redis-data-types/</url>
-    <content><![CDATA[<blockquote>
-<p>一、Redis 数据类型:</p>
-</blockquote>
-<p><strong>1、String（字符串）</strong><br>string 是 Redis 最基本的类型，理解成与 Memcached 一模一样的类型，一个 key 对应一个 value。</p>
-<p><strong>2、Hash（哈希）</strong><br>Redis hash 是一个键值(key=&gt;value)对集合。<br>Redis hash 是一个 string 类型的 field 和 value 的映射表，hash 特别适合用于存储对象。</p>
-<a id="more"></a>
-
-<p><strong>3、List（列表）</strong><br>Redis 列表是简单的字符串列表，按照插入顺序排序。你可以添加一个元素到列表的头部（左边）或者尾部（右边）。<br>ps：可以使用List实现简单消息队列</p>
-<p><strong>4、Set（集合）</strong><br>Redis 的 Set 是 string 类型的无序集合。<br>集合是通过哈希表实现的，所以添加，删除，查找的复杂度都是 O(1)。</p>
-<p><strong>5、zset(sorted set：有序集合)</strong><br>Redis zset 和 set 一样也是string类型元素的集合，且不允许重复的成员。<br>不同的是每个元素都会关联一个double类型的分数。Redis正是通过分数来为集合中的成员进行从小到大的排序。<br>zset的成员是唯一的，但分数(score)却可以重复。</p>
-<blockquote>
-<p>二、各个数据类型应用场景:</p>
-</blockquote>
-<table>
-<thead>
-<tr>
-<th>类型</th>
-<th>简介</th>
-<th>特性</th>
-<th>场景</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>String(字符串)</td>
-<td>二进制安全</td>
-<td>可以包含任何数据，比如jpg图片或者序列化的对象，一个键最大能存储512M</td>
-<td>- - -</td>
-</tr>
-<tr>
-<td>Hash(字典)</td>
-<td>键值对集合，即编程语言中的Map类型</td>
-<td>适合存储对象，并且可以像数据库中update一个属性一样只修改某一项属性值(Memcached中需要取出整个字符串反序列化成对象修改完再序列化存回去)</td>
-<td>存储、读取、修改用户属性</td>
-</tr>
-<tr>
-<td>List(列表)</td>
-<td>链表(双向链表)</td>
-<td>增删快，提供了操作某一段元素的API</td>
-<td>1，最新消息排行等功能(比如朋友圈的时间线) 2，消息队列</td>
-</tr>
-<tr>
-<td>Set(集合)</td>
-<td>哈希表实现，元素不重复</td>
-<td>1、添加、删除，查找的复杂度都是O(1) 2、为集合提供了求交集、并集、差集等操作</td>
-<td>1、共同好友 2、利用唯一性，统计访问网站的所有独立ip 3、好友推荐时，根据tag求交集，大于某个阈值就可以推荐</td>
-</tr>
-<tr>
-<td>Sorted Set(有序集合)</td>
-<td>将Set中的元素增加一个权重参数score，元素按score有序排列</td>
-<td>数据插入集合时，已经进行天然排序</td>
-<td>1、排行榜 2、带权重的消息队列</td>
-</tr>
-</tbody></table>
-<blockquote>
-<p>三、注意:</p>
-</blockquote>
-<p>&emsp;&emsp;Redis支持多个数据库，并且每个数据库的数据是隔离的不能共享，并且基于单机才有，如果是集群就没有数据库的概念。</p>
-<p>&emsp;&emsp;Redis是一个字典结构的存储服务器，而实际上一个Redis实例提供了多个用来存储数据的字典，客户端可以指定将数据存储在哪个字典中。这与我们熟知的在一个关系数据库实例中可以创建多个数据库类似，所以可以将其中的每个字典都理解成一个独立的数据库。</p>
-<p>&emsp;&emsp;每个数据库对外都是一个从0开始的递增数字命名，Redis默认支持16个数据库（可以通过配置文件支持更多，无上限），可以通过配置databases来修改这一数字。客户端与Redis建立连接后会自动选择0号数据库，不过可以随时使用SELECT命令更换数据库，如要选择1号数据库：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">redis&gt; SELECT 1</span><br><span class="line">OK</span><br><span class="line">redis [1] &gt; GET foo</span><br><span class="line">(nil)</span><br></pre></td></tr></table></figure>
-
-<p>&emsp;&emsp;然而这些以数字命名的数据库又与我们理解的数据库有所区别。首先Redis不支持自定义数据库的名字，每个数据库都以编号命名，开发者必须自己记录哪些数据库存储了哪些数据。另外Redis也不支持为每个数据库设置不同的访问密码，所以一个客户端要么可以访问全部数据库，要么连一个数据库也没有权限访问。最重要的一点是多个数据库之间并不是完全隔离的，比如FLUSHALL命令可以清空一个Redis实例中所有数据库中的数据。综上所述，这些数据库更像是一种命名空间，而不适宜存储不同应用程序的数据。比如可以使用0号数据库存储某个应用生产环境中的数据，使用1号数据库存储测试环境中的数据，但不适宜使用0号数据库存储A应用的数据而使用1号数据库B应用的数据，不同的应用应该使用不同的Redis实例存储数据。由于Redis非常轻量级，一个空Redis实例占用的内在只有1M左右，所以不用担心多个Redis实例会额外占用很多内存。</p>
-<hr>
-<p>参考链接：<a href="https://www.runoob.com/redis/redis-data-types.html" target="_blank" rel="noopener">菜鸟教程——Redis数据类型</a>  </p>
-]]></content>
-      <categories>
-        <category>数据库</category>
-        <category>Redis修炼</category>
-      </categories>
-      <tags>
-        <tag>数据库</tag>
-        <tag>Redis</tag>
-        <tag>数据类型</tag>
       </tags>
   </entry>
   <entry>
@@ -1538,6 +1515,140 @@
       <tags>
         <tag>B树与B+树</tag>
         <tag>数据结构</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>消息队列基础及选型</title>
+    <url>/2020/10/16/message-queue-basic/</url>
+    <content><![CDATA[<blockquote>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2></blockquote>
+<p>MQ全称为Message Queue，消息队列（MQ）是一种应用程序对应用程序或者模块对模块的通信方法。MQ是消费-生产者模型的一个典型的代表，一端往消息队列中不断写入消息，而另一端则可以读取队列中的消息。</p>
+<p>可以简单理解为：将要传输的数据放在队列中。</p>
+<ul>
+<li>把数据放在消息队列的称为生产者。</li>
+<li>从消息队列中取数据的称为消费者。</li>
+</ul>
+<p>目前使用较多的消息队列有<code>ActiveMQ</code>，<code>RabbitMQ</code>，<code>Kafka</code>，<code>RocketMQ</code>。</p>
+<p>作者开发中常用的Celery，会选择 <code>RabbitMQ</code> 和<code>Redis</code>作为消息队列 ，蓝鲸平台上也是将<code>kafka</code>作为分布式流处理平台。</p>
+<a id="more"></a>
+
+<h2 id="消息模型"><a href="#消息模型" class="headerlink" title="消息模型"></a>消息模型</h2><h3 id="点对点"><a href="#点对点" class="headerlink" title="点对点"></a>点对点</h3><p>消息生产者向消息队列中发送了一个消息之后，只能被一个消费者消费一次。</p>
+<p><a href="https://camo.githubusercontent.com/49be931bdfb4a55a0f80ffd7520053d659d8dd91d9a9ccf43a2f621b38de56eb/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f696d6167652d32303139313231323031313235303631332e706e67" target="_blank" rel="noopener"><img data-src="https://camo.githubusercontent.com/49be931bdfb4a55a0f80ffd7520053d659d8dd91d9a9ccf43a2f621b38de56eb/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f696d6167652d32303139313231323031313235303631332e706e67" alt="img"></a></p>
+<h3 id="发布-订阅"><a href="#发布-订阅" class="headerlink" title="发布/订阅"></a>发布/订阅</h3><p>消息生产者向频道发送一个消息之后，多个消费者可以从该频道订阅到这条消息并消费。</p>
+<p><a href="https://camo.githubusercontent.com/e6e010e3204692a0798e4fde10ce694206e14b1a50b336cd57de98ab7c2bafc6/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f696d6167652d32303139313231323031313431303337342e706e67" target="_blank" rel="noopener"><img data-src="https://camo.githubusercontent.com/e6e010e3204692a0798e4fde10ce694206e14b1a50b336cd57de98ab7c2bafc6/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f696d6167652d32303139313231323031313431303337342e706e67" alt="img"></a></p>
+<p>发布与订阅模式和观察者模式有以下不同：</p>
+<ul>
+<li>观察者模式中，观察者和主题都知道对方的存在；而在发布与订阅模式中，生产者与消费者不知道对方的存在，它们之间通过频道进行通信。</li>
+<li>观察者模式是同步的，当事件触发时，主题会调用观察者的方法，然后等待方法返回；而发布与订阅模式是异步的，生产者向频道发送一个消息之后，就不需要关心消费者何时去订阅这个消息，可以立即返回。</li>
+</ul>
+<p><a href="https://camo.githubusercontent.com/9e5b9d72f2a4175954f78f6e9479dba1a2e56373379da6907354b29cb27fd300/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f696d6167652d32303139313231323031313734373936372e706e67" target="_blank" rel="noopener"><img data-src="https://camo.githubusercontent.com/9e5b9d72f2a4175954f78f6e9479dba1a2e56373379da6907354b29cb27fd300/68747470733a2f2f63732d6e6f7465732d313235363130393739362e636f732e61702d6775616e677a686f752e6d7971636c6f75642e636f6d2f696d6167652d32303139313231323031313734373936372e706e67" alt="img"></a></p>
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><h3 id="异步处理"><a href="#异步处理" class="headerlink" title="异步处理"></a>异步处理</h3><p>发送者将消息发送给消息队列之后，不需要同步等待消息接收者处理完毕，而是立即返回进行其它操作。消息接收者从消息队列中订阅消息之后异步处理。</p>
+<p>例如在注册流程中通常需要发送验证邮件来确保注册用户身份的合法性，可以使用消息队列使发送验证邮件的操作异步处理，用户在填写完注册信息之后就可以完成注册，而将发送验证邮件这一消息发送到消息队列中。</p>
+<p>只有在业务流程允许异步处理的情况下才能这么做，例如上面的注册流程中，如果要求用户对验证邮件进行点击之后才能完成注册的话，就不能再使用消息队列。</p>
+<h3 id="流量削锋"><a href="#流量削锋" class="headerlink" title="流量削锋"></a>流量削锋</h3><p>在高并发的场景下，如果短时间有大量的请求到达会压垮服务器。</p>
+<p>可以将请求发送到消息队列中，服务器按照其处理能力从消息队列中订阅消息进行处理。</p>
+<h3 id="应用解耦"><a href="#应用解耦" class="headerlink" title="应用解耦"></a>应用解耦</h3><p>如果模块之间不直接进行调用，模块之间耦合度就会很低，那么修改一个模块或者新增一个模块对其它模块的影响会很小，从而实现可扩展性。</p>
+<p>通过使用消息队列，一个模块只需要向消息队列中发送消息，其它模块可以选择性地从消息队列中订阅消息从而完成调用。</p>
+<h3 id="广播"><a href="#广播" class="headerlink" title="广播"></a>广播</h3><p>有了消息队列，我们只需要关心消息是否送达了队列，至于谁希望订阅，是下游的事情，无疑极大地减少了开发和联调的工作量。</p>
+<h2 id="可靠性"><a href="#可靠性" class="headerlink" title="可靠性"></a>可靠性</h2><h3 id="发送端的可靠性"><a href="#发送端的可靠性" class="headerlink" title="发送端的可靠性"></a>发送端的可靠性</h3><p>发送端完成操作后一定能将消息成功发送到消息队列中。</p>
+<p>实现方法：在本地数据库建一张消息表，将消息数据与业务数据保存在同一数据库实例里，这样就可以利用本地数据库的事务机制。事务提交成功后，将消息表中的消息转移到消息队列中，若转移消息成功则删除消息表中的数据，否则继续重传。</p>
+<h3 id="接收端的可靠性"><a href="#接收端的可靠性" class="headerlink" title="接收端的可靠性"></a>接收端的可靠性</h3><p>接收端能够从消息队列成功消费一次消息。</p>
+<p>两种实现方法：</p>
+<ul>
+<li>保证接收端处理消息的业务逻辑具有幂等性：只要具有幂等性，那么消费多少次消息，最后处理的结果都是一样的。</li>
+<li>保证消息具有唯一编号，并使用一张日志表来记录已经消费的消息编号。</li>
+</ul>
+<h2 id="消息队列比较"><a href="#消息队列比较" class="headerlink" title="消息队列比较"></a>消息队列比较</h2><img data-src="/2020/10/16/message-queue-basic/selection.png" class>
+
+<h3 id="ActiveMQ"><a href="#ActiveMQ" class="headerlink" title="ActiveMQ"></a>ActiveMQ</h3><p><strong>优点</strong></p>
+<ul>
+<li>单机吞吐量：万级</li>
+<li>topic数量都吞吐量的影响：</li>
+<li>时效性：ms级</li>
+<li>可用性：高，基于主从架构实现高可用性</li>
+<li>消息可靠性：有较低的概率丢失数据</li>
+<li>功能支持：MQ领域的功能极其完备</li>
+</ul>
+<p><strong>缺点:</strong></p>
+<p>官方社区现在对ActiveMQ 5.x维护越来越少，较少在大规模吞吐的场景中使用。</p>
+<h3 id="Kafka"><a href="#Kafka" class="headerlink" title="Kafka"></a>Kafka</h3><p>号称大数据的杀手锏，谈到大数据领域内的消息传输，则绕不开Kafka，这款为大数据而生的消息中间件，以其百万级TPS的吞吐量名声大噪，迅速成为大数据领域的宠儿，在数据采集、传输、存储的过程中发挥着举足轻重的作用。</p>
+<p>Apache Kafka它最初由LinkedIn公司基于独特的设计实现为一个分布式的提交日志系统( a distributed commit log)，之后成为Apache项目的一部分。</p>
+<p>目前已经被LinkedIn，Uber, Twitter, Netflix等大公司所采纳。</p>
+<p><strong>优点</strong></p>
+<ul>
+<li>性能卓越，单机写入TPS约在百万条/秒，最大的优点，就是吞吐量高。</li>
+<li>时效性：ms级</li>
+<li>可用性：非常高，kafka是分布式的，一个数据多个副本，少数机器宕机，不会丢失数据，不会导致不可用</li>
+<li>消费者采用Pull方式获取消息, 消息有序, 通过控制能够保证所有消息被消费且仅被消费一次;</li>
+<li>有优秀的第三方Kafka Web管理界面Kafka-Manager；</li>
+<li>在日志领域比较成熟，被多家公司和多个开源项目使用；</li>
+<li>功能支持：功能较为简单，主要支持简单的MQ功能，在大数据领域的实时计算以及日志采集被大规模使用</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ol>
+<li>Kafka单机超过64个队列/分区，Load会发生明显的飙高现象，队列越多，load越高，发送消息响应时间变长</li>
+<li>使用短轮询方式，实时性取决于轮询间隔时间；</li>
+<li>消费失败不支持重试；</li>
+<li>支持消息顺序，但是一台代理宕机后，就会产生消息乱序；</li>
+<li>社区更新较慢；</li>
+</ol>
+<h3 id="RabbitMQ"><a href="#RabbitMQ" class="headerlink" title="RabbitMQ"></a>RabbitMQ</h3><p>RabbitMQ 2007年发布，是一个在AMQP(高级消息队列协议)基础上完成的，可复用的企业消息系统，是当前最主流的消息中间件之一。</p>
+<p><strong>RabbitMQ优点</strong>：</p>
+<ol>
+<li>由于erlang语言的特性，mq 性能较好，高并发；</li>
+<li>吞吐量到万级，MQ功能比较完备 </li>
+<li>健壮、稳定、易用、跨平台、支持多种语言、文档齐全；</li>
+<li>开源提供的管理界面非常棒，用起来很好用</li>
+<li>社区活跃度高；</li>
+</ol>
+<p><strong>RabbitMQ缺点：</strong></p>
+<ol>
+<li>erlang开发，很难去看懂源码，基本职能依赖于开源社区的快速维护和修复bug，不利于做二次开发和维护。</li>
+<li>RabbitMQ确实吞吐量会低一些，这是因为他做的实现机制比较重。</li>
+<li>需要学习比较复杂的接口和协议，学习和维护成本较高。</li>
+</ol>
+<h3 id="RocketMQ"><a href="#RocketMQ" class="headerlink" title="RocketMQ"></a>RocketMQ</h3><p>RocketMQ出自 阿里公司的开源产品，用 Java 语言实现，在设计时参考了 Kafka，并做出了自己的一些改进。</p>
+<p>RocketMQ在阿里集团被广泛应用在订单，交易，充值，流计算，消息推送，日志流式处理，binglog分发等场景。</p>
+<p><strong>RocketMQ优点：</strong></p>
+<ol>
+<li>单机吞吐量：十万级</li>
+<li>可用性：非常高，分布式架构</li>
+<li>消息可靠性：经过参数优化配置，消息可以做到0丢失</li>
+<li>功能支持：MQ功能较为完善，还是分布式的，扩展性好</li>
+<li>支持10亿级别的消息堆积，不会因为堆积导致性能下降</li>
+<li>源码是java，我们可以自己阅读源码，定制自己公司的MQ，可以掌控</li>
+</ol>
+<p><strong>RocketMQ缺点：</strong></p>
+<ol>
+<li>支持的客户端语言不多，目前是java及c++，其中c++不成熟；</li>
+<li>社区活跃度一般</li>
+<li>没有在 mq 核心中去实现JMS等接口，有些系统要迁移需要修改大量代码</li>
+</ol>
+<h2 id="消息队列选型"><a href="#消息队列选型" class="headerlink" title="消息队列选型"></a>消息队列选型</h2><h3 id="Kafka-1"><a href="#Kafka-1" class="headerlink" title="Kafka"></a>Kafka</h3><p>Kafka主要特点是基于Pull的模式来处理消息消费，追求高吞吐量，一开始的目的就是用于日志收集和传输，适合产生大量数据的互联网服务的数据收集业务。</p>
+<p>大型公司建议可以选用，如果有日志采集功能，肯定是首选kafka了。</p>
+<p>例如笔者所用的蓝鲸平台也是如此使用Kafka的。</p>
+<h3 id="RocketMQ-1"><a href="#RocketMQ-1" class="headerlink" title="RocketMQ"></a>RocketMQ</h3><p>天生为金融互联网领域而生，对于可靠性要求很高的场景，尤其是电商里面的订单扣款，以及业务削峰，在大量交易涌入时，后端可能无法及时处理的情况。</p>
+<p>RoketMQ在稳定性上可能更值得信赖，这些业务场景在阿里双11已经经历了多次考验，如果你的业务有上述并发场景，建议可以选择RocketMQ。</p>
+<h3 id="RabbitMQ-1"><a href="#RabbitMQ-1" class="headerlink" title="RabbitMQ"></a>RabbitMQ</h3><p>RabbitMQ结合erlang语言本身的并发优势，性能较好，社区活跃度也比较高，但是不利于做二次开发和维护。不过，RabbitMQ的社区十分活跃，可以解决开发过程中遇到的bug。</p>
+<p>如果你的数据量没有那么大，小公司优先选择功能比较完备的RabbitMQ。</p>
+<p>例如笔者使用Django开发是SaaS，由于对数据吞吐量要求不高，就会使用RabbitMQ，或者使用成本更低的Redis，利用LIST的两端压入或者弹出元素的特性，来实现消息队列的作用。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a href="http://developers-club.com/posts/270339/" target="_blank" rel="noopener">Observer vs Pub-Sub</a></li>
+<li><a href="https://blog.csdn.net/lizhitao/article/details/47723105" target="_blank" rel="noopener">消息队列中点对点与发布订阅区别</a></li>
+<li><a href="https://github.com/CyC2018/CS-Notes/blob/master/notes/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97.md" target="_blank" rel="noopener">GitHub - CyC2018/CS-Notes</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/60288391" target="_blank" rel="noopener">消息队列 - Kafka、RocketMQ、RabbitMQ的优劣势比较</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>消息队列</category>
+      </categories>
+      <tags>
+        <tag>Redis</tag>
+        <tag>RabbitMQ</tag>
+        <tag>消息队列</tag>
+        <tag>ActiveMQ</tag>
+        <tag>Kafka</tag>
+        <tag>RocketMQ</tag>
       </tags>
   </entry>
   <entry>
@@ -1993,10 +2104,224 @@
       </categories>
       <tags>
         <tag>Python</tag>
+        <tag>Redis</tag>
         <tag>Celery</tag>
         <tag>Django</tag>
         <tag>RabbitMQ</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Redis修炼之使用场景</title>
+    <url>/2020/08/16/redis-use-case/</url>
+    <content><![CDATA[<blockquote>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote>
+<p>接着Redis数据类型来说，来谈谈Redis的具体使用场景，首先回顾一下：</p>
+<p>Redis是一种基于键值对的NoSQL数据库，它的值主要由string（字符串），hash（哈希），list（列表），set（集合），zset（有序集合）五种基本数据结构构成。那么这些数据结构的使用场景有哪些？以下将用内部编码及使用场景的方式浅析Redis的五种数据类型。</p>
+<a id="more"></a>
+
+
+<blockquote>
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2></blockquote>
+<h3 id="一-字符串"><a href="#一-字符串" class="headerlink" title="一 字符串"></a><strong>一 字符串</strong></h3><p>字符串类型是Redis最基础的数据结构，字符串类型可以是<code>JSON</code>、<code>XML</code>甚至是二进制的图片等数据，但是最大值不能超过512MB。</p>
+<h4 id="1-1-内部编码"><a href="#1-1-内部编码" class="headerlink" title="1.1 内部编码"></a><strong>1.1 内部编码</strong></h4><p>Redis会根据当前值的类型和长度决定使用哪种内部编码来实现。</p>
+<p>字符串类型的内部编码有3种：</p>
+<ul>
+<li>int：8个字节的长整型。</li>
+<li>embstr：小于等于39个字节的字符串。</li>
+<li>raw：大于39个字节的字符串。</li>
+</ul>
+<h4 id="1-2-使用场景"><a href="#1-2-使用场景" class="headerlink" title="1.2 使用场景"></a><strong>1.2 使用场景</strong></h4><h5 id="1-2-1-缓存"><a href="#1-2-1-缓存" class="headerlink" title="1.2.1 缓存"></a>1.2.1 缓存</h5><p>在web服务中，使用MySQL作为数据库，Redis作为缓存。由于Redis具有支撑高并发的特性，通常能起到加速读写和降低后端压力的作用。web端的大多数请求都是从Redis中获取的数据，如果Redis中没有需要的数据，则会从MySQL中去获取，并将获取到的数据写入redis。</p>
+<h5 id="1-2-2-计数"><a href="#1-2-2-计数" class="headerlink" title="1.2.2 计数"></a>1.2.2 计数</h5><p>Redis中有一个字符串相关的命令<code>incr key</code>，<code>incr</code>命令对值做自增操作，返回结果分为以下三种情况：</p>
+<ul>
+<li>值不是整数，返回错误</li>
+<li>值是整数，返回自增后的结果</li>
+<li>key不存在，默认键为<code>0</code>，返回<code>1</code></li>
+</ul>
+<p>比如文章的阅读量，视频的播放量等等都会使用redis来计数，每播放一次，对应的播放量就会加1，同时将这些数据异步存储到数据库中达到持久化的目的。</p>
+<h5 id="1-2-3-共享Session"><a href="#1-2-3-共享Session" class="headerlink" title="1.2.3 共享Session"></a>1.2.3 共享Session</h5><p>在分布式系统中，用户的每次请求会访问到不同的服务器，这就会导致session不同步的问题，假如一个用来获取用户信息的请求落在A服务器上，获取到用户信息后存入session。下一个请求落在B服务器上，想要从session中获取用户信息就不能正常获取了，因为用户信息的session在服务器A上，为了解决这个问题，使用redis集中管理这些session，将session存入redis，使用的时候直接从redis中获取就可以了。</p>
+<h5 id="1-2-4-限速"><a href="#1-2-4-限速" class="headerlink" title="1.2.4 限速"></a>1.2.4 限速</h5><p>为了安全考虑，有些网站会对IP进行限制，限制同一IP在一定时间内访问次数不能超过n次。</p>
+<h3 id="二-哈希"><a href="#二-哈希" class="headerlink" title="二 哈希"></a><strong>二 哈希</strong></h3><p>Redis中，哈希类型是指一个键值对的存储结构。</p>
+<h4 id="2-1-内部编码"><a href="#2-1-内部编码" class="headerlink" title="2.1 内部编码"></a><strong>2.1 内部编码</strong></h4><p>哈希类型的内部编码有两种：</p>
+<ul>
+<li>ziplist（压缩列表）：当哈希类型元素个数小于<code>hash-max-ziplist-entries</code>配置（默认512个）同时所有值都小于<code>hash-max-ziplist-value</code>配置（默认64字节）时使用。ziplist使用更加紧凑的结构实现多个元素的连续存储，所以比hashtable更加节省内存。</li>
+<li>hashtable（哈希表）：当ziplist不能满足要求时，会使用hashtable。</li>
+</ul>
+<h4 id="2-2-使用场景"><a href="#2-2-使用场景" class="headerlink" title="2.2 使用场景"></a><strong>2.2 使用场景</strong></h4><p>由于hash类型存储的是一个键值对，比如数据库有以下一个用户表结构</p>
+<table>
+<thead>
+<tr>
+<th align="left">id</th>
+<th align="left">name</th>
+<th align="left">age</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">豆豆</td>
+<td align="left">24</td>
+</tr>
+</tbody></table>
+<p>将以上信息存入redis，用表明:id作为key，用户属性作为值：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">hset user:1 name 豆豆 age 24</span><br></pre></td></tr></table></figure>
+
+<p>使用哈希存储会比字符串更加方便直观</p>
+<h3 id="三-列表"><a href="#三-列表" class="headerlink" title="三 列表"></a><strong>三 列表</strong></h3><p>列表类型用来存储多个<strong>有序</strong>的字符串，一个列表最多可以存储<code>2^32-1</code>个元素，列表的两端都可以插入和弹出元素。</p>
+<h4 id="3-1-内部编码"><a href="#3-1-内部编码" class="headerlink" title="3.1 内部编码"></a><strong>3.1 内部编码</strong></h4><p>列表的内部编码有两种：</p>
+<ul>
+<li>ziplist（压缩列表）：当哈希类型元素个数小于<code>list-max-ziplist-entries</code>配置（默认512个）同时所有值都小于<code>list-max-ziplist-value</code>配置（默认64字节）时使用。ziplist使用更加紧凑的结构实现多个元素的连续存储，所以比hashtable更加节省内存。</li>
+<li>linkedlist（链表）：当ziplist不能满足要求时，会使用linkedlist。</li>
+</ul>
+<h4 id="3-2-使用场景"><a href="#3-2-使用场景" class="headerlink" title="3.2 使用场景"></a><strong>3.2 使用场景</strong></h4><h5 id="3-2-1-消息队列"><a href="#3-2-1-消息队列" class="headerlink" title="3.2.1 消息队列"></a>3.2.1 消息队列</h5><p>列表用来存储多个有序的字符串，既然是有序的，那么就满足消息队列的特点。使用<code>lpush</code>+<code>rpop</code>或者<code>rpush</code>+<code>lpop</code>实现消息队列。除此之外，redis支持阻塞操作，在弹出元素的时候使用阻塞命令来实现阻塞队列。</p>
+<p>在蓝鲸SaaS开发中，Django的Celery本身不提供消息服务，但是可以方便的和第三方提供的消息中间件集成。包括，RabbitMQ、Redis等等。SaaS的本地开发中，Celery也默认选择了Redis作为消息队列。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Celery 消息队列设置 RabbitMQ</span></span><br><span class="line"><span class="comment"># BROKER_URL = 'amqp://guest:guest@localhost:5672//'</span></span><br><span class="line"><span class="comment"># Celery 消息队列设置 Redis</span></span><br><span class="line">BROKER_URL = <span class="string">"redis://localhost:6379/0"</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="3-2-2-栈"><a href="#3-2-2-栈" class="headerlink" title="3.2.2 栈"></a>3.2.2 栈</h5><p>由于列表存储的是有序字符串，满足队列的特点，也就能满足栈先进后出的特点，使用<code>lpush</code>+<code>lpop</code>或者<code>rpush</code>+<code>rpop</code>实现栈。</p>
+<h5 id="3-2-3-文章列表"><a href="#3-2-3-文章列表" class="headerlink" title="3.2.3 文章列表"></a>3.2.3 文章列表</h5><p>因为列表的元素不但是有序的，而且还支持按照索引范围获取元素。因此我们可以使用命令<code>lrange key 0 9</code>分页获取文章列表</p>
+<h3 id="四-集合"><a href="#四-集合" class="headerlink" title="四 集合"></a><strong>四 集合</strong></h3><p>集合类型也可以保存多个字符串元素，与列表不同的是，集合中不允许有重复元素并且集合中的元素是无序的。一个集合最多可以存储<code>2^32-1</code>个元素。</p>
+<h4 id="4-1-内部编码"><a href="#4-1-内部编码" class="headerlink" title="4.1 内部编码"></a><strong>4.1 内部编码</strong></h4><p>集合类型的内部编码有两种：</p>
+<ul>
+<li>intset（整数集合）：当集合中的元素都是整数且元素个数小于<code>set-max-intset-entries</code>配置（默认512个）时，redis会选用intset来作为集合的内部实现，从而减少内存的使用。</li>
+<li>hashtable（哈希表）：当intset不能满足要求时，会使用hashtable。</li>
+</ul>
+<h4 id="4-2-使用场景"><a href="#4-2-使用场景" class="headerlink" title="4.2 使用场景"></a><strong>4.2 使用场景</strong></h4><h5 id="4-2-1-用户标签"><a href="#4-2-1-用户标签" class="headerlink" title="4.2.1 用户标签"></a>4.2.1 用户标签</h5><p>例如一个用户对篮球、足球感兴趣，另一个用户对橄榄球、乒乓球感兴趣，这些兴趣点就是一个标签。有了这些数据就可以得到喜欢同一个标签的人，以及用户的共同感兴趣的标签。给用户打标签的时候需要①给用户打标签，②给标签加用户，需要给这两个操作增加事务。</p>
+<ul>
+<li>给用户打标签</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sadd user:1:tags tag1 tag2</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>给标签添加用户</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sadd tag1:users user:1</span><br><span class="line">sadd tag2:users user:1</span><br></pre></td></tr></table></figure>
+
+<p>使用交集（sinter）求两个user的共同标签</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sinter user:1:tags user:2:tags</span><br></pre></td></tr></table></figure>
+
+<h5 id="4-2-2-抽奖功能"><a href="#4-2-2-抽奖功能" class="headerlink" title="4.2.2 抽奖功能"></a>4.2.2 抽奖功能</h5><p>集合有两个命令支持获取随机数，分别是：</p>
+<ul>
+<li>随机获取count个元素，集合元素个数不变</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">srandmember key [count]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>随机弹出count个元素，元素从集合弹出，集合元素个数改变</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">spop key [count]</span><br></pre></td></tr></table></figure>
+
+<p>用户点击抽奖按钮，参数抽奖，将用户编号放入集合，然后抽奖，分别抽一等奖、二等奖，如果已经抽中一等奖的用户不能参数抽二等奖则使用<code>spop</code>，反之使用<code>srandmember</code>。</p>
+<h3 id="五-有序集合"><a href="#五-有序集合" class="headerlink" title="五 有序集合"></a><strong>五 有序集合</strong></h3><p>有序集合和集合一样，不能有重复元素。但是可以排序，它给每个元素设置一个score作为排序的依据。最多可以存储<code>2^32-1</code>个元素。</p>
+<h4 id="5-1-内部编码"><a href="#5-1-内部编码" class="headerlink" title="5.1 内部编码"></a><strong>5.1 内部编码</strong></h4><p>有序集合类型的内部编码有两种：</p>
+<ul>
+<li>ziplist（压缩列表）：当有序集合的元素个数小于<code>list-max-ziplist-entries</code>配置（默认128个）同时所有值都小于<code>list-max-ziplist-value</code>配置（默认64字节）时使用。ziplist使用更加紧凑的结构实现多个元素的连续存储，更加节省内存。</li>
+<li>skiplist（跳跃表）：当不满足ziplist的要求时，会使用skiplist。</li>
+</ul>
+<h4 id="5-2-使用场景"><a href="#5-2-使用场景" class="headerlink" title="5.2 使用场景"></a><strong>5.2 使用场景</strong></h4><h5 id="5-2-1-排行榜"><a href="#5-2-1-排行榜" class="headerlink" title="5.2.1 排行榜"></a>5.2.1 排行榜</h5><p>用户发布了n篇文章，其他人看到文章后给喜欢的文章点赞，使用score来记录点赞数，有序集合会根据score排行。流程如下</p>
+<p>用户发布一篇文章，初始点赞数为0，即score为0</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">zadd user:article 0 a</span><br></pre></td></tr></table></figure>
+
+<p>有人给文章a点赞，递增<code>1</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">zincrby user:article 1 a</span><br></pre></td></tr></table></figure>
+
+<p>查询点赞前三篇文章</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">zrevrangebyscore user:article 0 2</span><br></pre></td></tr></table></figure>
+
+<p>查询点赞后三篇文章</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">zrangebyscore user:article 0 2</span><br></pre></td></tr></table></figure>
+
+<h5 id="5-2-2-延迟消息队列"><a href="#5-2-2-延迟消息队列" class="headerlink" title="5.2.2 延迟消息队列"></a>5.2.2 延迟消息队列</h5><p>下单系统，下单后需要在15分钟内进行支付，如果15分钟未支付则自动取消订单。将下单后的十五分钟后时间作为score，订单作为value存入redis，消费者轮询去消费，如果消费的大于等于这笔记录的score，则将这笔记录移除队列，取消订单。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a><strong>总结</strong></h3><p>在开发中，字符串类型是用的最多的数据类型，导致我们忽视了redis的其他四种数据类型，在具体场景下选择具体的数据类型对提升redis性能有非常大的帮助。redis虽然支持消息队列的实现，但是并不支持ack。所以redis实现的消息队列不能保证消息的可靠性，除非自己实现消息确认机制，不过这非常麻烦，所以如果是重要的消息还是推荐使用专门的消息队列去做，如RabbitMQ、RocketMQ。</p>
+<hr>
+<p>参考链接：<a href="https://mp.weixin.qq.com/s/FsL-54ALoNUAPcft-u8Leg?v_p=86&WBAPIAnalysisOriUICodes=10000001_10000002&launchid=10000365--x&wm=3333_2001&aid=01A0GdQv0UejmN65Ntcd4pBeamMWOPan5tHaY8rK5tZGJgPOs.&from=10AA393010" target="_blank" rel="noopener">Redis 五大数据类型使用场景</a>  </p>
+]]></content>
+      <categories>
+        <category>数据库</category>
+        <category>Redis修炼</category>
+      </categories>
+      <tags>
         <tag>Redis</tag>
+        <tag>Redis使用场景</tag>
+        <tag>NoSQL</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Redis修炼之数据类型</title>
+    <url>/2020/08/12/redis-data-types/</url>
+    <content><![CDATA[<blockquote>
+<p>一、Redis 数据类型:</p>
+</blockquote>
+<p><strong>1、String（字符串）</strong><br>string 是 Redis 最基本的类型，理解成与 Memcached 一模一样的类型，一个 key 对应一个 value。</p>
+<p><strong>2、Hash（哈希）</strong><br>Redis hash 是一个键值(key=&gt;value)对集合。<br>Redis hash 是一个 string 类型的 field 和 value 的映射表，hash 特别适合用于存储对象。</p>
+<a id="more"></a>
+
+<p><strong>3、List（列表）</strong><br>Redis 列表是简单的字符串列表，按照插入顺序排序。你可以添加一个元素到列表的头部（左边）或者尾部（右边）。<br>ps：可以使用List实现简单消息队列</p>
+<p><strong>4、Set（集合）</strong><br>Redis 的 Set 是 string 类型的无序集合。<br>集合是通过哈希表实现的，所以添加，删除，查找的复杂度都是 O(1)。</p>
+<p><strong>5、zset(sorted set：有序集合)</strong><br>Redis zset 和 set 一样也是string类型元素的集合，且不允许重复的成员。<br>不同的是每个元素都会关联一个double类型的分数。Redis正是通过分数来为集合中的成员进行从小到大的排序。<br>zset的成员是唯一的，但分数(score)却可以重复。</p>
+<blockquote>
+<p>二、各个数据类型应用场景:</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>简介</th>
+<th>特性</th>
+<th>场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>String(字符串)</td>
+<td>二进制安全</td>
+<td>可以包含任何数据，比如jpg图片或者序列化的对象，一个键最大能存储512M</td>
+<td>- - -</td>
+</tr>
+<tr>
+<td>Hash(字典)</td>
+<td>键值对集合，即编程语言中的Map类型</td>
+<td>适合存储对象，并且可以像数据库中update一个属性一样只修改某一项属性值(Memcached中需要取出整个字符串反序列化成对象修改完再序列化存回去)</td>
+<td>存储、读取、修改用户属性</td>
+</tr>
+<tr>
+<td>List(列表)</td>
+<td>链表(双向链表)</td>
+<td>增删快，提供了操作某一段元素的API</td>
+<td>1，最新消息排行等功能(比如朋友圈的时间线) 2，消息队列</td>
+</tr>
+<tr>
+<td>Set(集合)</td>
+<td>哈希表实现，元素不重复</td>
+<td>1、添加、删除，查找的复杂度都是O(1) 2、为集合提供了求交集、并集、差集等操作</td>
+<td>1、共同好友 2、利用唯一性，统计访问网站的所有独立ip 3、好友推荐时，根据tag求交集，大于某个阈值就可以推荐</td>
+</tr>
+<tr>
+<td>Sorted Set(有序集合)</td>
+<td>将Set中的元素增加一个权重参数score，元素按score有序排列</td>
+<td>数据插入集合时，已经进行天然排序</td>
+<td>1、排行榜 2、带权重的消息队列</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>三、注意:</p>
+</blockquote>
+<p>&emsp;&emsp;Redis支持多个数据库，并且每个数据库的数据是隔离的不能共享，并且基于单机才有，如果是集群就没有数据库的概念。</p>
+<p>&emsp;&emsp;Redis是一个字典结构的存储服务器，而实际上一个Redis实例提供了多个用来存储数据的字典，客户端可以指定将数据存储在哪个字典中。这与我们熟知的在一个关系数据库实例中可以创建多个数据库类似，所以可以将其中的每个字典都理解成一个独立的数据库。</p>
+<p>&emsp;&emsp;每个数据库对外都是一个从0开始的递增数字命名，Redis默认支持16个数据库（可以通过配置文件支持更多，无上限），可以通过配置databases来修改这一数字。客户端与Redis建立连接后会自动选择0号数据库，不过可以随时使用SELECT命令更换数据库，如要选择1号数据库：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">redis&gt; SELECT 1</span><br><span class="line">OK</span><br><span class="line">redis [1] &gt; GET foo</span><br><span class="line">(nil)</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;然而这些以数字命名的数据库又与我们理解的数据库有所区别。首先Redis不支持自定义数据库的名字，每个数据库都以编号命名，开发者必须自己记录哪些数据库存储了哪些数据。另外Redis也不支持为每个数据库设置不同的访问密码，所以一个客户端要么可以访问全部数据库，要么连一个数据库也没有权限访问。最重要的一点是多个数据库之间并不是完全隔离的，比如FLUSHALL命令可以清空一个Redis实例中所有数据库中的数据。综上所述，这些数据库更像是一种命名空间，而不适宜存储不同应用程序的数据。比如可以使用0号数据库存储某个应用生产环境中的数据，使用1号数据库存储测试环境中的数据，但不适宜使用0号数据库存储A应用的数据而使用1号数据库B应用的数据，不同的应用应该使用不同的Redis实例存储数据。由于Redis非常轻量级，一个空Redis实例占用的内在只有1M左右，所以不用担心多个Redis实例会额外占用很多内存。</p>
+<hr>
+<p>参考链接：<a href="https://www.runoob.com/redis/redis-data-types.html" target="_blank" rel="noopener">菜鸟教程——Redis数据类型</a>  </p>
+]]></content>
+      <categories>
+        <category>数据库</category>
+        <category>Redis修炼</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+        <tag>Redis</tag>
+        <tag>NoSQL</tag>
+        <tag>数据类型</tag>
       </tags>
   </entry>
   <entry>
@@ -2404,6 +2729,89 @@
         <tag>Python</tag>
         <tag>协程</tag>
         <tag>生成器</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python之全局解释器锁GIL</title>
+    <url>/2020/06/11/python-GIL/</url>
+    <content><![CDATA[<blockquote>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote>
+<p>GIL(Global Interpreter Lock)，也称为全局解释器，官方解释为：</p>
+<blockquote>
+<p>In CPython, the global interpreter lock, or GIL, is a mutex that prevents multiple native threads from executing Python bytecodes at once. This lock is necessary mainly because CPython’s memory management is not thread-safe. (However, since the GIL exists, other features have grown to depend on the guarantees that it enforces.)</p>
+</blockquote>
+<p>主要意思为：</p>
+<blockquote>
+<p>GIL是一个互斥锁，它防止多个线程同时执行Python字节码。这个锁是必要的，主要是因为CPython的内存管理不是线程安全的</p>
+</blockquote>
+<a id="more"></a>
+
+<h3 id="Python解释器有哪些"><a href="#Python解释器有哪些" class="headerlink" title="Python解释器有哪些"></a>Python解释器有哪些</h3><ol>
+<li>CPython: 官方默认版本，使用C语言开发，是Python使用最广泛的解释器，有GIL.</li>
+<li>IPython: IPython是基于CPython之上的交互式解释器，其它方面和CPython相同.</li>
+<li>PyPy: PyPy采用JIT(Just In Time)也就是即时编译编译器，对Python代码执行动态编译，目的是加快执行速度，有GIL.</li>
+<li>Jython: 运行在Java平台上的解释器，把Python代码编译为Java字节码执行，没有GIL.</li>
+<li>IronPython: IronPython和Jython类似，只不过IronPython是运行在微软.Net平台上的Python解释器，可以直接把Python代码编译成.Net的字节码，没有GIL.</li>
+</ol>
+<h2 id="GIL的背景"><a href="#GIL的背景" class="headerlink" title="GIL的背景"></a>GIL的背景</h2><p>由于物理上得限制，各CPU厂商在核心频率上的比赛已经被多核所取代。为了更有效的利用多核处理器的性能，就出现了多线程的编程方式，而随之带来的就是线程间数据一致性和状态同步的困难。</p>
+<p>Python当然也逃不开，为了利用多核，Python开始支持多线程。而解决多线程之间数据完整性和状态同步的最简单方法自然就是加锁。于是有了GIL这把超级大锁，而当越来越多的代码库开发者接受了这种设定后，他们开始大量依赖这种特性（即默认python内部对象是thread-safe的，无需在实现时考虑额外的内存锁和同步操作）。</p>
+<h2 id="GIL为什么会存在？"><a href="#GIL为什么会存在？" class="headerlink" title="GIL为什么会存在？"></a>GIL为什么会存在？</h2><p>GIL的问题其实是由于近十几年来应用程序和操作系统逐步从多任务单核心演进到多任务多核心导致的 , 在一个古老的单核CPU上调度多个线程任务，大家相互共享一个全局锁，谁在CPU执行，谁就占有这把锁，直到这个线程因为IO操作或者Timer Tick到期让出CPU，没有在执行的线程就安静的等待着这把锁（除了等待之外，他们应该也无事可做）。下面这个图演示了一个单核CPU的线程调度方式：</p>
+<img data-src="/2020/06/11/python-GIL/python-gil-single.jpg" class>
+
+<p>在一个现代多核心的处理器上，上面的模型就有很大优化空间了，原来只能等待的线程任务，现在可以在其它空闲的核心上调度并发执行。由于古老GIL机制，如果线程2需要在CPU 2 上执行，它需要先等待在CPU 1 上执行的线程1释放GIL（记住：GIL是全局的）。如果线程1是因为 i/o 阻塞让出的GIL，那么线程2必定拿到Gil。但如果线程1是因为timer ticks计数满100让出GIL，那么这个时候线程1和线程2公平竞争。但要命的是，在Python 2.x, 线程1不会动态的调整自身的优先级，所以很大概率下次被选中执行的还是线程1，在很多个这样的选举周期内，线程2只能安静的看着线程1拿着GIL在CPU 1上欢快的执行。</p>
+<img data-src="/2020/06/11/python-GIL/python-gil-muti.jpg" class>
+
+<p>在稍微极端一点的情况下，比如线程1使用了while True在CPU 1 上执行，那就真是“一核有难，八核围观”了，如下图所示：</p>
+<img data-src="/2020/06/11/python-GIL/python-gil-octo.jpg" class>
+
+<h2 id="GIL的影响"><a href="#GIL的影响" class="headerlink" title="GIL的影响"></a>GIL的影响</h2><p>从上文的介绍和官方的定义来看，GIL无疑就是一把全局排他锁。毫无疑问全局锁的存在会对多线程的效率有不小影响。甚至就几乎等于Python是个单线程的程序。</p>
+<h3 id="GIL对多线程Python程序的影响"><a href="#GIL对多线程Python程序的影响" class="headerlink" title="GIL对多线程Python程序的影响"></a>GIL对多线程Python程序的影响</h3><p>程序的性能受到计算密集型(CPU)的程序限制和I/O密集型的程序限制影响，那什么是计算密集型和I/O密集型程序?</p>
+<h4 id="计算密集型-CPU"><a href="#计算密集型-CPU" class="headerlink" title="计算密集型(CPU)"></a>计算密集型(CPU)</h4><p>高度使用CPU的程序，例如: 进行数学计算，矩阵运算，搜索，图像处理等.</p>
+<h4 id="I-O密集型"><a href="#I-O密集型" class="headerlink" title="I/O密集型"></a>I/O密集型</h4><p>I/0(Input/Output)程序是进行数据传输，例如: 文件操作，数据库，网络数据等</p>
+<h3 id="顺序执行单线程和并发执行多线程的效率对比"><a href="#顺序执行单线程和并发执行多线程的效率对比" class="headerlink" title="顺序执行单线程和并发执行多线程的效率对比"></a>顺序执行单线程和并发执行多线程的效率对比</h3><h4 id="顺序执行单线程-single-thread-py"><a href="#顺序执行单线程-single-thread-py" class="headerlink" title="- 顺序执行单线程(single_thread.py)"></a>- 顺序执行单线程(single_thread.py)</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test_counter</span><span class="params">()</span>:</span></span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> range(<span class="number">100000000</span>):</span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    start_time = time.time()</span><br><span class="line">    <span class="keyword">for</span> tid <span class="keyword">in</span> range(<span class="number">2</span>):</span><br><span class="line">        t1 = threading.Thread(target=test_counter)</span><br><span class="line">        t1.start()</span><br><span class="line">        t1.join()</span><br><span class="line">    end_time = time.time()</span><br><span class="line">    print(<span class="string">"Total time:&#123;&#125;"</span>.format(end_time-start_time))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+
+<p>执行结果:</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">Total</span> <span class="selector-tag">time</span>: 11<span class="selector-class">.299654722213745</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="并发执行两个线程-multi-thread-py"><a href="#并发执行两个线程-multi-thread-py" class="headerlink" title="- 并发执行两个线程(multi_thread.py)"></a>- 并发执行两个线程(multi_thread.py)</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test_counter</span><span class="params">()</span>:</span></span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> range(<span class="number">100000000</span>):</span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    thread_array = &#123;&#125;</span><br><span class="line">    start_time = time.time()</span><br><span class="line">    <span class="keyword">for</span> tid <span class="keyword">in</span> range(<span class="number">2</span>):</span><br><span class="line">        t = threading.Thread(target=test_counter)</span><br><span class="line">        t.start()</span><br><span class="line">        thread_array[tid] = t</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>):</span><br><span class="line">        thread_array[i].join()</span><br><span class="line">    end_time = time.time()</span><br><span class="line">    print(<span class="string">"Total time:&#123;&#125;"</span>.format(end_time-start_time))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+
+<p>执行结果:</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">Total</span> <span class="selector-tag">time</span><span class="selector-pseudo">:13.7098388671875</span></span><br></pre></td></tr></table></figure>
+
+<p>GIL对I/O绑定多线程程序的性能影响不大，因为线程在等待I/O时共享锁.</p>
+<p>GIL对计算型绑定多线程程序有影响，例如: 使用线程处理部分图像的程序，不仅会因锁定而成为单线程，而且还会看到执行时间的增加，这种增加是由锁的获取和释放开销的结果.</p>
+<h2 id="如何处理Python中的GIL"><a href="#如何处理Python中的GIL" class="headerlink" title="如何处理Python中的GIL"></a>如何处理Python中的GIL</h2><ul>
+<li>计算密集型程序<ul>
+<li>使用多进程(什么是多进程呢，后续道来)</li>
+<li>使用其它语言(将计算密集程序放到其它语言中执行)</li>
+<li>替换解释器(可以自己尝试)</li>
+<li>等大神解决GIL</li>
+</ul>
+</li>
+<li>I/O密集型程序<ul>
+<li>使用多线程</li>
+<li>使用多进程</li>
+<li>使用多进程 + 多线程</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p>参考链接：</p>
+<p><a href="http://www.dabeaz.com/python/UnderstandingGIL.pdf" target="_blank" rel="noopener">Understanding the Python GIL</a>  </p>
+<p><a href="https://realpython.com/python-gil/" target="_blank" rel="noopener">What Is the Python Global Interpreter Lock (GIL)?</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/75780308" target="_blank" rel="noopener">深入理解Python中的GIL（全局解释器锁）</a></p>
+]]></content>
+      <categories>
+        <category>Python</category>
+        <category>GIL</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>多线程</tag>
+        <tag>GIL</tag>
+        <tag>全局解释器锁</tag>
       </tags>
   </entry>
   <entry>
