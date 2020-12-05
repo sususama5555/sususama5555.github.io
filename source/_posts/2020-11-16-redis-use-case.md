@@ -1,9 +1,10 @@
 ---
 title: Redis修炼之使用场景
-date: 2020-11-16 00:33:06
+date: 2020-08-16 00:33:06
 tags: 
 - Redis
 - Redis使用场景
+- NoSQL
 categories: 
 - 数据库
 - Redis修炼

@@ -1,10 +1,11 @@
 ---
 title: Redis修炼之数据类型
-date: 2020-11-12 00:34:08
+date: 2020-08-12 00:34:08
 tags: 
 - Redis
 - 数据类型
 - 数据库
+- NoSQL
 categories: 
 - 数据库
 - Redis修炼

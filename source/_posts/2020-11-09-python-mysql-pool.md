@@ -1,14 +1,14 @@
 ---
-title: Python中构建MySql连接池
+title: Python中构建MySQL连接池
 date: 2020-11-09 23:17:35
 tags: 
 - Python
 - 数据库
 - 数据库连接池
-- MySql
+- MySQL
 categories: 
 - 数据库
-- MySql修炼
+- MySQL修炼
 ---
 ><b>背景：为何要使用连接池</b>
 
