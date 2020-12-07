@@ -3,6 +3,7 @@ title: 初识 - Zabbix
 date: 2020-07-02 00:27:07
 tags: 
 - Zabbix
+- Linux
 - 监控
 - 告警
 - 初识

@@ -3,6 +3,7 @@ title: Zabbix安装与部署
 date: 2020-12-01 00:05:19
 tags: 
 - Zabbix
+- Linux
 - 监控
 - 告警
 - 开源
