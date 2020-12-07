@@ -15,6 +15,7 @@ sticky: 1
 # TODO :memo:
 
 > 图床
+> Kafka
 > kubernetes
 > Prometheus
 > .......
