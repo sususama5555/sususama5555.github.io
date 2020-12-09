@@ -16,5 +16,6 @@ categories:
 ******
 晚上：打FF14  
 ******
-![avatar](/picture/first.jpg)
+![](/picture/first.jpg)
+
 ******
