@@ -3,13 +3,12 @@ title: 个人资源
 date: 2020-02-15 01:55:55
 categories: 
 - 个人资源
-sticky: 1
+sticky: 999
 ---
 
 # 已有 :sunflower:
 > 本站地址：https://notspr.com/
-> 算法练习：https://github.com/sususama5555/ExerciseCode
-> aliyun 云服务器IP：47.128.240.67
+> GitHub 地址：https://github.com/sususama5555/
 > Zabbix 地址：https://zabbix.notspr.com/
 > RabbitMQ 地址： http://47.112.240.167:15672/
 
