@@ -249,8 +249,6 @@ for item in test(n):
 
 Python3.4中，使用[`@asyncio.coroutine](mailto:`@asyncio.coroutine)`装饰的函数称为协程。不过没有从语法层面进行严格约束。
 
-> 对装饰器不了解的小伙伴可以看我的上一篇博客–[《理解Python装饰器》](https://link.zhihu.com/?target=https%3A//www.jianshu.com/p/ee82b941772a)
-
 对于Python原生支持的协程来说，Python对协程和生成器做了一些区分，便于消除这两个不同但相关的概念的歧义：
 
 - 标记了[`@asyncio.coroutine](mailto:`@asyncio.coroutine)`装饰器的函数称为协程函数，`iscoroutinefunction()`方法返回True
