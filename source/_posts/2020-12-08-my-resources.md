@@ -6,7 +6,7 @@ categories:
 sticky: 999
 ---
 
-# 已有 :sunflower:
+# 已有  :sunflower:
 > 本站地址：https://notspr.com/
 > GitHub 地址：https://github.com/sususama5555/
 > Zabbix 地址：https://zabbix.notspr.com/
