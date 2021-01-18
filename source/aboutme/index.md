@@ -13,11 +13,11 @@ date: 2020-02-23 01:06:13
 - ★★★ Python、Django
 - ★★★ Linux
 - ★★★ Git
-- ★★☆ 前端、Vue
+- ★★☆ 前端、Vue.js
 - ★★☆ MySQL、Redis
-- ★★☆ Docker、VMware、Zabbix
+- ★★☆ Docker、Nginx、VMware、Zabbix
 - ★☆☆ Golang、Prometheus
-- ★☆☆ RabbitMQ、Kafka、MongoDB
+- ★☆☆ RabbitMQ、Kafka
 
 
 > 兴趣
