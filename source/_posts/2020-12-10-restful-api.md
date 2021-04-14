@@ -24,6 +24,8 @@ Representational State Transfer这三个单词到底意味着什么：
 
 一句话概括为：**URL定位资源，用HTTP动词（GET,POST,DELETE,DETC）描述操作。**
 
+<!--more-->
+
 - GET用来获取资源
 - POST用来新建资源
 - PUT用来更新资源

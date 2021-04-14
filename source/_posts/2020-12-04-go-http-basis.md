@@ -36,6 +36,8 @@ Web服务器的工作原理可以简单的归纳为：
 - 服务器向客户端发送HTTP协议应答包
 - 客户端与服务器断开连接，客户端解释HTML文档，在客户端屏幕上渲染图形结果
 
+<!--more-->
+
 ## HTTP协议
 
 HTTP协议的全称：超文本传输协议，HyperText Transfer Protocol。
