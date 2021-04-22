@@ -4,7 +4,7 @@ date: 2021-04-16 00:38:01
 tags: 
 - Python
 - Python工匠
-- 代码优化
+- 编码优化
 categories: 
 - Python
 - Python工匠
@@ -304,8 +304,12 @@ def notify_nonsleep_users_in_last_30days():
 - 循环内部，是一个极易发生“代码膨胀”的场地
 - 请使用生成器函数将循环内不同职责的代码块解耦出来，获得更好的灵活性
 
-## 附录
 
-- [Python 工匠：编写地道循环的两个建议](https://www.zlovezl.cn/articles/two-tips-on-loop-writing/)
+
+------
+
+参考资料：
+
+[Python 工匠：编写地道循环的两个建议](https://www.zlovezl.cn/articles/two-tips-on-loop-writing/)
 
 
