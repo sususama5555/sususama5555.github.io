@@ -1,7 +1,13 @@
 ---
 title: Python工匠-高效操作文件
 date: 2021-04-13 00:26:12
-tags:
+tags: 
+- Python
+- Python工匠
+- 编码优化
+categories: 
+- Python
+- Python工匠
 ---
 
 ## 前言
@@ -374,5 +380,7 @@ def parse(self, source, parser=None):
 
 ******
 
-转载自：[Python 工匠：高效操作文件的三个建议](https://www.zlovezl.cn/articles/three-tips-on-writing-file-related-codes/)
+参考资料：
+
+[Python 工匠：高效操作文件的三个建议](https://www.zlovezl.cn/articles/three-tips-on-writing-file-related-codes/)
 
