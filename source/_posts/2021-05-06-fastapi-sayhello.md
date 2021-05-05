@@ -32,6 +32,8 @@ FastAPI 是一个用于构建 API 的现代、快速（高性能）的 web 框�
 
 先来实现一个sayhello的简单应用吧，以下使用FastAPI + SQLAlchemy(sqlite3) + html + css + vue.js + axios。
 
+**源码地址**：https://github.com/sususama5555/fastapi-sayhello
+
 <!-- more -->
 
 ## FastAPI初始化
