@@ -1,5 +1,5 @@
 ---
-title: Python工匠 - 使用装饰器的技巧
+title: <转载>Python工匠 - 使用装饰器的技巧
 date: 2021-04-20 23:56:33
 tags: 
 - Python

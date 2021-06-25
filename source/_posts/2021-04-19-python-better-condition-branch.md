@@ -1,5 +1,5 @@
 ---
-title: Python工匠 - 编写更好的条件语句
+title: <转载>Python工匠 - 编写更好的条件语句
 date: 2021-04-19 00:31:37
 tags: 
 - Python

@@ -1,5 +1,5 @@
 ---
-title: Python工匠 - 编写更好的循环
+title: <转载>Python工匠 - 编写更好的循环
 date: 2021-04-16 00:38:01
 tags: 
 - Python
