@@ -9,6 +9,11 @@ sticky: 999
 # 已有  :sunflower:
 > 本站地址：https://notspr.com/
 > GitHub 地址：https://github.com/sususama5555/
+> Grafana：http://47.112.240.167:3000/
+> > Username - guest
+> > Password - guest
+>
+> Prometheus：http://47.112.240.167:9090/
 > Zabbix 地址：https://zabbix.notspr.com/
 > RabbitMQ 地址： http://47.112.240.167:15672/
 
@@ -17,5 +22,5 @@ sticky: 999
 > 图床
 > Kafka
 > kubernetes
-> Prometheus
 > .......
+
