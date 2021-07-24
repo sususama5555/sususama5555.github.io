@@ -102,7 +102,7 @@ yum install zabbix-web-mysql-scl zabbix-nginx-conf-scl
 
 在数据库主机上运行以下代码，目的是在本地MySQL数据库中创建zabbix账号和同名数据库，并且赋予相应权限。
 
-```mysql
+```sql
 # mysql -uroot -p
 password
 mysql> create database zabbix character set utf8 collate utf8_bin;
@@ -133,7 +133,7 @@ ERROR 1071 (42000) at line 90: Specified key was too long; max key length is 767
 
 初步判断是MySQL字符集的问题，所以去查了 ***<u>Stack Overflow</u>*** 后，在MySQL命令行中，使用`show variables like 'character%'`查询默认字符集，结果发现许多编码为utf-8。
 
-```mysql
+```sql
 # mysql -uroot -p
 password
 mysql> show variables like 'character%';
