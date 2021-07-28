@@ -4,9 +4,11 @@
 
 # Site
 title: Sapphire
-subtitle: '興趣使然的博客'
+#subtitle: '興趣使然的博客'
+subtitle: '会思考的芦苇'
 #description: '全栈 | 硬件 | 篮球 | 游戏'
-description: '技术 | 学习 | 开源'
+#description: '技术 | 学习 | 开源'
+description: '興趣使然的技术博客'
 keywords: '博客'
 author: Ryan Shu
 language: zh-CN
