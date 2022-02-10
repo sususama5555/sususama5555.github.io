@@ -1,6 +1,6 @@
 ---
-title: MySQL索引详解
-date: 2021-07-24 23:47:20
+title: MySQL索引 - 理论详解
+date: 2021-08-14 23:47:20
 tags: 
 - MySQL
 - 索引
